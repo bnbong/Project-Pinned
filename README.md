@@ -10,7 +10,10 @@
 # About App
 
 ## 1. Stack
-Will be added later
+* Framework: Django, Python.
+* DB: PostgreSQL
+* Cache DB: Redis
+* Container: Docker
 
 ## 2. API Docs
 Will be added later
