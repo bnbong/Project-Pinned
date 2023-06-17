@@ -1,0 +1,4 @@
+pinn-venv/
+.env
+
+__pycache__/
