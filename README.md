@@ -23,11 +23,12 @@
 │   │   └── source files ...
 │   ├── manage.py
 │   └── setup.cfg (linter or test env configurations)
-├── frontend (frontend sources)
+├── front (frontend sources)
 │   ├── build (build files location)
 │   │   └── static
+│   ├── public
 │   ├── src (sources)
-│   └── other React files ...
+│   └── other initial React files ...
 ├── .env (개발자 각자 반드시 개인적으로 받아야 하는 파일)
 ├── .gitignore
 ├── docker-compose.yml (for build containers like DB, Cache DB, etc..)
