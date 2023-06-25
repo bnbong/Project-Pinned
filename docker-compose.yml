@@ -29,18 +29,6 @@ services:
     depends_on:
       - db
       - redis
-    environment:
-      DJANGO_SECRET_KEY: ${SECRET_KEY}
-      DEBUG: 1 # or 0 for production
-      DJANGO_ALLOWED_HOSTS: "*"
-      SQL_ENGINE: django.db.backends.postgresql
-      SQL_DATABASE: pinned_db
-      SQL_USER: pinned
-      SQL_PASSWORD: pinned
-      SQL_HOST: db
-      SQL_PORT: 5432
-      CACHE_HOST: redis
-      CACHE_PORT: 6379
 
 volumes:
   postgres_data:
