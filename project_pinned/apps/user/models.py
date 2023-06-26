@@ -1,7 +1,11 @@
 from uuid import uuid4
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser, BaseUserManager, PermissionsMixin, AbstractBaseUser
+from django.contrib.auth.models import (
+    BaseUserManager,
+    PermissionsMixin,
+    AbstractBaseUser,
+)
 from django.utils.translation import gettext_lazy as _
 from django.conf import settings
 
@@ -50,13 +54,15 @@ class UserManager(BaseUserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(default=uuid4, editable=False, unique=True)
     username = models.CharField(
-        verbose_name=_('username'),
+        verbose_name=_("username"),
         max_length=100,
         unique=False,
         null=True,
     )
-    email = models.EmailField(_("email address"), blank=True)
-    profile_image = models.ImageField(null=True, blank=True, upload_to=settings.MEDIA_ROOT)
+    email = models.EmailField(_("email address"), blank=True, unique=True)
+    profile_image = models.ImageField(
+        null=True, blank=True, upload_to=settings.MEDIA_ROOT
+    )
     is_active = models.BooleanField(
         _("active"),
         default=True,
