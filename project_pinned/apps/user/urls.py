@@ -1,4 +1,6 @@
 from django.urls import path, include
+from dj_rest_auth.views import LoginView, LogoutView
+
 from . import views
 
 
@@ -12,7 +14,8 @@ urlpatterns = [
     path("test/", views.UserViewTest.as_view(), name="user_view_test"),
 
     # Basic user login & registration
-    path("login/", views.UserLogin.as_view(), name="user-login"),
+    path("login/", LoginView.as_view(), name="user-login"),
+    path("logout/", LogoutView.as_view(), name="user-logout"),
     path("register/", views.UserRegister.as_view(), name="user-register"),
 
     # For individual user's information
@@ -21,7 +24,9 @@ urlpatterns = [
     path("<user_id>/follow/", views.UserFollow.as_view(), name="user-follow"),
     path("<user_id>/unfollow/", views.UserUnFollow.as_view(), name="user-unfollow"),
     path("<user_id>/followers/", views.UserFollowers.as_view(), name="user-followers"),
-    path("<user_id>/followings/", views.UserFollowings.as_view(), name="user-followings"),
+    path(
+        "<user_id>/followings/", views.UserFollowings.as_view(), name="user-followings"
+    ),
 
     # For user's token validate & refresh
     path("token/", include(token_patterns)),
