@@ -116,15 +116,15 @@ class UserFollow(APIView):
                 cur_user.following.add(target_user)
                 target_user.followers.add(cur_user)
                 return Response(
-                    {"is success": True, "detail": "user follow success"},
+                    {"is_success": True, "detail": "user follow success"},
                     status=status.HTTP_200_OK,
                 )
             return Response(
-                {"is success": False, "detail": "already followed user"},
+                {"is_success": False, "detail": "already followed user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
-            {"is success": False, "detail": "You cannot follow yourself"},
+            {"is_success": False, "detail": "You cannot follow yourself"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
@@ -147,15 +147,15 @@ class UserUnFollow(APIView):
                 cur_user.following.remove(target_user)
                 target_user.followers.remove(cur_user)
                 return Response(
-                    {"is success": True, "detail": "user unfollow success"},
+                    {"is_success": True, "detail": "user unfollow success"},
                     status=status.HTTP_200_OK,
                 )
             return Response(
-                {"is success": False, "detail": "already unfollowed user"},
+                {"is_success": False, "detail": "already unfollowed user"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         return Response(
-            {"is success": False, "detail": "You cannot unfollow yourself"},
+            {"is_success": False, "detail": "You cannot unfollow yourself"},
             status=status.HTTP_400_BAD_REQUEST,
         )
 
