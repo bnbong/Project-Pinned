@@ -112,9 +112,9 @@ class UserFollow(APIView):
         if user_id != target_user_id:
             cur_user = User.objects.get(user_id=user_id)
             target_user = User.objects.get(user_id=target_user_id)
-            if not cur_user.followers.filter(user_id=target_user_id).exists():
-                cur_user.followers.add(target_user)
-                target_user.following.add(cur_user)
+            if not cur_user.following.filter(user_id=target_user_id).exists():
+                cur_user.following.add(target_user)
+                target_user.followers.add(cur_user)
                 return Response(
                     {"is success": "true", "detail": "user follow success"},
                     status=status.HTTP_200_OK,
@@ -143,9 +143,9 @@ class UserUnFollow(APIView):
         if user_id != target_user_id:
             cur_user = User.objects.get(user_id=user_id)
             target_user = User.objects.get(user_id=target_user_id)
-            if cur_user.followers.filter(user_id=target_user_id).exists():
-                cur_user.followers.remove(target_user)
-                target_user.following.remove(cur_user)
+            if cur_user.following.filter(user_id=target_user_id).exists():
+                cur_user.following.remove(target_user)
+                target_user.followers.remove(cur_user)
                 return Response(
                     {"is success": "true", "detail": "user unfollow success"},
                     status=status.HTTP_200_OK,
