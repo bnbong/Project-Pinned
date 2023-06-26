@@ -49,3 +49,11 @@ class RegisterSerializer(serializers.ModelSerializer):
 #         token["user_id"] = user.user_id
 
 #         return token
+
+
+class FollowUserSerializer(serializers.ModelSerializer):
+    
+    
+    class Meta:
+        model = User
+        fields = ("username", "profile_image")
