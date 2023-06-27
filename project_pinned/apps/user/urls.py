@@ -1,7 +1,11 @@
 from django.urls import path, include
 from dj_rest_auth.views import LoginView, LogoutView
 
-from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView, TokenBlacklistView
+from rest_framework_simplejwt.views import (
+    TokenVerifyView,
+    TokenRefreshView,
+    TokenBlacklistView,
+)
 
 from . import views
 
@@ -9,7 +13,7 @@ from . import views
 token_patterns = [
     path("verify/", TokenVerifyView.as_view(), name="jwt-verify"),
     path("refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
-    path("blacklist/", TokenBlacklistView.as_view(), name='jwt-blacklist'),
+    path("blacklist/", TokenBlacklistView.as_view(), name="jwt-blacklist"),
 ]
 
 urlpatterns = [
@@ -22,7 +26,7 @@ urlpatterns = [
     path("register/", views.UserRegister.as_view(), name="user-register"),
 
     # For individual user's information
-    path("<user_id>/", views.UserDelete.as_view(), name="user-delete"),
+    path("<user_id>/withdrawal", views.UserDelete.as_view(), name="user-delete"),
     path("<user_id>/profile/", views.UserProfile.as_view(), name="user-profile"),
     path("<user_id>/follow/", views.UserFollow.as_view(), name="user-follow"),
     path("<user_id>/unfollow/", views.UserUnFollow.as_view(), name="user-unfollow"),
