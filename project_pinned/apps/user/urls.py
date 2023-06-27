@@ -1,12 +1,15 @@
 from django.urls import path, include
 from dj_rest_auth.views import LoginView, LogoutView
 
+from rest_framework_simplejwt.views import TokenVerifyView, TokenRefreshView, TokenBlacklistView
+
 from . import views
 
 
 token_patterns = [
-    path("verify/", views.TokenVerify.as_view(), name="jwt-verify"),
-    path("refresh/", views.TokenRefresh.as_view(), name="jwt-refresh"),
+    path("verify/", TokenVerifyView.as_view(), name="jwt-verify"),
+    path("refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
+    path("blacklist/", TokenBlacklistView.as_view(), name='jwt-blacklist'),
 ]
 
 urlpatterns = [

@@ -10,7 +10,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from . import authentication
 from .serializer import FollowUserSerializer, RegisterSerializer
 
 User = get_user_model()
@@ -21,32 +20,10 @@ class UserViewTest(View):
         return HttpResponse("Hello This is user app.")
 
 
-class TokenVerify(APIView):
-    authentication_classes = (authentication.JWTAuthentication,)
-
-    def post(self, request):
-        try:
-            pass
-
-        except (AssertionError, TypeError):
-            return Response({"detail": "Cannot find user. Token Verify Failed."})
-
-
-class TokenRefresh(APIView):
-    authentication_classes = (authentication.JWTAuthentication,)
-
-    def post(self, request):
-        try:
-            pass
-
-        except (AssertionError, TypeError):
-            return Response({"detail": "Cannot find user. Token Refresh Failed."})
-
-
 class UserRegister(APIView):
     """
     request:
-        "user_name": string,
+        "username": string,
         "email": string,
         "password": string,
     """
@@ -82,14 +59,14 @@ class UserRegister(APIView):
 
 
 class UserDelete(APIView):
-    authentication_classes = (authentication.JWTAuthentication,)
+    authentication_classes = [JWTAuthentication]
 
     def delete(self, request):
         pass
 
 
 class UserProfile(APIView):
-    authentication_classes = (authentication.JWTAuthentication,)
+    authentication_classes = [JWTAuthentication]
 
     def get(self, request):
         pass
@@ -103,7 +80,7 @@ class UserFollow(APIView):
     request:
         "user_id": string,
     """
-    
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 

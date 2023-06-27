@@ -4,7 +4,10 @@ Serializer.py는 request로 들어온 JSON 데이터를 파이썬 장고가 읽�
 """
 from uuid import uuid4
 
-from rest_framework import serializers
+from rest_framework import serializers, exceptions
+
+from django.contrib.auth import authenticate
+from django.utils.translation import gettext_lazy as _
 
 # from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -41,6 +44,52 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
 
 
+class UserLoginSerializer(serializers.ModelSerializer):
+    email = serializers.EmailField(required=True)
+    password = serializers.CharField(style={'input_type': 'password'})
+
+    def authenticate(self, **kwargs):
+        return authenticate(self.context['request'], **kwargs)
+
+    def _validate_email(self, email, password):
+        if email and password:
+            user = self.authenticate(email=email, password=password)
+        else:
+            msg = _('Must include "email" and "password".')
+            raise exceptions.ValidationError(msg)
+
+        return user
+
+    @staticmethod
+    def validate_auth_user_status(user):
+        if not user.is_active:
+            msg = _('User account is disabled.')
+            raise exceptions.ValidationError(msg)
+
+    def get_user_from_email(self, email, password):
+        self._validate_email(email=email, password=password)
+        user = User.objects.get(email=email)
+
+        return user
+
+    def validate(self, attrs):
+        email = attrs.get('email')
+        password = attrs.get('password')
+        user = self.get_user_from_email(email, password)
+
+        if not user:
+            msg = _('Unable to log in with provided credentials.')
+            raise exceptions.ValidationError(msg)
+
+        self.validate_auth_user_status(user)
+
+        attrs['user'] = user
+        return attrs
+
+    class Meta:
+        model = User
+        fields = ('email', 'password', )
+
 # class UserSerializerWithToken(TokenObtainPairSerializer):
 #     @classmethod
 #     def get_token(cls, user):
@@ -52,8 +101,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 
 class FollowUserSerializer(serializers.ModelSerializer):
-    
-    
+
     class Meta:
         model = User
         fields = ("username", "profile_image")
