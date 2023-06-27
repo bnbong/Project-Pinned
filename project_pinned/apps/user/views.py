@@ -3,13 +3,15 @@ from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import get_user_model
 
+from dj_rest_auth.views import LoginView
+
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializer import FollowUserSerializer, RegisterSerializer
+from .serializer import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
 
 User = get_user_model()
 
@@ -18,6 +20,7 @@ class UserViewTest(View):
     """
     API 테스트용
     """
+
     def get(self, request):
         return HttpResponse("Hello This is user app.")
 
@@ -62,15 +65,44 @@ class UserRegister(APIView):
             return user
 
 
+class UserLogin(LoginView):
+    """
+    유저의 로그인 API.
+    """
+
+    def get_response(self):
+        serializer_class = self.get_response_serializer()
+
+        data = {
+            "user": self.user,
+            "access_token": self.access_token,
+            "refresh_token": self.refresh_token,
+        }
+
+        serializer = serializer_class(
+            instance=data,
+            context=self.get_serializer_context(),
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserDelete(APIView):
     """
     회원 탈퇴 API.
     """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
     def delete(self, request, user_id):
         user = request.user
+
+        if user.user_id != user_id:
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
 
         user.delete()
 
@@ -84,13 +116,40 @@ class UserProfile(APIView):
     """
     유저의 프로필 정보를 확인하는 API.
     """
+
     authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
 
-    def get(self, request):
-        pass
+    def get(self, request, user_id):
+        user = User.objects.get(user_id=user_id)
+        serializer_class = UserProfileSerializer
 
-    def put(self, request):
-        pass
+        serializer = serializer_class(
+            instance=user,
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, user_id):
+        if str(request.user.user_id) != str(user_id):
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = UserProfileSerializer(
+            request.user, data=request.data, partial=True
+        )
+
+        if serializer.is_valid():
+            serializer.save()
+
+            return Response(
+                {"is_success": True, "detail": "profile edit success"},
+                status=status.HTTP_200_OK,
+            )
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserFollow(APIView):
@@ -159,6 +218,7 @@ class UserFollowers(APIView):
     """
     유저의 팔로워를 확인하는 API.
     """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -167,16 +227,14 @@ class UserFollowers(APIView):
         followers_list = target_user.followers.all()
 
         serializer = FollowUserSerializer(followers_list, many=True)
-        return Response(
-            {"followers_list": serializer.data},
-            status=status.HTTP_200_OK
-        )
+        return Response({"followers_list": serializer.data}, status=status.HTTP_200_OK)
 
 
 class UserFollowings(APIView):
     """
     유저가 팔로우하는 사람을 확인하는 API.
     """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -185,7 +243,4 @@ class UserFollowings(APIView):
         followings_list = target_user.following.all()
 
         serializer = FollowUserSerializer(followings_list, many=True)
-        return Response(
-            {"followings_list": serializer.data},
-            status=status.HTTP_200_OK
-        )
+        return Response({"followings_list": serializer.data}, status=status.HTTP_200_OK)

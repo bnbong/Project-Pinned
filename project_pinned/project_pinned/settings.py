@@ -187,10 +187,8 @@ SIMPLE_JWT = {
 
 REST_AUTH = {
     "USE_JWT": True,
-    "JWT_SERIALIZER": "dj_rest_auth.serializers.JWTSerializer",
-    "JWT_SERIALIZER_WITH_EXPIRATION": "dj_rest_auth.serializers.JWTSerializerWithExpiration",
+    "JWT_SERIALIZER": "apps.user.serializer.UserLoginResponseSerializer",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    'JWT_AUTH_RETURN_EXPIRATION': True,
     'JWT_AUTH_HTTPONLY': False,
 
     'TOKEN_MODEL': None,

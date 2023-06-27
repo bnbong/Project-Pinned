@@ -91,6 +91,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     def natural_key(self):
         return (self.get_user_id(),)
 
+    def follower_count(self):
+        # Pylint Linter가 Follow 테이블의 관계에서 follower_set을 이해하지 못해서 complain함.
+        # 코드 작동에는 문제 없음.
+        return self.follower_set.count()
+
+    def following_count(self):
+        # Pylint Linter가 Follow 테이블의 관계에서 following_set을 이해하지 못해서 complain함.
+        # 코드 작동에는 문제 없음.
+        return self.following_set.count()
+
 
 class Follow(BaseModel):
     follower = models.ForeignKey(

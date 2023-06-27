@@ -9,8 +9,6 @@ from rest_framework import serializers, exceptions
 from django.contrib.auth import authenticate
 from django.utils.translation import gettext_lazy as _
 
-# from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
 from .models import User
 
 
@@ -46,10 +44,10 @@ class RegisterSerializer(serializers.ModelSerializer):
 
 class UserLoginSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
-    password = serializers.CharField(style={'input_type': 'password'})
+    password = serializers.CharField(style={"input_type": "password"})
 
     def authenticate(self, **kwargs):
-        return authenticate(self.context['request'], **kwargs)
+        return authenticate(self.context["request"], **kwargs)
 
     def _validate_email(self, email, password):
         if email and password:
@@ -63,7 +61,7 @@ class UserLoginSerializer(serializers.ModelSerializer):
     @staticmethod
     def validate_auth_user_status(user):
         if not user.is_active:
-            msg = _('User account is disabled.')
+            msg = _("User account is disabled.")
             raise exceptions.ValidationError(msg)
 
     def get_user_from_email(self, email, password):
@@ -73,35 +71,62 @@ class UserLoginSerializer(serializers.ModelSerializer):
         return user
 
     def validate(self, attrs):
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email = attrs.get("email")
+        password = attrs.get("password")
         user = self.get_user_from_email(email, password)
 
         if not user:
-            msg = _('Unable to log in with provided credentials.')
+            msg = _("Unable to log in with provided credentials.")
             raise exceptions.ValidationError(msg)
 
         self.validate_auth_user_status(user)
 
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
 
     class Meta:
         model = User
-        fields = ('email', 'password', )
+        fields = (
+            "email",
+            "password",
+        )
 
-# class UserSerializerWithToken(TokenObtainPairSerializer):
-#     @classmethod
-#     def get_token(cls, user):
-#         token = super().get_token(user)
 
-#         token["user_id"] = user.user_id
+class UserLoginResponseSerializer(serializers.Serializer):
+    access_token = serializers.CharField()
+    refresh_token = serializers.CharField()
+    user = serializers.SerializerMethodField()
 
-#         return token
+    def get_user(self, obj):
+        user_data = UserProfileSerializer(obj["user"], context=self.context).data
+
+        return user_data
+
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    followers = serializers.SerializerMethodField()
+    followings = serializers.SerializerMethodField()
+
+    def get_followers(self, obj):
+        return obj.follower_count()
+
+    def get_followings(self, obj):
+        return obj.following_count()
+
+    class Meta:
+        model = User
+        fields = (
+            "user_id",
+            "username",
+            "email",
+            "profile_image",
+            "followers",
+            "followings",
+        )
+        read_only_fields = ("user_id", "email")
 
 
 class FollowUserSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = User
         fields = ("username", "profile_image")

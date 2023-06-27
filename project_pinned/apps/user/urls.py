@@ -21,12 +21,12 @@ urlpatterns = [
     path("test/", views.UserViewTest.as_view(), name="user_view_test"),
 
     # Basic user login & registration
-    path("login/", LoginView.as_view(), name="user-login"),
+    path("login/", views.UserLogin.as_view(), name="user-login"),
     path("logout/", LogoutView.as_view(), name="user-logout"),
     path("register/", views.UserRegister.as_view(), name="user-register"),
 
     # For individual user's information
-    path("<user_id>/withdrawal", views.UserDelete.as_view(), name="user-delete"),
+    path("<user_id>/withdrawal/", views.UserDelete.as_view(), name="user-delete"),
     path("<user_id>/profile/", views.UserProfile.as_view(), name="user-profile"),
     path("<user_id>/follow/", views.UserFollow.as_view(), name="user-follow"),
     path("<user_id>/unfollow/", views.UserUnFollow.as_view(), name="user-unfollow"),
