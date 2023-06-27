@@ -37,11 +37,11 @@ class UserAPITest(TestCase):
 
     def test_user_login(self):
         url = reverse("user-login")
-        data = {"username": "user1", "password": "testpassword1"}
+        data = {"email": "user1@example.com", "password": "testpassword1"}
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertIn("token", response.data)
+        self.assertIn("access_token", response.data)
 
     def test_get_user_profile(self):
         url = reverse("user-profile", kwargs={"user_id": str(self.user1.user_id)})
@@ -111,8 +111,7 @@ class UserAPITest(TestCase):
         url = reverse("jwt-verify")
         test_user_token = RefreshToken.for_user(self.user1)
         data = {
-            "access_token": str(test_user_token.access_token),
-            "refresh_token": str(test_user_token),
+            "token": str(test_user_token.access_token),
         }
 
         response = self.client.post(url, data, format="json")
@@ -123,8 +122,7 @@ class UserAPITest(TestCase):
         url = reverse("jwt-refresh")
         test_user_token = RefreshToken.for_user(self.user1)
         data = {
-            "access_token": str(test_user_token.access_token),
-            "refresh_token": str(test_user_token),
+            "refresh": str(test_user_token),
         }
 
         response = self.client.post(url, data, format="json")

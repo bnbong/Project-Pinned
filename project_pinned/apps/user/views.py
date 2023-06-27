@@ -99,7 +99,7 @@ class UserDelete(APIView):
     def delete(self, request, user_id):
         user = request.user
 
-        if user.user_id != user_id:
+        if str(user.user_id) != str(user_id):
             return Response(
                 {"is_success": False, "detail": "Permission denied."},
                 status=status.HTTP_403_FORBIDDEN,
