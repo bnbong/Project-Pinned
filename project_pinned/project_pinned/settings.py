@@ -48,8 +48,8 @@ INSTALLED_APPS = [
     "apps.landmark",
 
     "rest_framework",
-    "rest_framework.authtoken",
     "rest_framework_simplejwt",
+    'rest_framework_simplejwt.token_blacklist',
 
     "dj_rest_auth",
 ]
@@ -164,6 +164,7 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
     "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
@@ -178,13 +179,19 @@ SIMPLE_JWT = {
     # Default authentication rule is checking a user has is_active == True.
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
 
-    # Custom Token Obtainer
-    "TOKEN_OBTAIN_SERIALIZER": "user.serializers.UserSerializerWithToken",
+    "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
+    "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
+    "TOKEN_BLACKLIST_SERIALIZER": "rest_framework_simplejwt.serializers.TokenBlacklistSerializer",
 }
 
 REST_AUTH = {
-    'USE_JWT': True,
-    'JWT_SERIALIZER': 'dj_rest_auth.serializers.JWTSerializer',
-    'JWT_SERIALIZER_WITH_EXPIRATION': 'dj_rest_auth.serializers.JWTSerializerWithExpiration',
-    'JWT_TOKEN_CLAIMS_SERIALIZER': 'rest_framework_simplejwt.serializers.TokenObtainPairSerializer',
+    "USE_JWT": True,
+    "JWT_SERIALIZER": "apps.user.serializer.UserLoginResponseSerializer",
+    "JWT_TOKEN_CLAIMS_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
+    'JWT_AUTH_HTTPONLY': False,
+
+    'TOKEN_MODEL': None,
+
+    "LOGIN_SERIALIZER": "apps.user.serializer.UserLoginSerializer",
 }
