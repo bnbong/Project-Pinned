@@ -1,3 +1,4 @@
+# TODO: 캐시 기능 적용 방안 설계 및 구현
 from django.db import IntegrityError
 from django.http import HttpResponse
 from django.views import View

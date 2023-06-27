@@ -19,16 +19,29 @@ services:
     ports:
       - "6379:6379"
 
-  web:
-    build: .
-    command: python project_pinned/manage.py runserver 0.0.0.0:8000
+  backend:
+    build:
+      context: ./project_pinned
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - .:/code
+      - ./project_pinned:/app
     ports:
       - "8000:8000"
     depends_on:
       - db
       - redis
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    volumes:
+      - ./front:/app
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:8000
 
 volumes:
   postgres_data:
