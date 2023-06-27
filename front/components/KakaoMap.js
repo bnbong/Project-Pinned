@@ -15,7 +15,7 @@ export default function KakaoMap() {
           <div style={{ color: "#000" }}>Hello World!</div>
         </MapMarker>
       </Map>
-      <h4>success</h4>
+      <h1 className="text-6xl font-bold underline">Hello world!</h1>
     </>
   );
 }
