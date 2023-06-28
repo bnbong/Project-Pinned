@@ -1,9 +1,10 @@
 import KakaoMap from "@/components/KakaoMap";
+import SearchTab from "@/components/SearchTab";
 
 export default function Home() {
   return (
     <div>
-      <h4>지도 페이지 - Kakao Map</h4>
+      <SearchTab />
       <KakaoMap />
     </div>
   );

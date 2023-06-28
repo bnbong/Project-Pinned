@@ -1,16 +1,17 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { useState, useEffect } from "react";
 
-export default function KakaoMap() {
+export default function KakaoMap({ keyword }) {
   const [info, setInfo] = useState();
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState();
-
+  const location = keyword || "판교 명소";
+  console.log(location);
   useEffect(() => {
     if (!map) return;
     const ps = new kakao.maps.services.Places();
     /*검색을 통해 지도를띄워줘야 한다. */
-    ps.keywordSearch("이태원 맛집", (data, status, _pagination) => {
+    ps.keywordSearch(`${location}`, (data, status, _pagination) => {
       if (status === kakao.maps.services.Status.OK) {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다

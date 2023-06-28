@@ -25,8 +25,10 @@ const Edit = (props) => {
     setContent(content), [];
   });
 
+  /* SSR 방식이라 pre-rendering 될때는 window,document객체에 접근할 수없기 때문에
+  localstorage를 이용할 때는 조건문을 사용해야함.
+  */
   if (typeof window !== "undefined") {
-    // Perform localStorage action
     const autosavedContent = localStorage.getItem(`smde_demo`);
   }
 
@@ -49,7 +51,6 @@ const Edit = (props) => {
         placeholder="제목"
         id="title"
         onChange={(e) => {
-          console.log(e.target.value);
           setTitle(e.target.value);
         }}
       />
