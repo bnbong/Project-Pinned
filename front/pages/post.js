@@ -1,6 +1,5 @@
 import { React, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
 import "easymde/dist/easymde.min.css";
 
 function leftPad(value) {
