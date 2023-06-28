@@ -1,13 +1,20 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import {useParams} from "react"
 import { useRouter } from 'next/router';
+import EditProfileModal from '@/components/modal';
 
 const MyPage = () => {
   const router =useRouter();
   const { user } = useContext(AuthContext);
+
+  const [edit,setEdit] = useState(false);
+  const openEdit = () => setEdit(true);
+  const closeEdit = () => setEdit(false);
+
   const [userID, setUserID] = useState(user.id);
+  const [userName, setUserName] = useState(user.username);
+
   const dummyData = [
     { title: "Post 1" },
     { title: "Post 2" },
@@ -20,6 +27,7 @@ const MyPage = () => {
     { title: "Post 9" },
     { title: "Post 10" },
   ];
+
   const [posts, setPosts] = useState(dummyData);
 
   useEffect(() => {
@@ -49,10 +57,11 @@ const MyPage = () => {
             src="https://via.placeholder.com/150"
             alt="Avatar"
           />
-          <h2 className="text-2xl font-bold mb-0">허재원</h2>
-          <button //onClick={handleClick}
-            className={'bg-green-500 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer'}
+          <h2 className="text-2xl font-bold mb-0">{userName}</h2>
+          <button onClick={openEdit}
+            className={'bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer'}
           >Edit</button>
+          <EditProfileModal isOpen={edit} onClose={closeEdit} userName={userName} setUserName={setUserName}></EditProfileModal>
         </div>
         <div className='flex list-none p-0 m-0 mt-2'>
           <ul className="flex list-none p-0 m-0">
