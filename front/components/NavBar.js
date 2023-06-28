@@ -19,9 +19,7 @@ export default function NavBar() {
         <ul className="flex">
           {MENU_LIST.map((menu, index) => (
             <Link key={index} href={menu.href}>
-              <li className="text-gray-300 p-7" key={index}>
-                {menu.text}
-              </li>
+              <li className="text-gray-300 p-7">{menu.text}</li>
             </Link>
           ))}
         </ul>
