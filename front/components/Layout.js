@@ -1,7 +1,9 @@
-export default function Layout({children}) {
+import NavBar from "./NavBar";
+
+export default function Layout({ children }) {
   return (
     <div>
-      <h4>Layout</h4>
+      <NavBar />
       {children}
     </div>
   );
