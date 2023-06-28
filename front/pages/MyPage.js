@@ -1,11 +1,11 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import {useParams} from "react"
-import { useRouter } from 'next/router';
+import { useParams } from "react";
+import { useRouter } from "next/router";
 
 const MyPage = () => {
-  const router =useRouter();
+  const router = useRouter();
   const { user } = useContext(AuthContext);
   const [userID, setUserID] = useState(user.id);
   const dummyData = [
@@ -35,15 +35,11 @@ const MyPage = () => {
   }, [userID]);
 
   return (
-    <div className='p-5 bg-neutral-50'>
-      {
-        console.log(user)
-      }
-      {
-        console.log(userID)
-      }
-      <div className='flex flex-col items-center justify-center mb-5 bg-neutral-50 bg-opacity-100'>
-        <div className='flex items-center'>
+    <div className="p-5 bg-neutral-50">
+      {console.log(user)}
+      {console.log(userID)}
+      <div className="flex flex-col items-center justify-center mb-5 bg-neutral-50 bg-opacity-100">
+        <div className="flex items-center">
           <img
             className="w-12 h-12 rounded-full object-cover mr-5"
             src="https://via.placeholder.com/150"
@@ -51,10 +47,14 @@ const MyPage = () => {
           />
           <h2 className="text-2xl font-bold mb-0">허재원</h2>
           <button //onClick={handleClick}
-            className={'bg-green-500 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer'}
-          >Edit</button>
+            className={
+              "bg-green-500 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer"
+            }
+          >
+            Edit
+          </button>
         </div>
-        <div className='flex list-none p-0 m-0 mt-2'>
+        <div className="flex list-none p-0 m-0 mt-2">
           <ul className="flex list-none p-0 m-0">
             <li className="mr-5">
               <strong className="block">150</strong>
@@ -71,22 +71,26 @@ const MyPage = () => {
           </ul>
         </div>
       </div>
-      <hr className='border-2 bg-white mb-4'></hr>
+      <hr className="border-2 bg-white mb-4"></hr>
       <div className="grid gap-4 grid-cols-1">
         {posts.map((post) => (
-        <div className='text-center' >
-          <h4 >{post.title}</h4>
-          <div className= 'flex justify-center' key={post.title}>
-            <img src="https://via.placeholder.com/150" alt="Post Image" className="w-1/4 h-auto" />
+          <div className="text-center">
+            <h4>{post.title}</h4>
+            <div className="flex justify-center" key={post.title}>
+              <img
+                src="https://via.placeholder.com/150"
+                alt="Post Image"
+                className="w-1/4 h-auto"
+              />
+            </div>
+            <p>안녕</p>
+            <p>안녕</p>
+            <p>안녕</p>
+            <hr className="border-2 bg-white mb-4"></hr>
           </div>
-          <p>안녕</p>
-          <p>안녕</p>
-          <p>안녕</p>
-          <hr className='border-2 bg-white mb-4'></hr>
-        </div>
         ))}
       </div>
     </div>
-    )
-  }
+  );
+};
 export default MyPage;

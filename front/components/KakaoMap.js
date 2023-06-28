@@ -1,12 +1,14 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { useState, useEffect } from "react";
+import { useRouter } from "next/router";
 
-export default function KakaoMap({ keyword }) {
+export default function KakaoMap({ searchKeyword }) {
   const [info, setInfo] = useState();
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState();
-  const location = keyword || "판교 명소";
-  console.log(location);
+
+  const location = searchKeyword || "판교 명소";
+
   useEffect(() => {
     if (!map) return;
     const ps = new kakao.maps.services.Places();
@@ -36,7 +38,7 @@ export default function KakaoMap({ keyword }) {
         map.setBounds(bounds);
       }
     });
-  }, [map]);
+  }, [map, searchKeyword]);
   return (
     <Map // 로드뷰를 표시할 Container
       center={{
