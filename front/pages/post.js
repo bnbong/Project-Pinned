@@ -10,6 +10,8 @@ function leftPad(value) {
 
   return `0${value}`;
 }
+
+//Client sided에서 동작하는 라이브러리라 ssr을 false로 바꿔 런타임에 동적 import한다.
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
@@ -23,10 +25,10 @@ const Edit = (props) => {
     setContent(content), [];
   });
 
-  useEffect(() => {
-    autosavedContent = localStorage.getItem(`smde_demo`) || "Initial value";
-    console.log(autosavedContent);
-  }, []);
+  if (typeof window !== "undefined") {
+    // Perform localStorage action
+    const autosavedContent = localStorage.getItem(`smde_demo`);
+  }
 
   const delay = 2000;
 
