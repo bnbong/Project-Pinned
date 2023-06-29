@@ -19,25 +19,31 @@ class PostViewTest(View):
 
     def get(self, request):
         return HttpResponse("Hello This is post app.")
-    
 
-class MakePost(APIView):
+
+class PostCreate(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = PostCreateSerializer
 
     def post(self, request):
-        serializer = PostCreateSerializer(data=request.data, context={'user':request.user})
-        if serializer.is_valid():
+        serializer = self.serializer_class(
+            data=request.data, context={"request": request}
+        )
+        if serializer.is_valid(raise_exception=True):
             # post = serializer.save()
             post = serializer.save(request)
             return Response(
                 {"is_success": True, "detail": "post success"},
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
-        return Response({"is_success": False, "detail":"post fail"}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(
+            {"is_success": False, "detail": "post fail"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
 
-class PostCRUD(APIView):
+class PostView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -54,15 +60,19 @@ class PostCRUD(APIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
-        serializer = PostCreateSerializer(data=request.data, context={'user':request.user})
+        serializer = PostCreateSerializer(
+            data=request.data, context={"user": request.user}
+        )
         if serializer.is_valid():
             post = serializer.save()
             return Response(
                 {"is_success": True, "detail": "post success"},
-                status=status.HTTP_201_CREATED
+                status=status.HTTP_201_CREATED,
             )
-        return Response({"is_success": False, "detail":"post fail"}, status=status.HTTP_400_BAD_REQUEST)
-            
+        return Response(
+            {"is_success": False, "detail": "post fail"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
 
     def put(self, request, post_id):
         pass
@@ -86,14 +96,15 @@ class PostCRUD(APIView):
         if self.request.method == "GET":
             self.permission_classes = [AllowAny]
         return super().get_permissions()
-    
+
+
 class PostsByUser(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
-    
     def get(self, request, user_id):
         pass
+
 
 class PostFeed(APIView):
     authentication_classes = [JWTAuthentication]

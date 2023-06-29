@@ -12,8 +12,9 @@ class Post(BaseModel):
     content = models.TextField()
     updated_at = models.DateTimeField(auto_now=True)
 
+
 class Image(BaseModel):
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
     image = models.ImageField(null=True, blank=True, upload_to='post_images/')
 
 
