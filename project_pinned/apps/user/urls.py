@@ -24,6 +24,7 @@ urlpatterns = [
     path("login/", views.UserLogin.as_view(), name="user-login"),
     path("logout/", LogoutView.as_view(), name="user-logout"),
     path("register/", views.UserRegister.as_view(), name="user-register"),
+    path("search/", views.UserSearch.as_view(), name="user-search"),
 
     # For individual user's information
     path("<user_id>/withdrawal/", views.UserDelete.as_view(), name="user-delete"),

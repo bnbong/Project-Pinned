@@ -106,6 +106,7 @@ class UserLoginResponseSerializer(serializers.Serializer):
 class UserProfileSerializer(serializers.ModelSerializer):
     followers = serializers.SerializerMethodField()
     followings = serializers.SerializerMethodField()
+    profile_image = serializers.ImageField(required=False)
 
     def get_followers(self, obj):
         return obj.follower_count()
