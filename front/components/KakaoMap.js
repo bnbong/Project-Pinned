@@ -8,7 +8,7 @@ export default memo(function KakaoMap({ searchKeyword }) {
   const [map, setMap] = useState();
 
   const location = searchKeyword || "판교 명소";
-  console.log("자식 컴포넌트 랜더링");
+
   useEffect(() => {
     if (!map) return;
     const ps = new kakao.maps.services.Places();

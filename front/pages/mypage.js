@@ -87,11 +87,12 @@ const MyPage = () => {
         </div>
       </div>
       <hr className="border-2 bg-white mb-4"></hr>
+
       <div className="grid gap-4 grid-cols-1">
         {posts.map((post) => (
-          <div className="text-center">
+          <div className="text-center" key={post.title}>
             <h4>{post.title}</h4>
-            <div className="flex justify-center" key={post.title}>
+            <div className="flex justify-center">
               <img
                 src="https://via.placeholder.com/150"
                 alt="Post Image"
