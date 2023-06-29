@@ -47,7 +47,7 @@ export default function KakaoMap({ searchKeyword }) {
       }}
       style={{
         width: "100%",
-        height: "480px",
+        height: "930px",
       }}
       level={3}
       onCreate={setMap}
