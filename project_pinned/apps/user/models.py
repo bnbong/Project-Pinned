@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(_("email address"), blank=True, unique=True)
     profile_image = models.ImageField(
-        null=True, blank=True, upload_to=settings.MEDIA_ROOT
+        null=True, blank=True, upload_to='profile_images/'
     )
     is_active = models.BooleanField(
         _("active"),

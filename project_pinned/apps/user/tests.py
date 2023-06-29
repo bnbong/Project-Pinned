@@ -1,5 +1,11 @@
+import os
+
+from PIL import Image
+from io import BytesIO
+
 from django.test import TestCase
 from django.urls import reverse
+from django.core.files.uploadedfile import SimpleUploadedFile
 from django.contrib.auth import get_user_model
 
 from rest_framework.test import APIClient
@@ -21,6 +27,7 @@ class UserAPITest(TestCase):
         self.user2 = User.objects.create_user(
             username="user2", password="testpassword2", email="user2@example.com"
         )
+        self.test_profile_image = self.create_profile_image()
 
     def test_user_registration(self):
         url = reverse("user-register")
@@ -51,6 +58,16 @@ class UserAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], "user1")
 
+    def create_profile_image(self):
+        file = BytesIO()
+        image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
+        image.save(file, 'png')
+
+        file.name = 'test.png'
+        file.seek(0)
+
+        return file
+
     def test_edit_user_profile(self):
         url = reverse("user-profile", kwargs={"user_id": str(self.user1.user_id)})
         data = {"username": "updateduser1"}
@@ -59,6 +76,18 @@ class UserAPITest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(User.objects.get(id=self.user1.id).username, "updateduser1")
+
+    def test_edit_user_profile_image(self):
+        url = reverse("user-profile", kwargs={"user_id": str(self.user1.user_id)})
+
+        profile_image_file = self.create_profile_image()
+
+        data = {"profile_image": self.test_profile_image}
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.put(url, data, format="multipart")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertIsNotNone(User.objects.get(id=self.user1.id).profile_image)
 
     def test_user_follow(self):
         url = reverse("user-follow", kwargs={"user_id": str(self.user2.user_id)})
@@ -128,3 +157,11 @@ class UserAPITest(TestCase):
         response = self.client.post(url, data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+
+        test_image_path = 'media/profile_images/test.png'
+
+        os.remove(os.path.abspath(test_image_path))

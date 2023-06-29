@@ -1,5 +1,6 @@
 # TODO: 캐시 기능 적용 방안 설계 및 구현
 from django.db import IntegrityError
+from django.db.models import Q
 from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import get_user_model
@@ -9,6 +10,7 @@ from dj_rest_auth.views import LoginView
 from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
@@ -120,6 +122,7 @@ class UserProfile(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    parser_classes = [MultiPartParser, FormParser, JSONParser]
 
     def get(self, request, user_id):
         user = User.objects.get(user_id=user_id)
@@ -245,3 +248,25 @@ class UserFollowings(APIView):
 
         serializer = FollowUserSerializer(followings_list, many=True)
         return Response({"followings_list": serializer.data}, status=status.HTTP_200_OK)
+
+
+class UserSearch(APIView):
+    """
+    유저를 검색하는데 사용되는 API.
+    """
+
+    def get(self, request):
+        search_word = request.data.get("username", None)
+
+        if search_word is None:
+            return Response(
+                {"is_success": False, "detail": "username is required"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        users = User.objects.filter(
+            Q(username__icontains=search_word)
+        )
+
+        serializer = UserProfileSerializer(users, many=True)
+        return Response({"searched_users": serializer.data}, status=status.HTTP_200_OK)
