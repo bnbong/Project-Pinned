@@ -3,13 +3,6 @@ import { useRouter } from "next/router";
 import Head from "next/head";
 
 export default function NavBar() {
-  const MENU_LIST = [
-    { text: "메인", href: "/" },
-    { text: "지도", href: "/map" },
-    { text: "포스트작성", href: "/post" },
-    { text: "검색", href: "/search" },
-    { text: "마이페이지", href: "/mypage" },
-  ];
   return (
     <>
       <div class="fixed bottom-0 z-50 w-full -translate-x-1/2 bg-white border-t border-gray-200 left-1/2 dark:bg-gray-700 dark:border-gray-600">
@@ -80,7 +73,7 @@ export default function NavBar() {
               >
                 <path d="M8 0a7.992 7.992 0 0 0-6.583 12.535 1 1 0 0 0 .12.183l.12.146c.112.145.227.285.326.4l5.245 6.374a1 1 0 0 0 1.545-.003l5.092-6.205c.206-.222.4-.455.578-.7l.127-.155a.934.934 0 0 0 .122-.192A8.001 8.001 0 0 0 8 0Zm0 11a3 3 0 1 1 0-6 3 3 0 0 1 0 6Z" />
               </svg>
-              <span class="sr-only">Bookmark</span>
+              <span class="sr-only">Map</span>
             </button>
           </Link>
           <div
@@ -88,7 +81,7 @@ export default function NavBar() {
             role="tooltip"
             class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
           >
-            Bookmark
+            Map
             <div class="tooltip-arrow" data-popper-arrow></div>
           </div>
           <div class="flex items-center justify-center">
@@ -106,13 +99,13 @@ export default function NavBar() {
                   aria-hidden="true"
                 >
                   <path
-                    clip-rule="evenodd"
-                    fill-rule="evenodd"
+                    clipRule="evenodd"
+                    fillRule="evenodd"
                     d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                   ></path>
                 </svg>
               </Link>
-              <span class="sr-only">New item</span>
+              <span class="sr-only">New post</span>
             </button>
           </div>
           <div
@@ -120,7 +113,7 @@ export default function NavBar() {
             role="tooltip"
             class="absolute z-10 invisible inline-block px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip dark:bg-gray-700"
           >
-            Create new item
+            Create new post
             <div class="tooltip-arrow" data-popper-arrow></div>
           </div>
           <button
@@ -137,8 +130,8 @@ export default function NavBar() {
                 aria-hidden="true"
               >
                 <path
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
                   d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
                 ></path>
               </svg>
@@ -168,8 +161,8 @@ export default function NavBar() {
                 aria-hidden="true"
               >
                 <path
-                  clip-rule="evenodd"
-                  fill-rule="evenodd"
+                  clipRule="evenodd"
+                  fillRule="evenodd"
                   d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
                 ></path>
               </svg>

@@ -1,14 +1,14 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
-import { useState, useEffect } from "react";
+import { useState, useEffect, memo } from "react";
 import { useRouter } from "next/router";
 
-export default function KakaoMap({ searchKeyword }) {
+export default memo(function KakaoMap({ searchKeyword }) {
   const [info, setInfo] = useState();
   const [markers, setMarkers] = useState([]);
   const [map, setMap] = useState();
 
   const location = searchKeyword || "판교 명소";
-
+  console.log("자식 컴포넌트 랜더링");
   useEffect(() => {
     if (!map) return;
     const ps = new kakao.maps.services.Places();
@@ -65,4 +65,4 @@ export default function KakaoMap({ searchKeyword }) {
       ))}
     </Map>
   );
-}
+});

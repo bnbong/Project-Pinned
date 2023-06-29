@@ -1,14 +1,14 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
-import { useRouter } from 'next/router';
-import EditProfileModal from '@/components/modal';
+import { useRouter } from "next/router";
+import EditProfileModal from "@/components/modal";
 
 const MyPage = () => {
   const router = useRouter();
   const { user } = useContext(AuthContext);
 
-  const [edit,setEdit] = useState(false);
+  const [edit, setEdit] = useState(false);
   const openEdit = () => setEdit(true);
   const closeEdit = () => setEdit(false);
 
@@ -54,10 +54,20 @@ const MyPage = () => {
             alt="Avatar"
           />
           <h2 className="text-2xl font-bold mb-0">{userName}</h2>
-          <button onClick={openEdit}
-            className={'bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer'}
-          >Edit</button>
-          <EditProfileModal isOpen={edit} onClose={closeEdit} userName={userName} setUserName={setUserName}></EditProfileModal>
+          <button
+            onClick={openEdit}
+            className={
+              "bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer"
+            }
+          >
+            Edit
+          </button>
+          <EditProfileModal
+            isOpen={edit}
+            onClose={closeEdit}
+            userName={userName}
+            setUserName={setUserName}
+          ></EditProfileModal>
         </div>
         <div className="flex list-none p-0 m-0 mt-2">
           <ul className="flex list-none p-0 m-0">
@@ -97,6 +107,6 @@ const MyPage = () => {
       </div>
     </div>
   );
-}
+};
 
 export default MyPage;
