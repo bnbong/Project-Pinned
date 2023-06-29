@@ -5,7 +5,7 @@ import Head from "next/head";
 export default function NavBar() {
   return (
     <>
-      <div className="fixed bottom-0 z-50 w-full -translate-x-1/2 bg-white border-t border-gray-200 left-1/2 dark:bg-gray-700 dark:border-gray-600">
+      <div className="fixed bottom-0 z-50 w-full -translate--1/2 bg-white border-t border-gray-200 left-1/2 dark:bg-gray-700 dark:border-gray-600">
         <div className="w-full">
           <div
             className="grid max-w-xs grid-cols-3 gap-1 p-1 mx-auto my-2 bg-gray-100 rounded-lg dark:bg-gray-600"
