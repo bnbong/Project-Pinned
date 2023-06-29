@@ -1,18 +1,54 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-export default function EditProfileModal({ isOpen, onClose, userName, setUserName }) {
+const SettingUserThumbnail = ({img, setImg, check}) =>{
+    const inputRef = useRef(null);
+    
+    const UploadImage = (e) => {
+        if(!e.target.files) {
+            return;
+        }
+        console.log(e.target);
+        console.log(e.target.files);
+        console.log(e.target.files[0].name);
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = () => {
+            const ImageDataUrl = reader.result;
+            setImg(ImageDataUrl);
+        }
+        reader.readAsDataURL(file);
+    }
+    const UploadImageButtonClick = () => {
+        if(!inputRef.current){
+            return;
+        }
+        inputRef.current.click();
+    }
+    return (
+        <div className="flex flex-col items-center ">
+            <img
+                className='w-20 h-20 rounded-full object-cover mr-5'
+                src={img}
+                />
+            <input type='file' accept='image/*' ref={inputRef} onChange={UploadImage}></input>
+            <button onClick={UploadImageButtonClick}></button>
+        </div>
+    )
+};
+
+
+
+export default function EditProfileModal({ isOpen, onClose, userName, setUserName, img, setImg }) {
     const [name, setName] = useState(userName);
     const [imageUrl, setImageUrl] = useState('');
-
+    const [check, setCheck] = useState(false);
     useEffect(() => {
-      setName(userName);
+        setName(userName);
     },[userName]);
     
     const handleSubmit = () => {
         setUserName(name);
         onClose();
-        // Handle form submission here, call your API endpoint with name and imageUrl.
-        // After successful update, call onClose()
     };
 
     if (!isOpen) return null;
@@ -26,6 +62,7 @@ export default function EditProfileModal({ isOpen, onClose, userName, setUserNam
                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">Edit Profile</h3>
+                            <SettingUserThumbnail img={img} setImg={setImg} check={check}/>
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                                 <input 
@@ -35,17 +72,6 @@ export default function EditProfileModal({ isOpen, onClose, userName, setUserNam
                                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                                     value={name} 
                                     onChange={(e) => setName(e.target.value)} 
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="imageUrl" className="block text-sm font-medium text-gray-700">Profile Img</label>
-                                <input 
-                                    type="text" 
-                                    name="imageUrl" 
-                                    id="imageUrl" 
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                                    value={imageUrl} 
-                                    onChange={(e) => setImageUrl(e.target.value)} 
                                 />
                             </div>
                         </div>

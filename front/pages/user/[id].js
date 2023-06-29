@@ -40,7 +40,7 @@ const UserPage = () => {
 
   return (
     <div className='p-5 bg-neutral-50'>
-      <div className='flex flex-col items-center justify-center mb-5 bg-neutral-50 bg-opacity-100'>
+      <div className='flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md'>
         <div className='flex items-center'>
           <img
             className="w-12 h-12 rounded-full object-cover mr-5"
@@ -69,7 +69,6 @@ const UserPage = () => {
           </ul>
         </div>
       </div>
-      <hr className='border-2 bg-white mb-4'></hr>
       <div className="grid gap-4 grid-cols-1">
         {posts.map((post) => (
         <div className='text-center' >
@@ -80,7 +79,9 @@ const UserPage = () => {
           <p>안녕</p>
           <p>안녕</p>
           <p>안녕</p>
-          <hr className='border-2 bg-white mb-4'></hr>
+          <div className='flex justify-center'>
+              <hr className="w-1/4 border-1 bg-white mb-4"></hr>
+          </div>
         </div>
         ))}
       </div>
