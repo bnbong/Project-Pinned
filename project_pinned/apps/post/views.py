@@ -22,6 +22,10 @@ class PostViewTest(View):
 
 
 class PostCreate(APIView):
+    """
+    Post를 작성할 때 사용되는 API.
+    """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostCreateSerializer
@@ -44,6 +48,10 @@ class PostCreate(APIView):
 
 
 class PostView(APIView):
+    """
+    특정 게시물을 불러오거나, 수정, 삭제할 때 사용되는 API.
+    """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -59,24 +67,26 @@ class PostView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    def post(self, request):
-        serializer = PostCreateSerializer(
-            data=request.data, context={"user": request.user}
-        )
-        if serializer.is_valid():
-            post = serializer.save()
-            return Response(
-                {"is_success": True, "detail": "post success"},
-                status=status.HTTP_201_CREATED,
-            )
-        return Response(
-            {"is_success": False, "detail": "post fail"},
-            status=status.HTTP_400_BAD_REQUEST,
-        )
-
     def put(self, request, post_id):
-        pass
-        # return Response(serializer.data, status=status.HTTP_200_OK)
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response(
+                {"error": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        if post.user.user_id != request.user.user_id:
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = PostSerializer(post, data=request.data)
+        if serializer.is_valid():
+            serializer.update(post, request.data)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+    
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id):
         try:
@@ -84,6 +94,11 @@ class PostView(APIView):
         except Post.DoesNotExist:
             return Response(
                 {"error": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+        if post.user.user_id != request.user.user_id:
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
             )
 
         post.delete()
@@ -99,6 +114,10 @@ class PostView(APIView):
 
 
 class PostsByUser(APIView):
+    """
+    특정 유저가 작성한 게시물들을 불러올 때 사용되는 API.
+    """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
@@ -107,6 +126,10 @@ class PostsByUser(APIView):
 
 
 class PostFeed(APIView):
+    """
+    메인 페이지에 표시되는 유저 피드 게시물들을 불러올 때 사용되는 API.
+    """
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
