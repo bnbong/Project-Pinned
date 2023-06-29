@@ -1,6 +1,5 @@
 import { React, useState, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
-import { useEffect } from "react";
 import "easymde/dist/easymde.min.css";
 
 function leftPad(value) {
@@ -10,6 +9,8 @@ function leftPad(value) {
 
   return `0${value}`;
 }
+
+//Client sided에서 동작하는 라이브러리라 ssr을 false로 바꿔 런타임에 동적 import한다.
 const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
@@ -23,10 +24,12 @@ const Edit = (props) => {
     setContent(content), [];
   });
 
-  useEffect(() => {
-    autosavedContent = localStorage.getItem(`smde_demo`) || "Initial value";
-    console.log(autosavedContent);
-  }, []);
+  /* SSR 방식이라 pre-rendering 될때는 window,document객체에 접근할 수없기 때문에
+  localstorage를 이용할 때는 조건문을 사용해야함.
+  */
+  if (typeof window !== "undefined") {
+    const autosavedContent = localStorage.getItem(`smde_demo`);
+  }
 
   const delay = 2000;
 
@@ -47,7 +50,6 @@ const Edit = (props) => {
         placeholder="제목"
         id="title"
         onChange={(e) => {
-          console.log(e.target.value);
           setTitle(e.target.value);
         }}
       />
