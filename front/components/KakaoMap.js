@@ -1,6 +1,5 @@
 import { Map, MapMarker } from "react-kakao-maps-sdk";
 import { useState, useEffect, memo } from "react";
-import { useRouter } from "next/router";
 
 export default memo(function KakaoMap({ searchKeyword }) {
   const [info, setInfo] = useState();
