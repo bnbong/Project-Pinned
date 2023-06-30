@@ -1,4 +1,47 @@
+import { useState, useEffect } from "react";
+import Input from "./../components/Input";
+
 export default function Login() {
+  const [inputs, setInputs] = useState({
+    username: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  });
+  const { email, password, username, confirm_password } = inputs;
+
+  const onChange = (e) => {
+    const { id, value } = e.target;
+    setInputs({
+      ...inputs,
+      [id]: value,
+    });
+    console.log(inputs);
+  };
+
+  const validation = (id) => {
+    if (id == "email") {
+      const emailRegex =
+        /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
+      if (!emailRegex.test()) {
+        return "이메일 형식에 맞춰서 작성해주세요.";
+      }
+    }
+    if (id == "name") {
+      const nameRegex = /^[가-힣a-zA-Z]+$/;
+      if (!nameRegex.test()) {
+        return "사용자 이름은 한글/영어만 가능합니다.";
+      }
+    }
+    if (id == "password") {
+      const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
+      if (!passwordRegex.test()) {
+        return "비밀번호는 한글/영어/숫자 조합 8자 이상이어야 합니다.";
+      }
+    }
+  };
+  useEffect(validation, []);
+  const validText = validation();
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -12,54 +55,35 @@ export default function Login() {
               회원가입
             </h1>
             <form className="space-y-4 md:space-y-6" action="#">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  이메일
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
-                  required=""
-                ></input>{" "}
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  비밀번호
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
-                ></input>{" "}
-              </div>
-              <div>
-                <label
-                  htmlFor="confirm-password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  비밀번호 확인
-                </label>
-                <input
-                  type="confirm-password"
-                  name="confirm-password"
-                  id="confirm-password"
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
-                ></input>{" "}
-              </div>
+              <Input
+                name="사용자 이름"
+                id="username"
+                onChange={onChange}
+                value={username}
+                placeholder="사용자 이름"
+              />
+              <Input
+                name="이메일"
+                id="email"
+                onChange={onChange}
+                value={email}
+                placeholder="name@company.com"
+              />
+              <Input
+                name="비밀번호"
+                id="password"
+                onChange={onChange}
+                value={password}
+                placeholder="••••••••"
+              />
+              <Input
+                name="비밀번호 확인"
+                id="confirm-password"
+                onChange={onChange}
+                value={confirm_password}
+                placeholder="••••••••"
+              />
+
               <div className="flex items-start">
                 <div className="flex items-center h-5">
                   <input
