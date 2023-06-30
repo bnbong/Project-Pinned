@@ -4,7 +4,7 @@ Landmark 테이블에 모두 저장하는 모듈.
 """
 import pandas as pd
 
-from pyproj import Proj, transform, Transformer
+from pyproj import Proj, Transformer
 
 from django.core.management import BaseCommand
 from apps.landmark.models import Landmark

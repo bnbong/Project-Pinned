@@ -1,15 +1,16 @@
+from django.views import View
+from django.http import HttpResponse
+
+from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status
-from apps.user.models import User
-from apps.landmark.models import Landmark
-from .models import Post
-from django.views import View
-from .serializers import PostSerializer, PostCreateSerializer
-
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from django.http import HttpResponse
+
+from apps.user.models import User
+
+from .models import Post
+from .serializers import PostSerializer, PostCreateSerializer
 
 
 class PostViewTest(View):

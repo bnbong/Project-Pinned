@@ -1,4 +1,8 @@
+from django.db.models import Q
+
+from rest_framework import status
 from rest_framework.views import APIView
+from rest_framework.response import Response
 
 
 class Get3RandomLandmarks(APIView):
@@ -25,7 +29,20 @@ class SearchLandmark(APIView):
     """
 
     def get(self, request):
-        pass
+        search_word = request.data.get("landmark_name", None)
+
+        if search_word is None:
+            return Response(
+                {"is_success": False, "detail": "landmark_name is required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        landmarks = Landmark.objects.filter(
+            Q(landmark_name__icontains=search_word)
+        ).order_by("landmark_name")
+
+        serializer = LandmarkDetailSerializer(landmarks, many=True)
+        return Response({"landmarks": serializer.data}, status=status.HTTP_200_OK)
 
 
 class GetLandmarkPosts(APIView):
