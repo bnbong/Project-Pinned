@@ -74,7 +74,7 @@ class PostView(APIView):
             return Response(
                 {"error": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
             )
-        
+
         if post.user.user_id != request.user.user_id:
             return Response(
                 {"is_success": False, "detail": "Permission denied."},
@@ -85,7 +85,7 @@ class PostView(APIView):
         if serializer.is_valid():
             serializer.update(post, request.data)
             return Response(serializer.data, status=status.HTTP_200_OK)
-    
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id):
@@ -122,7 +122,16 @@ class PostsByUser(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, user_id):
-        pass
+        try:
+            user = User.objects.get(user_id=user_id)
+        except User.DoesNotExist:
+            return Response(
+                {"error": "User not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        posts = Post.objects.filter(user=user)
+        serializer = PostSerializer(posts, many=True)
+        return Response({"user_posts": serializer.data}, status=status.HTTP_200_OK)
 
 
 class PostFeed(APIView):

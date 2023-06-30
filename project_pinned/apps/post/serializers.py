@@ -58,10 +58,10 @@ class PostSerializer(serializers.ModelSerializer):
     )
 
     def update(self, instance, data):
-        instance.title = data.get('post_title', instance.title)
-        instance.content = data.get('post_content', instance.content)
+        instance.title = data.get("post_title", instance.title)
+        instance.content = data.get("post_content", instance.content)
 
-        post_images = data.get('post_image')
+        post_images = data.get("post_image")
         if post_images:
             Image.objects.filter(post=instance).delete()
 
@@ -71,8 +71,6 @@ class PostSerializer(serializers.ModelSerializer):
         # Save the updated instance
         instance.save()
         return instance
-
-
 
     class Meta:
         model = Post
@@ -85,5 +83,5 @@ class PostSerializer(serializers.ModelSerializer):
             "landmark_name",
             "landmark_lat",
             "landmark_lon",
-            "created_at"
+            "created_at",
         )
