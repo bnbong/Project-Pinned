@@ -14,7 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from .serializer import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
+from .serializers import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
 
 User = get_user_model()
 
@@ -264,9 +264,7 @@ class UserSearch(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        users = User.objects.filter(
-            Q(username__icontains=search_word)
-        )
+        users = User.objects.filter(Q(username__icontains=search_word))
 
         serializer = UserProfileSerializer(users, many=True)
         return Response({"searched_users": serializer.data}, status=status.HTTP_200_OK)
