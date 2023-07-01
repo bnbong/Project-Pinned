@@ -145,3 +145,70 @@ class PostFeed(APIView):
 
     def get(self, request):
         pass
+
+
+class CommentCreate(APIView):
+    """
+    댓글을 작성하거나 게시물의 모든 댓글들을 불러올 때 사용되는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, post_id):
+        pass
+
+    def post(self, request, post_id):
+        pass
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+        return super().get_permissions()
+
+
+class CommentView(APIView):
+    """
+    특정 댓글을 불러오고 수정하고 삭제할 때 사용되는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, post_id, comment_id):
+        pass
+
+    def put(self, request, post_id, comment_id):
+        pass
+
+    def delete(self, request, post_id, comment_id):
+        pass
+
+    def get_permissions(self):
+        if self.request.method == "GET":
+            self.permission_classes = [AllowAny]
+        return super().get_permissions()
+
+
+class PostLike(APIView):
+    """
+    자신이 특정 게시물에 좋아요를 누를 때 사용되는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        pass
+
+
+class PostUnLike(APIView):
+    """
+    특정 게시물에 눌렀던 좋아요를 취소할 때 사용하는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, post_id):
+        pass
