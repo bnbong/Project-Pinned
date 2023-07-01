@@ -166,6 +166,7 @@ class CommentCreate(APIView):
             self.permission_classes = [AllowAny]
         return super().get_permissions()
 
+
 class CommentView(APIView):
     """
     특정 댓글을 불러오고 수정하고 삭제할 때 사용되는 API.
@@ -199,6 +200,7 @@ class PostLike(APIView):
 
     def post(self, request, post_id):
         pass
+
 
 class PostUnLike(APIView):
     """
