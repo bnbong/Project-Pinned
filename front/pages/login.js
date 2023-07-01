@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import Input from "./../components/Input";
 
 export default function Login() {
@@ -8,40 +8,60 @@ export default function Login() {
     password: "",
     confirm_password: "",
   });
+  const [emailError, setEmailError] = useState("");
+  const [usernameError, setUsernameError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPasswordError, setConfirmPasswordError] = useState("");
   const { email, password, username, confirm_password } = inputs;
-
-  const onChange = (e) => {
-    const { id, value } = e.target;
-    setInputs({
-      ...inputs,
-      [id]: value,
-    });
-    console.log(inputs);
-  };
-
-  const validation = (id) => {
+  const validation = (id, value) => {
     if (id == "email") {
       const emailRegex =
         /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-      if (!emailRegex.test()) {
-        return "이메일 형식에 맞춰서 작성해주세요.";
+      if (!emailRegex.test(value)) {
+        setEmailError("이메일 형식에 맞춰서 작성해주세요.");
+      } else {
+        setEmailError("");
       }
     }
-    if (id == "name") {
+    if (id == "username") {
       const nameRegex = /^[가-힣a-zA-Z]+$/;
-      if (!nameRegex.test()) {
-        return "사용자 이름은 한글/영어만 가능합니다.";
+      if (!nameRegex.test(value)) {
+        setUsernameError("사용자 이름은 한글/영어만 가능합니다.");
+      } else {
+        setUsernameError("");
       }
     }
     if (id == "password") {
       const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
-      if (!passwordRegex.test()) {
-        return "비밀번호는 한글/영어/숫자 조합 8자 이상이어야 합니다.";
+      if (!passwordRegex.test(value)) {
+        setPasswordError(
+          "비밀번호는 한글/영어/숫자 조합 8자 이상이어야 합니다."
+        );
+      } else {
+        setPasswordError("");
+      }
+    }
+    if (id == "confirm_password") {
+      if (confirm_password !== password) {
+        console.log(confirm_password, password);
+        setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
+      } else {
+        setConfirmPasswordError("");
       }
     }
   };
-  useEffect(validation, []);
-  const validText = validation();
+
+  const onChange = (e) => {
+    const { id, value } = e.target;
+    validation(id, value);
+    setInputs({
+      ...inputs,
+      [id]: value,
+    });
+
+    console.log(inputs);
+  };
+
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
       <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
@@ -61,6 +81,7 @@ export default function Login() {
                 onChange={onChange}
                 value={username}
                 placeholder="사용자 이름"
+                valid_text={usernameError}
               />
               <Input
                 name="이메일"
@@ -68,6 +89,7 @@ export default function Login() {
                 onChange={onChange}
                 value={email}
                 placeholder="name@company.com"
+                valid_text={emailError}
               />
               <Input
                 name="비밀번호"
@@ -75,13 +97,15 @@ export default function Login() {
                 onChange={onChange}
                 value={password}
                 placeholder="••••••••"
+                valid_text={passwordError}
               />
               <Input
                 name="비밀번호 확인"
-                id="confirm-password"
+                id="confirm_password"
                 onChange={onChange}
                 value={confirm_password}
                 placeholder="••••••••"
+                valid_text={confirmPasswordError}
               />
 
               <div className="flex items-start">

@@ -1,29 +1,4 @@
-import { useEffect } from "react";
-
 export default function Input(prop) {
-  const validation = (id) => {
-    if (id == "email") {
-      const emailRegex =
-        /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/;
-      if (!emailRegex.test(prop.value)) {
-        return "이메일 형식에 맞춰서 작성해주세요.";
-      }
-    }
-    if (id == "username") {
-      const nameRegex = /^[가-힣a-zA-Z]+$/;
-      if (!nameRegex.test(prop.value)) {
-        return "사용자 이름은 한글/영어만 가능합니다.";
-      }
-    }
-    if (id == "password") {
-      const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
-      if (!passwordRegex.test(prop.value)) {
-        return "비밀번호는 한글/영어/숫자 조합 8자 이상이어야 합니다.";
-      }
-    }
-  };
-  useEffect(validation, [prop.value]);
-  const validText = validation(prop.id);
   return (
     <div>
       <label
@@ -41,7 +16,9 @@ export default function Input(prop) {
         placeholder={prop.placeholder}
         required=""
       ></input>{" "}
-      <div style={{ color: "red" }}>{validText}</div>
+      <div className="font-light text-red-500 dark:text-gray-300">
+        {prop.valid_text}
+      </div>
     </div>
   );
 }
