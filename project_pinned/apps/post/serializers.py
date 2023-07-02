@@ -56,8 +56,8 @@ class PostSerializer(serializers.ModelSerializer):
     landmark_lon = serializers.DecimalField(
         source="landmark.location_lon", max_digits=20, decimal_places=10, required=False
     )
-    likes = serializers.SerializerMethodField()
-    comments = serializers.SerializerMethodField()
+    likes = serializers.SerializerMethodField(required=False)
+    comments = serializers.SerializerMethodField(required=False)
 
     def update(self, instance, data):
         instance.title = data.get("post_title", instance.title)
@@ -73,13 +73,12 @@ class PostSerializer(serializers.ModelSerializer):
         # Save the updated instance
         instance.save()
         return instance
-    
+
     def get_likes(self, instance):
         return instance.likes.count()
-    
+
     def get_comments(self, instance):
         return instance.comments.count()
-
 
     class Meta:
         model = Post
