@@ -7,6 +7,7 @@ from rest_framework.permissions import AllowAny
 
 from .serializers import LandmarkDetailSerializer, LandmarkSerializer
 from .models import Landmark
+from apps.post.models import Post
 from apps.post.serializers import PostSerializer
 
 
@@ -19,7 +20,10 @@ class Get3RandomLandmarks(APIView):
     serializer_class = LandmarkSerializer
 
     def get(self, request):
-        pass
+        landmarks = Landmark.objects.order_by("?")[:3]
+        serializer = self.serializer_class(landmarks, many=True)
+
+        return Response({"recommends": serializer.data}, status=status.HTTP_200_OK)
 
 
 class GetLandmark(APIView):
@@ -27,8 +31,20 @@ class GetLandmark(APIView):
     특정 랜드마크의 정보(게시물 수, 좋아요 수 포함)를 불러오는 API.
     """
 
+    permission_classes = [AllowAny]
+    serializer_class = LandmarkDetailSerializer
+
     def get(self, request, landmark_id):
-        pass
+        try:
+            landmark = Landmark.objects.get(id=landmark_id)
+        except Landmark.DoesNotExist:
+            return Response(
+                {"is_success": False, "detail": "landmark not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        serializer = self.serializer_class(landmark)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class SearchLandmark(APIView):
@@ -40,7 +56,7 @@ class SearchLandmark(APIView):
     serializer_class = LandmarkDetailSerializer
 
     def get(self, request):
-        search_word = request.data.get("landmark_name", None)
+        search_word = request.query_params.get("landmark_name", None)
 
         if search_word is None:
             return Response(
@@ -66,4 +82,15 @@ class GetLandmarkPosts(APIView):
     serializer_class = PostSerializer
 
     def get(self, request, landmark_id):
-        pass
+        try:
+            landmark = Landmark.objects.get(id=landmark_id)
+        except Landmark.DoesNotExist:
+            return Response(
+                {"is_success": False, "detail": "landmark not found"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
+        posts = Post.objects.filter(landmark=landmark)
+        serializer = self.serializer_class(posts, many=True)
+
+        return Response({"landmark_posts": serializer.data}, status=status.HTTP_200_OK)
