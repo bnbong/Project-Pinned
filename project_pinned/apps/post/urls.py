@@ -8,9 +8,7 @@ urlpatterns = [
     # Post CRUD & User's Posts and User's Feed
     path("", views.PostCreate.as_view(), name="post-create"),
     path("feed/", views.PostFeed.as_view(), name="post-feed"),
-
-    path("<user_id>/", views.PostsByUser.as_view(), name="posts-by-user"),
-
+    path("posts/<user_id>/", views.PostsByUser.as_view(), name="posts-by-user"),
     path("<post_id>/", views.PostView.as_view(), name="post-view"),
     # Comment CRUD
     path("<post_id>/comments/", views.CommentCreate.as_view(), name="comment-create"),

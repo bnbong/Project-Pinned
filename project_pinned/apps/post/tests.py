@@ -92,7 +92,7 @@ class PostTests(TestCase):
         pass
 
     def test_create_comment(self):
-        url = reverse("comment-create")
+        url = reverse("comment-create", kwargs={"post_id": self.post.id})
         data = {
             "comment_content": "Test Comment",
         }
@@ -136,7 +136,7 @@ class PostTests(TestCase):
         self.assertFalse(Comment.objects.filter(id=self.comment.id).exists())
 
     def test_get_comments(self):
-        url = reverse("comment-view", kwargs={"post_id": self.post.id})
+        url = reverse("comment-create", kwargs={"post_id": self.post.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.get(url)
 

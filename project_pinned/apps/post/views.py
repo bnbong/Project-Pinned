@@ -10,8 +10,8 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.user.models import User
 
-from .models import Post
-from .serializers import PostSerializer, PostCreateSerializer
+from .models import Post, Comment
+from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
 
 class PostViewTest(View):
@@ -188,10 +188,33 @@ class CommentCreate(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, post_id):
-        pass
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response(
+                {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        comments = Comment.objects.filter(post=post)
+        serializer = CommentSerializer(comments, many=True)
+        return Response({"comments": serializer.data}, status=status.HTTP_200_OK)
 
     def post(self, request, post_id):
-        pass
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                post = Post.objects.get(id=post_id)
+            except Post.DoesNotExist:
+                return Response(
+                    {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+            comment = serializer.save(user=request.user, post=post)
+            return Response(
+                {"is_success": True, "detail": "comment create success"},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_permissions(self):
         if self.request.method == "GET":
@@ -208,13 +231,58 @@ class CommentView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, post_id, comment_id):
-        pass
+        try:
+            comment = Comment.objects.get(id=comment_id, post_id=post_id)
+        except Comment.DoesNotExist:
+            return Response(
+                {"detail": "Comment not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        serializer = CommentSerializer(comment)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, post_id, comment_id):
-        pass
+        try:
+            comment = Comment.objects.get(id=comment_id, post_id=post_id)
+        except Comment.DoesNotExist:
+            return Response(
+                {"detail": "Comment not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if comment.user.user_id != request.user.user_id:
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(
+                {"is_success": True, "detail": "comment edit success"},
+                status=status.HTTP_200_OK,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, post_id, comment_id):
-        pass
+        try:
+            comment = Comment.objects.get(id=comment_id, post_id=post_id)
+        except Comment.DoesNotExist:
+            return Response(
+                {"detail": "Comment not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if comment.user.user_id != request.user.user_id:
+            return Response(
+                {"is_success": False, "detail": "Permission denied."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        comment.delete()
+        return Response(
+            {"is_success": True, "detail": "comment delete success"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
 
     def get_permissions(self):
         if self.request.method == "GET":
