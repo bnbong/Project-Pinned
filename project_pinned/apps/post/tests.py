@@ -144,17 +144,17 @@ class PostTests(TestCase):
         self.assertEqual(len(response.data["comments"]), 1)
 
     def test_post_like(self):
-        url = reverse("post-like", kwargs={"post_id", self.post.id})
+        url = reverse("post-like", kwargs={"post_id": self.post2.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(self.post.likes, 1)
+        self.assertEqual(self.post2.likes.count(), 1)
 
     def test_post_unlike(self):
-        url = reverse("post-unlike", kwargs={"post_id", self.post.id})
+        url = reverse("post-unlike", kwargs={"post_id": self.post.id})
         self.client.force_authenticate(user=self.user)
         response = self.client.post(url)
 
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(self.post.likes, 0)
+        self.assertEqual(self.post.likes.count(), 0)

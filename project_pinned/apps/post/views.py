@@ -10,7 +10,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from apps.user.models import User
 
-from .models import Post, Comment
+from .models import Post, Comment, Like
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
 
@@ -299,7 +299,24 @@ class PostLike(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        pass
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response(
+                {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        if Like.objects.filter(user=request.user, post=post).exists():
+            return Response(
+                {"is_success": False, "detail": "You already like this post."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        like = Like.objects.create(user=request.user, post=post)
+        return Response(
+            {"is_success": True, "detail": "post like success"},
+            status=status.HTTP_201_CREATED,
+        )
 
 
 class PostUnLike(APIView):
@@ -311,4 +328,23 @@ class PostUnLike(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, post_id):
-        pass
+        try:
+            post = Post.objects.get(id=post_id)
+        except Post.DoesNotExist:
+            return Response(
+                {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            like = Like.objects.get(user=request.user, post=post)
+        except Like.DoesNotExist:
+            return Response(
+                {"is_success": False, "detail": "You haven't liked this post."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        like.delete()
+        return Response(
+            {"is_success": True, "detail": "cancel post like success"},
+            status=status.HTTP_204_NO_CONTENT,
+        )
