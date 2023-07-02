@@ -98,12 +98,14 @@ class PostSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField(source="id", required=False)
     username = serializers.CharField(source="user.username", required=False)
     comment_content = serializers.CharField(source="content")
 
     class Meta:
         model = Comment
         fields = (
+            "comment_id",
             "username",
             "comment_content",
             "created_at",
