@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Post, Image, Landmark
+from .models import Post, Image, Landmark, Comment
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -94,4 +94,17 @@ class PostSerializer(serializers.ModelSerializer):
             "created_at",
             "likes",
             "comments",
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source="user.username", required=False)
+    comment_content = serializers.CharField(source="content")
+
+    class Meta:
+        model = Comment
+        fields = (
+            "username",
+            "comment_content",
+            "created_at",
         )

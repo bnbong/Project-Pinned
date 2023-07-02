@@ -11,7 +11,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 from apps.user.models import User
 
 from .models import Post
-from .serializers import PostSerializer, PostCreateSerializer
+from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
 
 class PostViewTest(View):
@@ -191,7 +191,21 @@ class CommentCreate(APIView):
         pass
 
     def post(self, request, post_id):
-        pass
+        serializer = CommentSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                post = Post.objects.get(id=post_id)
+            except Post.DoesNotExist:
+                return Response(
+                    {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
+                )
+
+            comment = serializer.save(user=request.user, post=post)
+            return Response(
+                {"is_success": True, "detail": "comment create success"},
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get_permissions(self):
         if self.request.method == "GET":
