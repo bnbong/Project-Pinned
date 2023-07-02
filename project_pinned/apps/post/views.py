@@ -306,12 +306,6 @@ class PostLike(APIView):
                 {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
             )
 
-        if post.user.user_id != request.user.user_id:
-            return Response(
-                {"is_success": False, "detail": "Permission denied."},
-                status=status.HTTP_403_FORBIDDEN,
-            )
-
         if Like.objects.filter(user=request.user, post=post).exists():
             return Response(
                 {"is_success": False, "detail": "You already like this post."},
@@ -339,12 +333,6 @@ class PostUnLike(APIView):
         except Post.DoesNotExist:
             return Response(
                 {"detail": "Post not found"}, status=status.HTTP_400_BAD_REQUEST
-            )
-
-        if post.user.user_id != request.user.user_id:
-            return Response(
-                {"is_success": False, "detail": "Permission denied."},
-                status=status.HTTP_403_FORBIDDEN,
             )
 
         try:
