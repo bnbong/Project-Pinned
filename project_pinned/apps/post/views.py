@@ -1,5 +1,6 @@
 from django.views import View
 from django.http import HttpResponse
+from django.db.models import Count
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -142,9 +143,40 @@ class PostFeed(APIView):
 
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    serializer_class = PostSerializer
 
-    def get(self, request):
-        pass
+    def get(self, request, offset=0, limit=10):
+        following_posts, most_liked_posts, recommended_posts = self.get_posts(
+            request, offset, limit
+        )
+
+        return Response(
+            {
+                "followed_posts": self.serializer_class(
+                    following_posts, many=True
+                ).data,
+                "trending_posts": self.serializer_class(
+                    most_liked_posts, many=True
+                ).data,
+                "recommended_posts": self.serializer_class(
+                    recommended_posts, many=True
+                ).data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    def get_posts(self, request, offset=0, limit=10):
+        following_posts = Post.objects.filter(
+            user__in=request.user.following.all()
+        ).order_by("-created_at")[offset : offset + limit]
+
+        most_liked_posts = Post.objects.annotate(like_count=Count("likes")).order_by(
+            "-like_count"
+        )[offset : offset + limit]
+
+        recommended_posts = Post.objects.order_by("?")[offset : offset + limit]
+
+        return following_posts, most_liked_posts, recommended_posts
 
 
 class CommentCreate(APIView):
