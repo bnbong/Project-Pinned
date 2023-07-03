@@ -2,9 +2,9 @@ from django.test import TestCase
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIClient
-from apps.user.models import User
+from apps.user.models import User, Follow
 from apps.landmark.models import Landmark
-from .models import Post, Comment, Like, Image
+from .models import Post, Comment, Like
 
 
 class PostTests(TestCase):
@@ -89,7 +89,30 @@ class PostTests(TestCase):
         self.assertEqual(len(response.data["user_posts"]), 2)
 
     def test_get_feed(self):
-        pass
+        self.user2 = User.objects.create_user(
+            username="testuser2", email="test2@example.com", password="testpassword2"
+        )
+        self.post3 = Post.objects.create(
+            user=self.user2,
+            landmark=self.landmark,
+            title="Test Post3",
+            content="This is a third test post.",
+        )
+        Follow.objects.create(follower=self.user2, following=self.user)
+
+        url = reverse("post-feed")
+        self.client.force_authenticate(user=self.user2)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data["followed_posts"]), 2)
+        self.assertGreaterEqual(
+            response.data["followed_posts"][0]["created_at"],
+            response.data["followed_posts"][1]["created_at"]
+        )
+        self.assertEqual(len(response.data["trending_posts"]), 3)
+        self.assertEqual(response.data["trending_posts"][0]["post_id"], self.post.id)
+        self.assertEqual(len(response.data["recommended_posts"]), 3)
 
     def test_create_comment(self):
         url = reverse("comment-create", kwargs={"post_id": self.post.id})
