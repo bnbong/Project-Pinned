@@ -1,6 +1,7 @@
 from django.views import View
 from django.http import HttpResponse
 from django.db.models import Count
+from django.core.cache import cache
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -37,8 +38,7 @@ class PostCreate(APIView):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid(raise_exception=True):
-            # post = serializer.save()
-            post = serializer.save(request)
+            serializer.save(request)
             return Response(
                 {"is_success": True, "detail": "post success"},
                 status=status.HTTP_201_CREATED,
@@ -144,6 +144,35 @@ class PostFeed(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
+
+    # def get(self, request, offset=0, limit=10):
+    #     # 캐시를 활용하여 뉴스피드 불러오는 로직(구현중, 뉴스피드 업데이트 로직 구현 필요)
+    #     cache_key = f'user_{request.user.id}_feed'
+    #     data = cache.get(cache_key)
+
+    #     if not data:
+    #         following_posts, most_liked_posts, recommended_posts = self.get_posts(
+    #             request, offset, limit
+    #         )
+
+    #         data = {
+    #             "followed_posts": self.serializer_class(
+    #                 following_posts, many=True
+    #             ).data,
+    #             "trending_posts": self.serializer_class(
+    #                 most_liked_posts, many=True
+    #             ).data,
+    #             "recommended_posts": self.serializer_class(
+    #                 recommended_posts, many=True
+    #             ).data,
+    #         }
+
+    #         cache.set(cache_key, data, 60*60)
+
+    #     return Response(
+    #         data,
+    #         status=status.HTTP_200_OK,
+    #     )
 
     def get(self, request, offset=0, limit=10):
         following_posts, most_liked_posts, recommended_posts = self.get_posts(

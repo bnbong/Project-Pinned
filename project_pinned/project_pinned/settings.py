@@ -42,15 +42,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "apps.user",
     "apps.post",
     "apps.landmark",
-
     "rest_framework",
     "rest_framework_simplejwt",
-    'rest_framework_simplejwt.token_blacklist',
-
+    "rest_framework_simplejwt.token_blacklist",
     "dj_rest_auth",
     "corsheaders",
 ]
@@ -63,8 +60,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-
-    'corsheaders.middleware.CorsMiddleware',  
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "project_pinned.urls"
@@ -85,9 +81,11 @@ TEMPLATES = [
     },
 ]
 
-CORS_ORIGIN_WHITELIST = ['http://127.0.0.1:3000'
-                         ,'http://localhost:3000'
-                         ,'http://0.0.0.0:3000']
+CORS_ORIGIN_WHITELIST = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "http://0.0.0.0:3000",
+]
 CORS_ALLOW_CREDENTIALS = True
 
 WSGI_APPLICATION = "project_pinned.wsgi.application"
@@ -151,7 +149,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MEDIA_URL = "media/"
 
@@ -173,24 +171,21 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "user.User"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
-
     # User request's header will contain Access Token like:
     # Authorization: Bearer <token>
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "user_id",
     "USER_ID_CLAIM": "user_id",
-
     # Default authentication rule is checking a user has is_active == True.
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
@@ -201,9 +196,7 @@ REST_AUTH = {
     "USE_JWT": True,
     "JWT_SERIALIZER": "apps.user.serializers.UserLoginResponseSerializer",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    'JWT_AUTH_HTTPONLY': False,
-
-    'TOKEN_MODEL': None,
-
+    "JWT_AUTH_HTTPONLY": False,
+    "TOKEN_MODEL": None,
     "LOGIN_SERIALIZER": "apps.user.serializers.UserLoginSerializer",
 }
