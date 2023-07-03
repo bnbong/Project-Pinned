@@ -7,7 +7,7 @@ export default function App({ Component, pageProps }) {
   const router = useRouter();
   return (
     <AuthProvider>
-      {router.pathname == "/login" ? (
+      {router.pathname == "/login" || router.pathname == "/signup" ? (
         <Component {...pageProps} />
       ) : (
         <Layout>
