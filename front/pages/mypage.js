@@ -6,16 +6,16 @@ import EditProfileModal from "@/components/modal";
 
 const MyPage = () => {
   const router = useRouter();
-  const { user } = useContext(AuthContext);
-
+  const { loginState } = useContext(AuthContext);
+  const user = loginState.user;
   //edit 하는 state & 함수
   const [edit, setEdit] = useState(false);
   const openEdit = () => setEdit(true);
   const closeEdit = () => setEdit(false);
 
   //user Id & Name 관리하는 state
-  const [userID, setUserID] = useState(user.id);
-  const [userName, setUserName] = useState(user.username);
+  const [userID, setUserID] = useState(user?.id);
+  const [userName, setUserName] = useState(user?.username);
   
   //img 파일 관리하는 state
   const [img,setImg] = useState("https://via.placeholder.com/150");
@@ -35,22 +35,23 @@ const MyPage = () => {
 
   const [posts, setPosts] = useState(dummyData);
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axios.get(`api/v1/post/${userID}`);
-        setPosts(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchPosts();
-  }, [userID]);
+  // useEffect(() => {
+  //   const fetchPosts = async () => {
+  //     try {
+  //       const response = await axios.get(`api/v1/post/${userID}/`);
+  //       setPosts(response.data);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
+  //   fetchPosts();
+  // }, [userID]);
 
   return (
     <div className="p-5 bg-neutral-50">
       {console.log(user)}
       {console.log(userID)}
+      {console.log(userName)}
       <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md">
         <div className="flex items-center">
           <img
