@@ -1,4 +1,4 @@
-# TODO: 캐시 기능 적용 방안 설계 및 구현
+# TODO: notification 기능 구현하기
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
