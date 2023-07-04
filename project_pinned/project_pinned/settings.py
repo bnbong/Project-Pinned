@@ -201,3 +201,15 @@ REST_AUTH = {
     "TOKEN_MODEL": None,
     "LOGIN_SERIALIZER": "apps.user.serializers.UserLoginSerializer",
 }
+
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT 토큰을 전달하세요. (예: Bearer {토큰})",
+        },
+    },
+}

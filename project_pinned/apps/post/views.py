@@ -15,6 +15,9 @@ from apps.user.models import User
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 class PostViewTest(View):
     """
@@ -34,6 +37,24 @@ class PostCreate(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostCreateSerializer
 
+    @swagger_auto_schema(
+        operation_description="Post를 작성할 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "post_title": openapi.Schema(type=openapi.TYPE_STRING),
+                "post_content": openapi.Schema(type=openapi.TYPE_STRING),
+                "post_image": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(type=openapi.TYPE_STRING),
+                ),
+                "landmark_name": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["post_title", "post_content", "landmark_name"],
+        ),
+        responses={201: "게시물 작성 성공", 400: "존재하지 않는 게시물", 401: "사용자 인증 실패"},
+    )
     def post(self, request):
         serializer = self.serializer_class(
             data=request.data, context={"request": request}
@@ -41,7 +62,7 @@ class PostCreate(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save(request)
 
-            cache_key = f'user_{request.user.id}_feed'
+            cache_key = f"user_{request.user.id}_feed"
             cache.delete(cache_key)
 
             return Response(
@@ -62,6 +83,10 @@ class PostView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 post를 불러올 때 사용되는 API",
+        responses={200: PostSerializer(), 400: "존재하지 않는 게시물"},
+    )
     def get(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -74,6 +99,29 @@ class PostView(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_description="특정 게시물을 수정할 때 사용되는 API\n\
+        자신이 작성한 게시물만 수정 가능\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "post_title": openapi.Schema(type=openapi.TYPE_STRING),
+                "post_content": openapi.Schema(type=openapi.TYPE_STRING),
+                "post_image": openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Schema(type=openapi.TYPE_STRING),
+                ),
+            },
+            required=["post_title", "post_content"],
+        ),
+        responses={
+            201: PostSerializer(),
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+            403: "수정 권한 없음",
+        },
+    )
     def put(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -95,6 +143,17 @@ class PostView(APIView):
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="특정 게시물을 삭제할 때 사용되는 API\n\
+        자신이 작성한 게시물만 삭제 가능\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            204: "게시물 삭제 성공",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+            403: "삭제 권한 없음",
+        },
+    )
     def delete(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -128,6 +187,16 @@ class PostsByUser(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 유저가 작성한 게시물들을 불러올 때 사용되는 API\n\
+            Header에 JWT 토큰 인증 필요",
+        responses={
+            200: "성공 (응답 참고)",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+            403: "삭제 권한 없음",
+        },
+    )
     def get(self, request, user_id):
         try:
             user = User.objects.get(user_id=user_id)
@@ -162,8 +231,13 @@ class PostFeed(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = PostSerializer
 
+    @swagger_auto_schema(
+        operation_description="메인 페이지에 표시되는 유저 피드 게시물들을 불러올 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: "성공 (응답 참고)", 401: "사용자 인증 실패"},
+    )
     def get(self, request, offset=0, limit=10):
-        cache_key = f'user_{request.user.id}_feed'
+        cache_key = f"user_{request.user.id}_feed"
         data = cache.get(cache_key)
 
         if not data:
@@ -183,7 +257,7 @@ class PostFeed(APIView):
                 ).data,
             }
 
-            cache.set(cache_key, data, 60*60*24)
+            cache.set(cache_key, data, 60 * 60 * 24)
 
         return Response(
             data,
@@ -212,6 +286,14 @@ class CommentCreate(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 게시물에 작성된 모든 댓글들을 불러올 때 사용되는 API",
+        responses={
+            200: "성공 (응답 참고)",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+        },
+    )
     def get(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -224,6 +306,22 @@ class CommentCreate(APIView):
         serializer = CommentSerializer(comments, many=True)
         return Response({"comments": serializer.data}, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_description="댓글을 작성할 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "comment_content": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["comment_content"],
+        ),
+        responses={
+            201: "댓글 작성 성공",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request, post_id):
         serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
@@ -255,6 +353,13 @@ class CommentView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 댓글을 불러올 때 사용되는 API",
+        responses={
+            200: CommentSerializer(),
+            400: "존재하지 않는 댓글",
+        },
+    )
     def get(self, request, post_id, comment_id):
         try:
             comment = Comment.objects.get(id=comment_id, post_id=post_id)
@@ -266,6 +371,24 @@ class CommentView(APIView):
         serializer = CommentSerializer(comment)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_description="특정 댓글을 수정할 때 사용되는 API\n\
+        자신이 작성한 댓글만 수정 가능.\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "comment_content": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["comment_content"],
+        ),
+        responses={
+            200: "댓글 수정 성공",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+            403: "수정 권한 없음",
+        },
+    )
     def put(self, request, post_id, comment_id):
         try:
             comment = Comment.objects.get(id=comment_id, post_id=post_id)
@@ -289,6 +412,17 @@ class CommentView(APIView):
             )
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    @swagger_auto_schema(
+        operation_description="특정 댓글을 삭제할 때 사용되는 API\n\
+        자신이 작성한 댓글만 삭제 가능.\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            204: "댓글 삭제 성공",
+            400: "존재하지 않는 게시물",
+            401: "사용자 인증 실패",
+            403: "삭제 권한 없음",
+        },
+    )
     def delete(self, request, post_id, comment_id):
         try:
             comment = Comment.objects.get(id=comment_id, post_id=post_id)
@@ -323,6 +457,15 @@ class PostLike(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 게시물에 눌렀던 좋아요를 취소할 때 사용하는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            201: "좋아요 성공",
+            400: "존재하지 않는 게시물 / 이미 좋아요 누른 게시물",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
@@ -352,6 +495,15 @@ class PostUnLike(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 게시물에 눌렀던 좋아요를 취소할 때 사용하는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            201: "좋아요 취소 성공",
+            400: "존재하지 않는 게시물 / 좋아요되지 않은 게시물",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request, post_id):
         try:
             post = Post.objects.get(id=post_id)
