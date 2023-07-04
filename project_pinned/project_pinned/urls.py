@@ -16,25 +16,45 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
 
+schema_view = get_schema_view(
+    openapi.Info(
+        title="Project-Pinned",
+        default_version="v1",
+        description="Project-Pinned API 문서",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="pjy90123@gmail.com"),
+        license=openapi.License(name="mit"),
+    ),
+    public=True,
+    permission_classes=[permissions.AllowAny],
+)
 
 api_v1_patterns = [
     # url will be looks like http://{host}/api/v1/user/~
-    path('user/', include('apps.user.urls')),
-
+    path("user/", include("apps.user.urls")),
     # url will be looks like http://{host}/api/v1/post/~
-    path('post/', include('apps.post.urls')),
-
+    path("post/", include("apps.post.urls")),
     # url will be looks like http://{host}/api/v1/landmark/~
-    path('landmark/', include('apps.landmark.urls')),
+    path("landmark/", include("apps.landmark.urls")),
 ]
 
-api_v2_patterns = [
-
-]
+api_v2_patterns = []
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('api/v1/', include(api_v1_patterns)),
-    path('api/v2/', include(api_v2_patterns)),
+    path("admin/", admin.site.urls),
+    path("api/v1/", include(api_v1_patterns)),
+    path("api/v2/", include(api_v2_patterns)),
+    path(
+        "swagger<format>/", schema_view.without_ui(cache_timeout=0), name="schema-json"
+    ),
+    path(
+        "swagger/",
+        schema_view.with_ui("swagger", cache_timeout=0),
+        name="schema-swagger-ui",
+    ),
+    path("redoc/", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"),
 ]
