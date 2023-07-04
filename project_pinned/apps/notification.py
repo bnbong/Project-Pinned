@@ -7,6 +7,19 @@ from firebase_admin import credentials
 from project_pinned.settings import BASE_DIR
 
 
+def send_notifiaction(target_user, title, content):
+    firebase_manager = FirebaseManager.getInstance()
+    try:
+        registration_token = target_user.device.first().fcmToken
+        firebase_manager.send_notification_with_fcm(
+            registration_token, title, content
+        )
+        print("Notifiacton sent successfully.")
+
+    except AttributeError:
+        print("User's device not found.")
+
+
 class FirebaseManager:
     """
     Push 알림을 보내기 위한 Firebase admin app manager.

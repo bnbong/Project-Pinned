@@ -14,7 +14,7 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
-from apps.notification import FirebaseManager
+from apps.notification import send_notifiaction
 
 from .serializers import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
 from .models import UserDevice
@@ -178,13 +178,10 @@ class UserFollow(APIView):
                 cur_user.following.add(target_user)
                 target_user.followers.add(cur_user)
 
-                firebase_manager = FirebaseManager.getInstance()
-                registration_token = target_user.device.first().fcmToken
                 title = "새로운 팔로워가 생겼어요!"
                 body = f"{cur_user.username} 님이 팔로우를 시작했어요!"
-                firebase_manager.send_notification_with_fcm(
-                    registration_token, title, body
-                )
+
+                send_notifiaction(target_user=target_user, title=title, content=body)
 
                 return Response(
                     {"is_success": True, "detail": "user follow success"},

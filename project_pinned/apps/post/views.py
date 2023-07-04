@@ -15,6 +15,8 @@ from apps.user.models import User
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
+from apps.notification import send_notifiaction
+
 
 class PostViewTest(View):
     """
@@ -41,7 +43,7 @@ class PostCreate(APIView):
         if serializer.is_valid(raise_exception=True):
             serializer.save(request)
 
-            cache_key = f'user_{request.user.id}_feed'
+            cache_key = f"user_{request.user.id}_feed"
             cache.delete(cache_key)
 
             return Response(
@@ -163,7 +165,7 @@ class PostFeed(APIView):
     serializer_class = PostSerializer
 
     def get(self, request, offset=0, limit=10):
-        cache_key = f'user_{request.user.id}_feed'
+        cache_key = f"user_{request.user.id}_feed"
         data = cache.get(cache_key)
 
         if not data:
@@ -183,7 +185,7 @@ class PostFeed(APIView):
                 ).data,
             }
 
-            cache.set(cache_key, data, 60*60*24)
+            cache.set(cache_key, data, 60 * 60 * 24)
 
         return Response(
             data,
@@ -338,6 +340,13 @@ class PostLike(APIView):
             )
 
         like = Like.objects.create(user=request.user, post=post)
+
+        target_user = post.user
+
+        title = "좋아요 알림"
+        body = f"{request.user} 님이 당신의 게시물에 좋아요를 눌렀습니다."
+
+        send_notifiaction(target_user=target_user, title=title, content=body)
         return Response(
             {"is_success": True, "detail": "post like success"},
             status=status.HTTP_201_CREATED,
