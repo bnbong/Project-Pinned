@@ -57,30 +57,41 @@ export default function Login() {
   const onChange = (e) => {
     const { id, value } = e.target;
     validation(id, value);
+    0;
     setInputs({
       ...inputs,
       [id]: value,
     });
-
-    console.log(inputs);
-  };
-  const onClick = async () => {
-    await axiosBaseURL
-      .post(
-        apiMapper.user.post.REGISTER,
-        JSON.stringify({
-          username,
-          email,
-          password,
-        })
-      )
-      .then((e) => consol.log(e.data))
-      .catch((e) => console.log(e));
   };
 
-  const { mutate, isLoading, isError, error, isSuccess } = useMutation(onClick);
-
-  console.log(error, isError);
+  const { mutate, data, isError, isLoading } = useMutation(
+    async () => {
+      const response = await axiosBaseURL.post(apiMapper.user.post.REGISTER, {
+        username,
+        email,
+        password,
+      });
+    },
+    {
+      onSuccess: (e) => console.log(e, "success"),
+      onError: (e) => {
+        console.log(e, "error");
+      },
+    }
+  );
+  console.log(data, isLoading, isError);
+  const onClick = () => {
+    const { response } = axiosBaseURL
+      .post(apiMapper.user.post.REGISTER, {
+        username,
+        email,
+        password,
+      })
+      .then((e) => consol.log(e))
+      .catch((e) => console.log(e.response.data));
+    /* eslint-disable no-console */
+    console.log(response);
+  };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -155,7 +166,6 @@ export default function Login() {
               </div>
               <button
                 onClick={mutate}
-                type="submit"
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 회원가입하기
