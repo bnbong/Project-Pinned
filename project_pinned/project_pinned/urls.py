@@ -34,7 +34,7 @@ api_v2_patterns = [
 ]
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('api/admin/', admin.site.urls),
     path('api/v1/', include(api_v1_patterns)),
     path('api/v2/', include(api_v2_patterns)),
 ]
