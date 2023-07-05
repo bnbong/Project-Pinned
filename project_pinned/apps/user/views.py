@@ -19,6 +19,9 @@ from apps.notification import send_notifiaction
 from .serializers import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
 from .models import UserDevice
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 User = get_user_model()
 
@@ -44,6 +47,12 @@ class UserRegister(APIView):
 
     permission_classes = (permissions.AllowAny,)
 
+    @swagger_auto_schema(
+        operation_description="Post를 작성할 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=RegisterSerializer(),
+        responses={201: "회원가입 성공", 400: "이미 존재하는 이메일", 401: "사용자 인증 실패"},
+    )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)
 
@@ -78,6 +87,47 @@ class UserLogin(LoginView):
     유저의 로그인 API.
     """
 
+    @swagger_auto_schema(
+        operation_description="유저의 로그인에 사용되는 API",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "email": openapi.Schema(type=openapi.TYPE_STRING),
+                "password": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=[
+                "email, password",
+            ],
+        ),
+        responses={
+            200: openapi.Response(
+                description="로그인 성공",
+                schema=openapi.Schema(
+                    type=openapi.TYPE_OBJECT,
+                    properties={
+                        "access_token": openapi.Schema(type=openapi.TYPE_STRING),
+                        "refresh_token": openapi.Schema(type=openapi.TYPE_STRING),
+                        "user": openapi.Schema(
+                            type=openapi.TYPE_OBJECT,
+                            properties={
+                                "user_id": openapi.Schema(type=openapi.TYPE_STRING),
+                                "username": openapi.Schema(type=openapi.TYPE_STRING),
+                                "email": openapi.Schema(type=openapi.TYPE_STRING),
+                                "profile_image": openapi.Schema(
+                                    type=openapi.TYPE_STRING
+                                ),
+                                "followers": openapi.Schema(type=openapi.TYPE_INTEGER),
+                                "followings": openapi.Schema(type=openapi.TYPE_INTEGER),
+                            },
+                        ),
+                    },
+                ),
+            ),
+        },
+    )
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+
     def get_response(self):
         serializer_class = self.get_response_serializer()
 
@@ -109,6 +159,12 @@ class UserDelete(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="유저 탈퇴 시 사용되는 API\n\
+        본인 계정만 탈퇴 가능\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={204: "계정 삭제 성공", 401: "사용자 인증 실패", 403: "삭제 권한 없음"},
+    )
     def delete(self, request, user_id):
         user = request.user
 
@@ -135,6 +191,12 @@ class UserProfile(APIView):
     permission_classes = [IsAuthenticated]
     parser_classes = [MultiPartParser, FormParser, JSONParser]
 
+    @swagger_auto_schema(
+        operation_description="개별 유저의 프로필을 검색하는데 사용되는 API\n\
+        여기서 사용되는 user_id는 1, 2, 3... 씩 늘어나는 autoincrease 속성을 가진 컬럼이 아니라 as1qQWnD4lsAA 형식같이 uuid를 가지는 컬럼이다\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: UserProfileSerializer(), 401: "사용자 인증 실패"},
+    )
     def get(self, request, user_id):
         user = User.objects.get(user_id=user_id)
         serializer_class = UserProfileSerializer
@@ -145,6 +207,22 @@ class UserProfile(APIView):
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+    @swagger_auto_schema(
+        operation_description="유저의 프로필을 수정하는데 사용되는 API\n\
+        본인의 프로필만 변경 가능함\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "username": openapi.Schema(type=openapi.TYPE_STRING),
+                "profile_image": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=[
+                "username",
+            ],
+        ),
+        responses={200: "성공", 400: "잘못된 입력", 401: "사용자 인증 실패", "403": "수정 권한 없음"},
+    )
     def put(self, request, user_id):
         if str(request.user.user_id) != str(user_id):
             return Response(
@@ -175,6 +253,16 @@ class UserFollow(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 유저를 팔로우 할 때 사용되는 API.\n\
+            여기서, 팔로우할 특정 유저는 {user_id}가 가리키는 유저이다.\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            200: "팔로우 성공",
+            400: "이미 팔로우 중인 유저 / 자기 자신을 팔로우 시도",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request, user_id):
         cur_user = request.user
         target_user_id = user_id
@@ -212,6 +300,16 @@ class UserUnFollow(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 유저를 언팔로우 할 때 사용되는 API.\n\
+            여기서, 언팔로우할 특정 유저는 {user_id}가 가리키는 유저이다.\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={
+            200: "언팔로우 성공",
+            400: "이미 언팔로우 중인 유저 / 자기 자신을 언팔로우 시도",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request, user_id):
         cur_user = request.user
         target_user_id = user_id
@@ -243,6 +341,11 @@ class UserFollowers(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 유저의 팔로워를 확인할 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: "성공 (응답 참고)", 401: "사용자 인증 실패"},
+    )
     def get(self, request, user_id):
         target_user = User.objects.get(user_id=user_id)
         followers_list = target_user.followers.all()
@@ -259,6 +362,11 @@ class UserFollowings(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="특정 유저가 팔로우한 계정들을 확인할 때 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: "성공 (응답 참고)", 401: "사용자 인증 실패"},
+    )
     def get(self, request, user_id):
         target_user = User.objects.get(user_id=user_id)
         followings_list = target_user.following.all()
@@ -272,6 +380,7 @@ class UserSearch(APIView):
     유저를 검색하는데 사용되는 API.
     """
 
+    # TODO SWAGGER
     def get(self, request):
         search_word = request.data.get("username", None)
 
@@ -295,6 +404,22 @@ class UserFCMToken(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    @swagger_auto_schema(
+        operation_description="클라이언트에서 FCM 토큰을 받아 사용자 모델에 저장하는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                "fcmToken": openapi.Schema(type=openapi.TYPE_STRING),
+            },
+            required=["fcmToken"],
+        ),
+        responses={
+            200: "성공",
+            400: "토큰이 제공되지 않음",
+            401: "사용자 인증 실패",
+        },
+    )
     def post(self, request):
         fcm_token = request.data.get("fcm_token", None)
 
