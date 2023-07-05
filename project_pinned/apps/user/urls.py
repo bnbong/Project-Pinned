@@ -38,4 +38,7 @@ urlpatterns = [
 
     # For user's token validate & refresh
     path("token/", include(token_patterns)),
+
+    # For user's device token
+    path("device/", views.UserFCMToken.as_view(), name="user-device-token"),
 ]

@@ -125,7 +125,7 @@ export default function Home() {
       console.log(userId);
       console.log(userName);
 
-      // 유저 프로필 조회
+      // 유저 프로필 조회 => 마이페이지에서 사용해야 할듯
       const userProfile = await getUserProfile(
         userId,
         loginResult.access_token
@@ -135,8 +135,8 @@ export default function Home() {
       setLoginState({
         isLoggedIn: true,
         user: loginResult.user,
-        access_token: loginResult.access_token,
-        refreshToken: loginResult.refresh_token,
+        accessToken: refreshResult.access,
+        refreshToken: null,
       });
 
       // // 유저 검색
