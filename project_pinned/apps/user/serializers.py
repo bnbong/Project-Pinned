@@ -7,6 +7,7 @@ from uuid import uuid4
 from rest_framework import serializers, exceptions
 
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import check_password
 from django.utils.translation import gettext_lazy as _
 
 from .models import User
@@ -52,6 +53,9 @@ class UserLoginSerializer(serializers.ModelSerializer):
     def _validate_email(self, email, password):
         if email and password:
             user = self.authenticate(email=email, password=password)
+            if user is None or not check_password(password, user.password):
+                msg = _("Invalid email or password")
+                raise exceptions.ValidationError(msg)
         else:
             msg = _('Must include "email" and "password".')
             raise exceptions.ValidationError(msg)
