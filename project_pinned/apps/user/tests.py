@@ -12,7 +12,9 @@ from rest_framework.test import APIClient
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import User, Follow
+from apps.notification import FirebaseManager
+
+from .models import User, Follow, UserDevice
 
 
 User = get_user_model()
@@ -60,10 +62,10 @@ class UserAPITest(TestCase):
 
     def create_profile_image(self):
         file = BytesIO()
-        image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
-        image.save(file, 'png')
+        image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))
+        image.save(file, "png")
 
-        file.name = 'test.png'
+        file.name = "test.png"
         file.seek(0)
 
         return file
@@ -162,6 +164,24 @@ class UserAPITest(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
 
-        test_image_path = 'media/profile_images/test.png'
+        test_image_path = "media/profile_images/test.png"
 
         os.remove(os.path.abspath(test_image_path))
+
+
+class FCMTest(TestCase):
+    def setUp(self):
+        self.user1 = User.objects.create_user(
+            email="test@testmail.com",
+            password="testpassword1",
+            username="testuser1",
+        )
+
+    # def test_send_notification(self):
+    #     mock_token = "thisistestnotificationtoken"  # 실제 테스트를 하기 위해서는 해당 토큰을 클라이언트로부터 실제로 받아와야 함
+    #     UserDevice.objects.create(user=self.user1, fcmToken=mock_token)
+
+    #     firebase_manager = FirebaseManager.getInstance()
+    #     firebase_manager.send_notification_with_fcm(
+    #         mock_token, "test_title", "test_body"
+    #     )

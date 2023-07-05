@@ -1,14 +1,42 @@
 import Input from "@/components/Input";
+import apiMapper from "@/components/apiMapper";
+import axiosBaseURL from "@/components/axiosBaseUrl";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { useMutation } from "react-query";
 
 export default function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const [errorMessage, setErrorMessage] = useState({});
+  const router = useRouter();
   const onChange = (e) => {
     const { id, value } = e.target;
+    if (id == "email") {
+      setEmail(value);
+      console.log(email);
+    }
+    if (id == "password") {
+      setPassword(value);
+      console.log(password);
+    }
   };
-
+  const { mutate, data, isLoading, isError } = useMutation({
+    mutationFn: (loginInformation) => {
+      return axiosBaseURL.post(apiMapper.user.post.LOGIN, loginInformation);
+    },
+    onSuccess: (data, variables, context) => {
+      //data에 서버 resonse값이 저장됨
+      console.log(data, variables, context);
+      console.log("success");
+      router.push("/");
+    },
+    onError: (error, variables, context) => {
+      console(error, variables, context);
+      setErrorMessage(e.response.data);
+    },
+  });
   return (
     <>
       <section className="bg-gray-50 dark:bg-gray-900">
@@ -24,17 +52,19 @@ export default function Login() {
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
                 로그인하기
               </h1>
-              <form className="space-y-4 md:space-y-6" action="#">
+              <div className="space-y-4 md:space-y-6">
                 <Input
                   name="이메일"
                   id="email"
                   value={email}
+                  onChange={onChange}
                   placeholder="name@company.com"
                 />
                 <Input
                   name="비밀번호"
                   id="password"
                   value={password}
+                  onChange={onChange}
                   placeholder="••••••••"
                 />
                 <div className="flex items-center justify-between">
@@ -66,10 +96,12 @@ export default function Login() {
                 </div>
                 <button
                   type="submit"
+                  onClick={() => mutate({ email, password })}
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
                   로그인하기
                 </button>
+                {isError ? <div>{errorMessage.detail}</div> : null}
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   계정이 아직 없으신가요?{" "}
                   <Link
@@ -79,7 +111,7 @@ export default function Login() {
                     가입하기
                   </Link>
                 </p>
-              </form>
+              </div>
             </div>
           </div>
         </div>

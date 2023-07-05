@@ -17,7 +17,10 @@ export default function Login() {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [errorMessage, setErrorMessage] = useState({});
+
   const { email, password, username, confirm_password } = inputs;
+
   const validation = (id, value) => {
     if (id == "email") {
       const emailRegex =
@@ -57,30 +60,21 @@ export default function Login() {
   const onChange = (e) => {
     const { id, value } = e.target;
     validation(id, value);
+
     setInputs({
       ...inputs,
       [id]: value,
     });
-
-    console.log(inputs);
-  };
-  const onClick = async () => {
-    await axiosBaseURL
-      .post(
-        apiMapper.user.post.REGISTER,
-        JSON.stringify({
-          username,
-          email,
-          password,
-        })
-      )
-      .then((e) => consol.log(e.data))
-      .catch((e) => console.log(e));
   };
 
-  const { mutate, isLoading, isError, error, isSuccess } = useMutation(onClick);
-
-  console.log(error, isError);
+  const { mutate, data, error, isError, isLoading } = useMutation({
+    mutationFn: (userInformation) => {
+      return axiosBaseURL.post(apiMapper.user.post.REGISTER, userInformation);
+    },
+    onError: (e) => {
+      setErrorMessage(e.response.data);
+    },
+  });
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -153,13 +147,14 @@ export default function Login() {
                   </label>
                 </div>
               </div>
+
               <button
-                onClick={mutate}
-                type="submit"
+                onClick={() => mutate({ username, email, password })}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 회원가입하기
               </button>
+              {isError ? <div>{errorMessage.detail}</div> : null}
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 이미 계정이 있으신가요?{" "}
                 <Link

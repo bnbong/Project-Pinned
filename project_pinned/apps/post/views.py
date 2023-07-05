@@ -17,6 +17,7 @@ from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
 
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
+from apps.notification import send_notifiaction
 
 
 class PostViewTest(View):
@@ -481,6 +482,13 @@ class PostLike(APIView):
             )
 
         like = Like.objects.create(user=request.user, post=post)
+
+        target_user = post.user
+
+        title = "좋아요 알림"
+        body = f"{request.user} 님이 당신의 게시물에 좋아요를 눌렀습니다."
+
+        send_notifiaction(target_user=target_user, title=title, content=body)
         return Response(
             {"is_success": True, "detail": "post like success"},
             status=status.HTTP_201_CREATED,

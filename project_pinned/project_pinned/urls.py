@@ -57,8 +57,8 @@ api_v1_patterns = [
 api_v2_patterns = []
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/v1/", include(api_v1_patterns)),
-    path("api/v2/", include(api_v2_patterns)),
-    path("swagger/", include(swagger_patterns)),
+    path('api/admin/', admin.site.urls),
+    path('api/v1/', include(api_v1_patterns)),
+    path('api/v2/', include(api_v2_patterns)),
+    path("api/swagger/", include(swagger_patterns)),
 ]
