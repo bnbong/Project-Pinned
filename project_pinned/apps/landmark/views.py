@@ -10,6 +10,9 @@ from .models import Landmark
 from apps.post.models import Post
 from apps.post.serializers import PostSerializer
 
+from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+
 
 class Get3RandomLandmarks(APIView):
     """
@@ -19,6 +22,9 @@ class Get3RandomLandmarks(APIView):
     permission_classes = [AllowAny]
     serializer_class = LandmarkSerializer
 
+    @swagger_auto_schema(
+        responses={200: "성공 (응답 참고)"},
+    )
     def get(self, request):
         landmarks = Landmark.objects.order_by("?")[:3]
         serializer = self.serializer_class(landmarks, many=True)
@@ -34,6 +40,9 @@ class GetLandmark(APIView):
     permission_classes = [AllowAny]
     serializer_class = LandmarkDetailSerializer
 
+    @swagger_auto_schema(
+        responses={200: LandmarkDetailSerializer, 404: "존재하지 않는 랜드마크"},
+    )
     def get(self, request, landmark_id):
         try:
             landmark = Landmark.objects.get(id=landmark_id)
@@ -55,6 +64,17 @@ class SearchLandmark(APIView):
     permission_classes = [AllowAny]
     serializer_class = LandmarkDetailSerializer
 
+    @swagger_auto_schema(
+        manual_parameters=[
+            openapi.Parameter(
+                "landmark_name",
+                openapi.IN_QUERY,
+                description="랜드마크 이름",
+                type=openapi.TYPE_STRING,
+            )
+        ],
+        responses={200: "성공 (응답 참고)", 400: "landmark_name이 전달되지 않음"},
+    )
     def get(self, request):
         search_word = request.query_params.get("landmark_name", None)
 
@@ -81,6 +101,9 @@ class GetLandmarkPosts(APIView):
     permission_classes = [AllowAny]
     serializer_class = PostSerializer
 
+    @swagger_auto_schema(
+        responses={200: "성공 (응답 참고)", 404: "존재하지 않는 랜드마크 ID"},
+    )
     def get(self, request, landmark_id):
         try:
             landmark = Landmark.objects.get(id=landmark_id)
