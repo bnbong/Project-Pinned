@@ -18,8 +18,6 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
 const Edit = (props) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("initial content");
-  let autosavedContent;
-
   const onChange = useCallback((content) => {
     setContent(content), [];
   });
@@ -27,9 +25,9 @@ const Edit = (props) => {
   /* SSR 방식이라 pre-rendering 될때는 window,document객체에 접근할 수없기 때문에
   localstorage를 이용할 때는 조건문을 사용해야함.
   */
-  if (typeof window !== "undefined") {
-    const autosavedContent = localStorage.getItem(`smde_demo`);
-  }
+
+  const autosavedContent =
+    typeof window !== "undefined" ? localStorage.getItem(`smde_demo`) : null;
 
   const delay = 2000;
 

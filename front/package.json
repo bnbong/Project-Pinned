@@ -15,6 +15,7 @@
     "draftjs-to-html": "^0.9.1",
     "eslint": "8.43.0",
     "eslint-config-next": "13.4.7",
+    "firebase": "^9.23.0",
     "flowbite-react": "^0.4.9",
     "next": "13.4.7",
     "postcss": "8.4.24",
