@@ -74,7 +74,6 @@ class UserRegister(APIView):
 
 class UserLogin(LoginView):
     """
-    TODO: 유저의 이메일과 패스워드가 불일치 할 때의 response 추가하기.
     유저의 로그인 API.
     """
 
@@ -273,7 +272,7 @@ class UserSearch(APIView):
     """
 
     def get(self, request):
-        search_word = request.data.get("username", None)
+        search_word = request.query_params.get("username", None)
 
         if search_word is None:
             return Response(
