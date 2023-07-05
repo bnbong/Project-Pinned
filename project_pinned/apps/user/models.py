@@ -118,3 +118,10 @@ class Follow(BaseModel):
 
     class Meta:
         unique_together = ["follower", "following"]
+
+
+class UserDevice(BaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="device"
+    )
+    fcmToken = models.CharField(max_length=500, null=True, blank=True)

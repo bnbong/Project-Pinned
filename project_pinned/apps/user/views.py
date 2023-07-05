@@ -1,4 +1,4 @@
-# TODO: 캐시 기능 적용 방안 설계 및 구현
+# TODO: notification 기능 구현하기
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
@@ -14,7 +14,11 @@ from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
+from apps.notification import send_notifiaction
+
 from .serializers import FollowUserSerializer, RegisterSerializer, UserProfileSerializer
+from .models import UserDevice
+
 
 User = get_user_model()
 
@@ -173,6 +177,12 @@ class UserFollow(APIView):
             if not cur_user.following.filter(user_id=target_user_id).exists():
                 cur_user.following.add(target_user)
                 target_user.followers.add(cur_user)
+
+                title = "새로운 팔로워가 생겼어요!"
+                body = f"{cur_user.username} 님이 팔로우를 시작했어요!"
+
+                send_notifiaction(target_user=target_user, title=title, content=body)
+
                 return Response(
                     {"is_success": True, "detail": "user follow success"},
                     status=status.HTTP_200_OK,
@@ -268,3 +278,29 @@ class UserSearch(APIView):
 
         serializer = UserProfileSerializer(users, many=True)
         return Response({"searched_users": serializer.data}, status=status.HTTP_200_OK)
+
+
+class UserFCMToken(APIView):
+    """
+    클라이언트에서 FCM 토큰을 받아 사용자 모델에 저장하는 API
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        fcm_token = request.data.get("fcm_token", None)
+
+        if fcm_token:
+            UserDevice.objects.update_or_create(
+                user=request.user, defaults={"fcmToken": fcm_token}
+            )
+            return Response(
+                {"is_success": True, "detail": "FCM Token saved"},
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response(
+                {"is_success": False, "detail": "FCM Token is not provided"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )

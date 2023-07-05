@@ -1,6 +1,8 @@
+# TODO: notification 기능 구현하기
 from django.views import View
 from django.http import HttpResponse
 from django.db.models import Count
+from django.core.cache import cache
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -12,6 +14,8 @@ from apps.user.models import User
 
 from .models import Post, Comment, Like
 from .serializers import PostSerializer, PostCreateSerializer, CommentSerializer
+
+from apps.notification import send_notifiaction
 
 
 class PostViewTest(View):
@@ -37,8 +41,11 @@ class PostCreate(APIView):
             data=request.data, context={"request": request}
         )
         if serializer.is_valid(raise_exception=True):
-            # post = serializer.save()
-            post = serializer.save(request)
+            serializer.save(request)
+
+            cache_key = f"user_{request.user.id}_feed"
+            cache.delete(cache_key)
+
             return Response(
                 {"is_success": True, "detail": "post success"},
                 status=status.HTTP_201_CREATED,
@@ -139,6 +146,18 @@ class PostsByUser(APIView):
 class PostFeed(APIView):
     """
     메인 페이지에 표시되는 유저 피드 게시물들을 불러올 때 사용되는 API.
+
+    피드 생성 로직 ->
+    1. 팔로우한 유저들의 게시물들을 불러온다.
+    2. 좋아요 수가 많은 게시물들을 불러온다.
+    3. 추천 게시물들을 불러온다.
+    4. 1, 2, 3번의 게시물들을 합친다.
+    5. 4번의 게시물들을 좋아요 수가 많은 순서대로 정렬한다.
+    6. 5번의 게시물들을 offset, limit에 맞게 잘라서 반환한다.
+
+    피드 갱신 로직 ->
+    1. 특정 유저가 게시물을 만들면, 현재 로그인 되어 있는 유저의 피드를 삭제한다.
+    2. 피드를 불러오는 api를 호출할 때 피드를 다시 생성한다.
     """
 
     authentication_classes = [JWTAuthentication]
@@ -146,12 +165,15 @@ class PostFeed(APIView):
     serializer_class = PostSerializer
 
     def get(self, request, offset=0, limit=10):
-        following_posts, most_liked_posts, recommended_posts = self.get_posts(
-            request, offset, limit
-        )
+        cache_key = f"user_{request.user.id}_feed"
+        data = cache.get(cache_key)
 
-        return Response(
-            {
+        if not data:
+            following_posts, most_liked_posts, recommended_posts = self.get_posts(
+                request, offset, limit
+            )
+
+            data = {
                 "followed_posts": self.serializer_class(
                     following_posts, many=True
                 ).data,
@@ -161,7 +183,12 @@ class PostFeed(APIView):
                 "recommended_posts": self.serializer_class(
                     recommended_posts, many=True
                 ).data,
-            },
+            }
+
+            cache.set(cache_key, data, 60 * 60 * 24)
+
+        return Response(
+            data,
             status=status.HTTP_200_OK,
         )
 
@@ -313,6 +340,13 @@ class PostLike(APIView):
             )
 
         like = Like.objects.create(user=request.user, post=post)
+
+        target_user = post.user
+
+        title = "좋아요 알림"
+        body = f"{request.user} 님이 당신의 게시물에 좋아요를 눌렀습니다."
+
+        send_notifiaction(target_user=target_user, title=title, content=body)
         return Response(
             {"is_success": True, "detail": "post like success"},
             status=status.HTTP_201_CREATED,

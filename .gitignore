@@ -5,3 +5,5 @@ __pycache__/
 
 # misc
 .DS_Store
+
+serviceAccountKey.json

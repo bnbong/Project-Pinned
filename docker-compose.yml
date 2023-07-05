@@ -43,6 +43,16 @@ services:
     environment:
       - REACT_APP_BACKEND_URL=http://backend:8000
 
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+      - backend
+
 volumes:
   postgres_data:
   redis_data:

@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import Input from "../components/Input";
 import Link from "next/link";
+import { useMutation } from "react-query";
+import apiMapper from "@/components/apiMapper";
+import axiosBaseURL from "@/components/axiosBaseUrl";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
@@ -9,6 +12,7 @@ export default function Login() {
     password: "",
     confirm_password: "",
   });
+
   const [emailError, setEmailError] = useState("");
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
@@ -35,9 +39,7 @@ export default function Login() {
     if (id == "password") {
       const passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9]).{8,25}$/;
       if (!passwordRegex.test(value)) {
-        setPasswordError(
-          "비밀번호는 한글/영어/숫자 조합 8자 이상이어야 합니다."
-        );
+        setPasswordError("비밀번호는 영어/숫자 조합 8자 이상이어야 합니다.");
       } else {
         setPasswordError("");
       }
@@ -55,12 +57,40 @@ export default function Login() {
   const onChange = (e) => {
     const { id, value } = e.target;
     validation(id, value);
+    0;
     setInputs({
       ...inputs,
       [id]: value,
     });
+  };
 
-    console.log(inputs);
+  const { mutate, data, isError, isLoading } = useMutation(
+    async () => {
+      const response = await axiosBaseURL.post(apiMapper.user.post.REGISTER, {
+        username,
+        email,
+        password,
+      });
+    },
+    {
+      onSuccess: (e) => console.log(e, "success"),
+      onError: (e) => {
+        console.log(e, "error");
+      },
+    }
+  );
+  console.log(data, isLoading, isError);
+  const onClick = () => {
+    const { response } = axiosBaseURL
+      .post(apiMapper.user.post.REGISTER, {
+        username,
+        email,
+        password,
+      })
+      .then((e) => consol.log(e))
+      .catch((e) => console.log(e.response.data));
+    /* eslint-disable no-console */
+    console.log(response);
   };
 
   return (
@@ -75,7 +105,7 @@ export default function Login() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               회원가입
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <div className="space-y-4 md:space-y-6">
               <Input
                 name="사용자 이름"
                 id="username"
@@ -135,7 +165,7 @@ export default function Login() {
                 </div>
               </div>
               <button
-                type="submit"
+                onClick={mutate}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 회원가입하기
@@ -149,7 +179,7 @@ export default function Login() {
                   로그인 하기
                 </Link>
               </p>
-            </form>
+            </div>
           </div>
         </div>
       </div>
