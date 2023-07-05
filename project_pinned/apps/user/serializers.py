@@ -94,7 +94,6 @@ class UserLoginSerializer(serializers.ModelSerializer):
 
 class UserLoginResponseSerializer(serializers.Serializer):
     access_token = serializers.CharField()
-    refresh_token = serializers.CharField()
     user = serializers.SerializerMethodField()
 
     def get_user(self, obj):

@@ -1,4 +1,3 @@
-# TODO: notification 기능 구현하기
 from django.db import IntegrityError
 from django.db.models import Q
 from django.http import HttpResponse
@@ -6,6 +5,7 @@ from django.views import View
 from django.contrib.auth import get_user_model
 
 from dj_rest_auth.views import LoginView
+from dj_rest_auth.jwt_auth import set_jwt_cookies
 
 from rest_framework import permissions, status
 from rest_framework.views import APIView
@@ -74,6 +74,7 @@ class UserRegister(APIView):
 
 class UserLogin(LoginView):
     """
+    TODO: 유저의 이메일과 패스워드가 불일치 할 때의 response 추가하기.
     유저의 로그인 API.
     """
 
@@ -83,7 +84,6 @@ class UserLogin(LoginView):
         data = {
             "user": self.user,
             "access_token": self.access_token,
-            "refresh_token": self.refresh_token,
         }
 
         serializer = serializer_class(
@@ -91,7 +91,14 @@ class UserLogin(LoginView):
             context=self.get_serializer_context(),
         )
 
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        response = Response(serializer.data, status=status.HTTP_200_OK)
+
+        set_jwt_cookies(
+            response,
+            self.access_token,
+            self.refresh_token,
+        )
+        return response
 
 
 class UserDelete(APIView):

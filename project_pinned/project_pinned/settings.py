@@ -204,4 +204,10 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
     "TOKEN_MODEL": None,
     "LOGIN_SERIALIZER": "apps.user.serializers.UserLoginSerializer",
+
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',  # Cookie name. Enables cookies if value is set.
+    'JWT_AUTH_SAMESITE': 'Lax',
+    'JWT_AUTH_RETURN_EXPIRATION': False,
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
+    'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
 }
