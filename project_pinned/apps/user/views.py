@@ -379,7 +379,19 @@ class UserSearch(APIView):
     유저를 검색하는데 사용되는 API.
     """
 
-    # TODO SWAGGER
+    @swagger_auto_schema(
+        operation_description="유저를 검색하는데 사용되는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        manual_parameters=[
+            openapi.Parameter(
+                "username",
+                openapi.IN_QUERY,
+                description="사용자 이름",
+                type=openapi.TYPE_STRING,
+            )
+        ],
+        responses={200: "성공 (응답 참고)", 400: "username이 전달되지 않음", 401: "사용자 인증 실패"},
+    )
     def get(self, request):
         search_word = request.query_params.get("username", None)
 
