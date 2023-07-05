@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
+import { useContext, useEffect, useRef, useState } from 'react';
+import axios from 'axios';
 
-const SettingUserThumbnail = ({img, setImg, check}) =>{
+const SettingUserThumbnail = ({img, setImg, imgUrl, setImgUrl}) =>{
     const inputRef = useRef(null);
-    
     const UploadImage = (e) => {
         if(!e.target.files) {
             return;
@@ -10,11 +11,14 @@ const SettingUserThumbnail = ({img, setImg, check}) =>{
         console.log(e.target);
         console.log(e.target.files);
         console.log(e.target.files[0].name);
+
         const file = e.target.files[0];
+        setImg(file);
+
         const reader = new FileReader();
         reader.onload = () => {
             const ImageDataUrl = reader.result;
-            setImg(ImageDataUrl);
+            setImgUrl(ImageDataUrl);
         }
         reader.readAsDataURL(file);
     }
@@ -24,33 +28,62 @@ const SettingUserThumbnail = ({img, setImg, check}) =>{
         }
         inputRef.current.click();
     }
+    useEffect(() => {
+        if (img instanceof Blob) {
+            const tempImgUrl = URL.createObjectURL(img);
+            setImgUrl(tempImgUrl);
+            return () => URL.revokeObjectURL(imgUrl);
+        }
+    }, [img]);
     return (
         <div className="flex flex-col items-center ">
             <img
                 className='w-20 h-20 rounded-full object-cover mr-5'
-                src={img}
-                />
+                src={img instanceof Blob ? URL.createObjectURL(img) : img} // img가 Blob 객체인지 확인
+            />
             <input type='file' accept='image/*' ref={inputRef} onChange={UploadImage}></input>
             <button onClick={UploadImageButtonClick}></button>
         </div>
-    )
+    )   
 };
 
 
 
 export default function EditProfileModal({ isOpen, onClose, userName, setUserName, img, setImg }) {
+    const {loginState, setLoginState} = useContext(AuthContext)
     const [name, setName] = useState(userName);
-    const [imageUrl, setImageUrl] = useState('');
-    const [check, setCheck] = useState(false);
-    useEffect(() => {
-        setName(userName);
-    },[userName]);
-    
-    const handleSubmit = () => {
-        setUserName(name);
-        onClose();
-    };
 
+
+    const [imgUrl, setImgUrl] = useState('');
+
+
+    
+    const handleSubmit = async () => {
+        const formData = new FormData();
+        formData.append('username',name);
+        formData.append('profile_image',img);
+        console.log('이미지 확인 = ' + img);
+        try{
+            const response = await axios.put(
+                    `http://localhost:8000/api/v1/user/${loginState.user.user_id}/profile/`,
+                    formData,
+                    {
+                        headers: {
+                            "Authorization": `Bearer ${loginState.accessToken}`,
+                            "Content-Type": 'multipart/form-data',
+                        },
+                    }
+                );
+
+                if(response.data.is_success){
+                    setUserName(name);
+                    setImg(imgUrl);
+                }
+        }catch (error){
+            console.log(error);  
+        }
+        onClose();
+    }
     if (!isOpen) return null;
 
     return (
@@ -62,7 +95,7 @@ export default function EditProfileModal({ isOpen, onClose, userName, setUserNam
                     <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                             <h3 className="text-lg leading-6 font-medium text-gray-900" id="modal-title">Edit Profile</h3>
-                            <SettingUserThumbnail img={img} setImg={setImg} check={check}/>
+                            <SettingUserThumbnail img={img} setImg={setImg} imgUrl={imgUrl} setImgUrl={setImgUrl} />
                             <div>
                                 <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                                 <input 
