@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Link from "next/link";
 import { useMutation } from "react-query";

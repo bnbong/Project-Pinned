@@ -25,7 +25,6 @@ services:
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./project_pinned:/app
       - django_static_volume:/app/static
     ports:
       - "8000:8000"
@@ -37,8 +36,6 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
-    volumes:
-      - ./front:/app
     ports:
       - "3000:3000"
     environment:
