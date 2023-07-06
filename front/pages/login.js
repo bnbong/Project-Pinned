@@ -3,7 +3,7 @@ import apiMapper from "@/components/apiMapper";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
 
 export default function Login() {
@@ -11,17 +11,20 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState({});
   const router = useRouter();
-  const onChange = (e) => {
-    const { id, value } = e.target;
-    if (id == "email") {
-      setEmail(value);
-      console.log(email);
-    }
-    if (id == "password") {
-      setPassword(value);
-      console.log(password);
-    }
-  };
+  const onChange = useCallback(
+    (e) => {
+      const { id, value } = e.target;
+      if (id == "email") {
+        setEmail(value);
+        console.log(email);
+      }
+      if (id == "password") {
+        setPassword(value);
+        console.log(password);
+      }
+    },
+    [email, password]
+  );
   const { mutate, data, isLoading, isError } = useMutation({
     mutationFn: (loginInformation) => {
       return axiosBaseURL.post(apiMapper.user.post.LOGIN, loginInformation);
@@ -30,10 +33,12 @@ export default function Login() {
       //data에 서버 resonse값이 저장됨
       console.log(data, variables, context);
       console.log("success");
+      alert("로그인 성공");
       router.push("/");
     },
     onError: (error, variables, context) => {
       console(error, variables, context);
+      alert("로그인 실패");
       setErrorMessage(e.response.data);
     },
   });

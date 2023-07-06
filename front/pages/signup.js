@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useCallback } from "react";
 import Input from "../components/Input";
 import Link from "next/link";
 import { useMutation } from "react-query";
@@ -57,15 +57,18 @@ export default function Login() {
     }
   };
 
-  const onChange = (e) => {
-    const { id, value } = e.target;
-    validation(id, value);
+  const onChange = useCallback(
+    (e) => {
+      const { id, value } = e.target;
+      validation(id, value);
 
-    setInputs({
-      ...inputs,
-      [id]: value,
-    });
-  };
+      setInputs({
+        ...inputs,
+        [id]: value,
+      });
+    },
+    [inputs]
+  );
 
   const { mutate, data, error, isError, isLoading } = useMutation({
     mutationFn: (userInformation) => {
