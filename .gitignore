@@ -1,5 +1,6 @@
 pinn-venv/
 .env
+.coverage
 
 __pycache__/
 
