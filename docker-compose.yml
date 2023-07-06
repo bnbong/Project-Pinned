@@ -50,6 +50,7 @@ services:
       dockerfile: Dockerfile
     volumes:
       - django_static_volume:/data/static
+      - ./logs:/var/log/nginx
     ports:
       - "80:80"
     depends_on:
