@@ -12,8 +12,9 @@ import "react-quill/dist/quill.snow.css";
 import { useMutation } from "react-query";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import apiMapper from "@/components/apiMapper";
+import withAuth from "@/HOC/withAuth";
 
-export default function Post({ html, setHtml }) {
+export default withAuth(function Post({ html, setHtml }) {
   const ReactQuill = dynamic(
     async () => {
       const { default: RQ } = await import("react-quill");
@@ -207,4 +208,4 @@ export default function Post({ html, setHtml }) {
       </div>
     </div>
   );
-}
+});

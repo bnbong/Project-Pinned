@@ -3,13 +3,12 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import EditProfileModal from "@/components/modal";
-
-
+import withAuth from "@/HOC/withAuth";
 
 const MyPage = () => {
   const router = useRouter();
 
-  // loginState = 유저의 데이터 
+  // loginState = 유저의 데이터
   const { loginState, setLoginState } = useContext(AuthContext);
   const user = loginState.user;
 
@@ -19,13 +18,15 @@ const MyPage = () => {
   const closeEdit = () => setEdit(false);
 
   //user_Id, user_name, follower, following 관리
-  const [userID, setUserID] = useState(user?.user_id || '');
+  const [userID, setUserID] = useState(user?.user_id || "");
   const [userName, setUserName] = useState(user?.username);
   const [follower, setFollower] = useState(user?.followers);
   const [following, setFollowing] = useState(user?.followings);
   const [postNumber, setPostNumber] = useState(0);
   //img 파일 관리하는 state
-  const [img,setImg] = useState(user?.profile_image || "https://via.placeholder.com/150");
+  const [img, setImg] = useState(
+    user?.profile_image || "https://via.placeholder.com/150"
+  );
 
   // const dummyData = [
   //   { title: "Post 1" },
@@ -50,7 +51,7 @@ const MyPage = () => {
           `http://localhost:8000/api/v1/post/posts/${userID}/`,
           {
             headers: {
-              'Authorization': `Bearer ${loginState.accessToken}`,
+              Authorization: `Bearer ${loginState.accessToken}`,
             },
           }
         );
@@ -64,28 +65,28 @@ const MyPage = () => {
   }, [userID]);
 
   //프로필 fetch
-  useEffect(()=> {
+  useEffect(() => {
     const fetchUser = async () => {
-      try{
+      try {
         const response = await axios.get(
           `http://localhost:8000/api/v1/user/${userID}/profile/`,
           {
             headers: {
-            'Authorization': `Bearer ${loginState.accessToken}`,
+              Authorization: `Bearer ${loginState.accessToken}`,
             },
           }
         );
         console.log(response.data.profile_image);
         setUserName(response.data.username);
         setImg(response.data.profile_image);
-        setLoginState(prevState => ({
-            ...prevState,
-            user: response.data
+        setLoginState((prevState) => ({
+          ...prevState,
+          user: response.data,
         }));
-      } catch(error){
+      } catch (error) {
         console.log(error);
       }
-    }
+    };
   }, [userName, img]);
 
   return (
@@ -116,7 +117,7 @@ const MyPage = () => {
             onClose={closeEdit}
             userName={userName}
             setUserName={setUserName}
-            img = {img}
+            img={img}
             setImg={setImg}
           ></EditProfileModal>
         </div>
@@ -143,7 +144,9 @@ const MyPage = () => {
             <h4>{post.post_title}</h4>
             <div className="flex justify-center">
               <img
-                src={post.post_image[0]?.url || "https://via.placeholder.com/150"}
+                src={
+                  post.post_image[0]?.url || "https://via.placeholder.com/150"
+                }
                 alt="Post Image"
                 className="w-1/4 h-auto"
               />
@@ -151,7 +154,7 @@ const MyPage = () => {
             <p>안녕</p>
             <p>안녕</p>
             <p>안녕</p>
-            <div className='flex justify-center'>
+            <div className="flex justify-center">
               <hr className="w-1/4 border-1 bg-white mb-4"></hr>
             </div>
           </div>
@@ -161,4 +164,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default withAuth(MyPage);
