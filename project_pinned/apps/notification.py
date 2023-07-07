@@ -4,7 +4,7 @@ import firebase_admin
 from firebase_admin import messaging
 from firebase_admin import credentials
 
-from project_pinned.settings import BASE_DIR
+from project_pinned.settings.base import BASE_DIR
 
 
 def send_notifiaction(target_user, title, content):

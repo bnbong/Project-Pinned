@@ -1,8 +1,8 @@
 echo "deleting exist docker volumes..."
-docker compose down --volumes
+docker compose -f docker-compose.yml down --volumes
 
 echo "building container..."
-docker compose up --build -d
+docker compose -f docker-compose.yml up --build -d
 
 echo "Applying Schemas to Database..."
 docker exec -it "project-pinned-backend-1" python manage.py migrate

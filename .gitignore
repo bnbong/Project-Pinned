@@ -9,4 +9,8 @@ __pycache__/
 
 serviceAccountKey.json
 
+# Nginx 로그 파일
 logs/
+
+# pgAdmin4 데이터 파일
+data/
