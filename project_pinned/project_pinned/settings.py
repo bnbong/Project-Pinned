@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt.token_blacklist",
     "dj_rest_auth",
     "corsheaders",
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -87,6 +88,7 @@ CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "http://0.0.0.0:3000",
+    "http://localhost"
 ]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -151,6 +153,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 MEDIA_URL = "media/"
@@ -201,4 +205,22 @@ REST_AUTH = {
     "JWT_AUTH_HTTPONLY": False,
     "TOKEN_MODEL": None,
     "LOGIN_SERIALIZER": "apps.user.serializers.UserLoginSerializer",
+
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',  # Cookie name. Enables cookies if value is set.
+    'JWT_AUTH_SAMESITE': 'Lax',
+    'JWT_AUTH_RETURN_EXPIRATION': False,
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
+    'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
+}
+
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT 토큰을 전달하세요. (예: Bearer {토큰})",
+        },
+    },
 }

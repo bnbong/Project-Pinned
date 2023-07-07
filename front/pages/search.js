@@ -1,8 +1,9 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { useContext } from "react";
+import withAuth from "@/HOC/withAuth";
 
-export default function SearchPage() {
+export default withAuth(function SearchPage() {
   const { loginState } = useContext(AuthContext);
   const id = 1;
   const userId = "최수용";
@@ -15,4 +16,4 @@ export default function SearchPage() {
       </Link>
     </div>
   );
-}
+});

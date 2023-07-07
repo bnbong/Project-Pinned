@@ -6,11 +6,12 @@ import EditProfileModal from "@/components/modal";
 import PostLayout from '@/components/postLayout';
 import NewPostLayout from '@/components/NewPostLayout';
 
+import withAuth from "@/HOC/withAuth";
 
 const MyPage = () => {
   const router = useRouter();
 
-  // loginState = 유저의 데이터 
+  // loginState = 유저의 데이터
   const { loginState, setLoginState } = useContext(AuthContext);
   const user = loginState.user;
 
@@ -20,7 +21,7 @@ const MyPage = () => {
   const closeEdit = () => setEdit(false);
 
   //user_Id, user_name, follower, following 관리
-  const [userID, setUserID] = useState(user?.user_id || '');
+  const [userID, setUserID] = useState(user?.user_id || "");
   const [userName, setUserName] = useState(user?.username);
   const [follower, setFollower] = useState(user?.followers);
   const [following, setFollowing] = useState(user?.followings);
@@ -28,6 +29,7 @@ const MyPage = () => {
   //img 파일 관리하는 state
   const [img,setImg] = useState(user?.profile_image.replace('localhost:3000', 'localhost:8000') || "https://via.placeholder.com/150");
   //post 관리하는 state
+
   const [posts, setPosts] = useState([]);
 
   const dummyData = [
@@ -88,7 +90,7 @@ const MyPage = () => {
           `http://localhost:8000/api/v1/post/posts/${userID}/`,
           {
             headers: {
-              'Authorization': `Bearer ${loginState.accessToken}`,
+              Authorization: `Bearer ${loginState.accessToken}`,
             },
           }
         );
@@ -102,7 +104,7 @@ const MyPage = () => {
   }, [userID]);
 
   //프로필 fetch
-  useEffect(()=> {
+  useEffect(() => {
     const fetchUser = async () => {
         try{
             const response = await axios.get(
@@ -158,7 +160,7 @@ const MyPage = () => {
             onClose={closeEdit}
             userName={userName}
             setUserName={setUserName}
-            img = {img}
+            img={img}
             setImg={setImg}
           />
         </div>
@@ -202,4 +204,4 @@ const MyPage = () => {
   );
 };
 
-export default MyPage;
+export default withAuth(MyPage);

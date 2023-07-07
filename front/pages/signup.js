@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Input from "../components/Input";
 import Link from "next/link";
 import { useMutation } from "react-query";
@@ -17,7 +17,10 @@ export default function Login() {
   const [usernameError, setUsernameError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const [confirmPasswordError, setConfirmPasswordError] = useState("");
+  const [errorMessage, setErrorMessage] = useState({});
+
   const { email, password, username, confirm_password } = inputs;
+
   const validation = (id, value) => {
     if (id == "email") {
       const emailRegex =
@@ -54,44 +57,27 @@ export default function Login() {
     }
   };
 
-  const onChange = (e) => {
-    const { id, value } = e.target;
-    validation(id, value);
-    0;
-    setInputs({
-      ...inputs,
-      [id]: value,
-    });
-  };
+  const onChange = useCallback(
+    (e) => {
+      const { id, value } = e.target;
+      validation(id, value);
 
-  const { mutate, data, isError, isLoading } = useMutation(
-    async () => {
-      const response = await axiosBaseURL.post(apiMapper.user.post.REGISTER, {
-        username,
-        email,
-        password,
+      setInputs({
+        ...inputs,
+        [id]: value,
       });
     },
-    {
-      onSuccess: (e) => console.log(e, "success"),
-      onError: (e) => {
-        console.log(e, "error");
-      },
-    }
+    [inputs]
   );
-  console.log(data, isLoading, isError);
-  const onClick = () => {
-    const { response } = axiosBaseURL
-      .post(apiMapper.user.post.REGISTER, {
-        username,
-        email,
-        password,
-      })
-      .then((e) => consol.log(e))
-      .catch((e) => console.log(e.response.data));
-    /* eslint-disable no-console */
-    console.log(response);
-  };
+
+  const { mutate, data, error, isError, isLoading } = useMutation({
+    mutationFn: (userInformation) => {
+      return axiosBaseURL.post(apiMapper.user.post.REGISTER, userInformation);
+    },
+    onError: (e) => {
+      setErrorMessage(e.response.data);
+    },
+  });
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -164,12 +150,14 @@ export default function Login() {
                   </label>
                 </div>
               </div>
+
               <button
-                onClick={mutate}
+                onClick={() => mutate({ username, email, password })}
                 className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
                 회원가입하기
               </button>
+              {isError ? <div>{errorMessage.detail}</div> : null}
               <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                 이미 계정이 있으신가요?{" "}
                 <Link
