@@ -2,6 +2,7 @@ import Link from "next/link";
 import axios from 'axios';
 import { createContext, useContext, useEffect } from 'react';
 import { AuthContext } from '@/contexts/AuthContext';
+import PostLayout from '@/components/postLayout';
 
 export default function Home() {
   const {loginState, setLoginState} = useContext(AuthContext);
@@ -124,6 +125,13 @@ export default function Home() {
     <div>
       <h4>메인페이지</h4>
       <h4>안녕!</h4>
+      <PostLayout 
+      profileImage="profile.jpg" 
+      username="Username" 
+      postImage="https://via.placeholder.com/150" 
+      likes={999} 
+      description="Post Description..." 
+    />
     </div>
   );
 }
