@@ -3,6 +3,11 @@ version: '3.8'
 services:
   db:
     image: postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
     environment:
       POSTGRES_DB: pinned_db
       POSTGRES_USER: pinned
@@ -14,6 +19,11 @@ services:
 
   redis:
     image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
     volumes:
       - redis_data:/data
     ports:
@@ -24,6 +34,11 @@ services:
       context: ./project_pinned
       dockerfile: Dockerfile
     command: python manage.py runserver 0.0.0.0:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
     volumes:
       - django_static_volume:/app/static
     environment:
@@ -38,6 +53,11 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
     ports:
       - "3000:3000"
     environment:
@@ -47,6 +67,11 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
     volumes:
       - django_static_volume:/data/static
       - ./logs:/var/log/nginx
@@ -58,6 +83,11 @@ services:
   
   pgadmin:
     image: dpage/pgadmin4
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
     restart: always
     ports:
       - "5050:80"
