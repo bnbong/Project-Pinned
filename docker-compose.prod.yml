@@ -1,26 +1,41 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
+    environment:
+      POSTGRES_DB: pinned_db
+      POSTGRES_USER: pinned
+      POSTGRES_PASSWORD: pinned
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
 
   redis:
-    image: ${ACR_LOGIN_SERVER}/project-pinned-redis:latest
+    image: "redis:alpine"
     deploy:
       resources:
         limits:
           cpus: '0.8'
-    container_name: azure-redis
     volumes:
       - redis-data:/data
     ports:
       - "6379:6379"
 
   backend:
-    image: ${ACR_LOGIN_SERVER}/project-pinned-backend:latest
+    build:
+      context: ./project_pinned
+      dockerfile: Dockerfile
     deploy:
       resources:
         limits:
           cpus: '1'
-    container_name: azure-backend
     volumes:
       - django-static-volume:/app/static
     environment:
@@ -29,61 +44,39 @@ services:
       - "8000:8000"
 
   frontend:
-    image: ${ACR_LOGIN_SERVER}/project-pinned-frontend:latest
+    build:
+      context: ./front
+      dockerfile: Dockerfile
     deploy:
       resources:
         limits:
           cpus: '1'
-    container_name: azure-frontend
     ports:
       - "3000:3000"
 
   nginx:
-    image: ${ACR_LOGIN_SERVER}/project-pinned-nginx:latest
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
     deploy:
       resources:
         limits:
           cpus: '1'
-    container_name: azure-nginx
     volumes:
       - django-static-volume:/data/static
-      - certbot-letsencrypt:/etc/letsencrypt
-      - certbot-www:/var/www/certbot
     ports:
       - "80:80"
       - "443:443"
 
-  certbot:  #certbot 컨테이너 추가 
-    image: certbot/certbot
-    deploy:
-      resources:
-        limits:
-          cpus: '0.1'
-    restart: unless-stopped
-    container_name: certbot
-    volumes: 
-        - certbot-letsencrypt:/etc/letsencrypt
-        - certbot-www:/var/www/certbot
-
 
 volumes:
   redis-data:
-    driver: azure_file
-    driver_opts:
-      share_name: ${AZ_SHARE_NAME}
-      storage_account_name: ${AZ_STORAGE_ACCOUNT}
+    # driver: azure_file
+    # driver_opts:
+    #   share_name: ${AZ_SHARE_NAME}
+    #   storage_account_name: ${AZ_STORAGE_ACCOUNT}
   django-static-volume:
-    driver: azure_file
-    driver_opts:
-      share_name: ${AZ_SHARE_NAME}
-      storage_account_name: ${AZ_STORAGE_ACCOUNT}
-  certbot-www:
-    driver: azure_file
-    driver_opts:
-      share_name: ${AZ_SHARE_NAME}
-      storage_account_name: ${AZ_STORAGE_ACCOUNT}
-  certbot-letsencrypt:
-    driver: azure_file
-    driver_opts:
-      share_name: ${AZ_SHARE_NAME}
-      storage_account_name: ${AZ_STORAGE_ACCOUNT}
+    # driver: azure_file
+    # driver_opts:
+    #   share_name: ${AZ_SHARE_NAME}
+    #   storage_account_name: ${AZ_STORAGE_ACCOUNT}
