@@ -3,8 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import EditProfileModal from "@/components/modal";
-import PostLayout from '@/components/PostLayout';
-import NewPostLayout from '@/components/NewPostLayout';
+import NewPostLayout from "@/components/NewPostLayout";
 
 import withAuth from "@/HOC/withAuth";
 
@@ -27,7 +26,10 @@ const MyPage = () => {
   const [following, setFollowing] = useState(user?.followings);
   const [postNumber, setPostNumber] = useState(0);
   //img 파일 관리하는 state
-  const [img,setImg] = useState(user?.profile_image.replace('localhost:3000', 'localhost:8000') || "https://via.placeholder.com/150");
+  const [img, setImg] = useState(
+    user?.profile_image.replace("localhost:3000", "localhost:8000") ||
+      "https://via.placeholder.com/150"
+  );
   //post 관리하는 state
 
   const [posts, setPosts] = useState([]);
@@ -38,49 +40,51 @@ const MyPage = () => {
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
+      description: "Post Description 1...",
     },
     {
       profileImage: "profile2.jpg",
       username: "Username2",
       postImage: "https://via.placeholder.com/150",
       likes: 500,
-      description: "Post Description 2..."
+      description: "Post Description 2...",
     },
     {
       profileImage: "profile1.jpg",
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
-    },{
+      description: "Post Description 1...",
+    },
+    {
       profileImage: "profile1.jpg",
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
-    },{
+      description: "Post Description 1...",
+    },
+    {
       profileImage: "profile1.jpg",
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
-    },{
+      description: "Post Description 1...",
+    },
+    {
       profileImage: "profile1.jpg",
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
-    },{
+      description: "Post Description 1...",
+    },
+    {
       profileImage: "profile1.jpg",
       username: "Username1",
       postImage: "https://via.placeholder.com/150",
       likes: 999,
-      description: "Post Description 1..."
+      description: "Post Description 1...",
     },
   ];
-
-  
 
   //게시물 로딩
   useEffect(() => {
@@ -106,31 +110,31 @@ const MyPage = () => {
   //프로필 fetch
   useEffect(() => {
     const fetchUser = async () => {
-        try{
-            const response = await axios.get(
-                `http://localhost:8000/api/v1/user/${userID}/profile/`,
-                {
-                headers: {
-                    'Authorization': `Bearer ${loginState.accessToken}`,
-                },
-                }
-            );
-            console.log("프로필 fetch = "+ response.data.profile_image);
-            setUserName(response.data.username);
-            setImg(response.data.profile_image);
-        } catch(error){
-            console.log(error);
-        }
-    }
+      try {
+        const response = await axios.get(
+          `http://localhost:8000/api/v1/user/${userID}/profile/`,
+          {
+            headers: {
+              Authorization: `Bearer ${loginState.accessToken}`,
+            },
+          }
+        );
+        console.log("프로필 fetch = " + response.data.profile_image);
+        setUserName(response.data.username);
+        setImg(response.data.profile_image);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-    if(user){
-        fetchUser();
+    if (user) {
+      fetchUser();
     }
   }, [user, userID, loginState]);
 
-  useEffect(()=> {
+  useEffect(() => {
     setImg(user?.profile_image || "https://via.placeholder.com/150");
-}, [user?.profile_image]);
+  }, [user?.profile_image]);
 
   return (
     <div className="p-5 bg-neutral-50">
@@ -182,7 +186,7 @@ const MyPage = () => {
         </div>
       </div>
       <div className="grid-cols-1 items-center justify-center">
-        {dummyData.map((post,index) => (
+        {dummyData.map((post, index) => (
           <NewPostLayout
             key={index}
             author={post.username}
@@ -193,9 +197,9 @@ const MyPage = () => {
           // <PostLayout
           //   key={index}
           //   profileImage= {post.profileImage}
-          //   username= {post.username} 
-          //   postImage={post.postImage} 
-          //   likes={post.likes} 
+          //   username= {post.username}
+          //   postImage={post.postImage}
+          //   likes={post.likes}
           //   description={post.description}
           // />
         ))}

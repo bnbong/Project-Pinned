@@ -1,11 +1,14 @@
 import Link from "next/link";
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { getToken, getMessaging } from "firebase/messaging";
 import { messaging } from "@/components/firebase";
 import NewPostLayout from "@/components/NewPostLayout";
 import axiosBaseURL from "@/components/axiosBaseUrl";
+import { useInfiniteQuery } from "react-query";
+import { useObserver } from "@/hook/useObserver";
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
 export default function Home() {
   const [isSupported] = useState(
@@ -19,6 +22,7 @@ export default function Home() {
 
   //page offset
   const OFFSET = 1;
+  const bottom = useRef(null);
   const { loginState, setLoginState } = useContext(AuthContext);
 
   // 유저 등록
@@ -272,17 +276,27 @@ export default function Home() {
       .catch((err) => console.log(err));
   };
 
-  // const {
-  //   data, //data.pages를 갖고 있는 배열
-  //   error, // error 객체
-  //   fetchNextPage, // 다음 페이지를 불러오는 함수
-  //   hasNextPage, // 다음 페이지가 있는지 여부, Boolean
-  //   isFetching, // 첫 페이지 fetching 여부, Boolean, 잘 안쓰인다
-  //   isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
-  //   status, // loading, error, success 중 하나의 상태, string
-  // } = useInfiniteQuery(["post"], getPost, {
-  //   getNextPageParam: (lastPage, page) => {},
-  // });
+  const {
+    data, //data.pages를 갖고 있는 배열
+    error, // error 객체
+    fetchNextPage, // 다음 페이지를 불러오는 함수
+    hasNextPage, // 다음 페이지가 있는지 여부, Boolean
+    isFetching, // 첫 페이지 fetching 여부, Boolean, 잘 안쓰인다
+    isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
+    status, // loading, error, success 중 하나의 상태, string
+  } = useInfiniteQuery(["post"], getPost, {
+    getNextPageParam: (lastPage, page) => {},
+  });
+
+  // useObserver로 넘겨줄 callback, entry로 넘어오는 HTMLElement가
+  // isIntersecting이라면 무한 스크롤을 위한 fetchNextPage가 실행될 것이다.
+  const onIntersect = ([entry]) => entry.isIntersecting && fetchNextPage();
+
+  // useObserver로 bottom ref와 onIntersect를 넘겨 주자.
+  useObserver({
+    target: bottom,
+    onIntersect,
+  });
 
   return (
     <div className="p-5 bg-neutral-50">
@@ -308,9 +322,8 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {/* {status === "loading" && <p>loading</p>}
+      {status === "loading" && <p>loading</p>}
       {status === "error" && <p>{error.message}</p>}
-
       {status === "success" &&
         data &&
         data.pages.map((group, index) => (
@@ -322,9 +335,10 @@ export default function Home() {
               <p key={post.post_id}>post 컴포넌트가 들어가야한다.</p>
             ))}
           </div>
-        ))} */}
-      {/* <button onClick={() => fetchNextPage()}>더 불러오기</button> */}
-
+        ))}
+      <div ref={bottom} />
+      {isFetchingNextPage && <p>continue loading</p>}
+      <button onClick={() => fetchNextPage()}>더 불러오기</button>
       <button onClick={requestPermission}>FCM</button>
       <div className="grid-cols-1 items-center justify-center">
         {dummyData.map((post, index) => (
