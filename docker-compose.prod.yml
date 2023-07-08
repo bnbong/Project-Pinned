@@ -58,6 +58,8 @@ services:
     build:
       context: ./nginx
       dockerfile: Dockerfile
+      args:
+      - NGINX_CONF_FILE=nginx.conf
     deploy:
       resources:
         limits:
@@ -80,3 +82,4 @@ volumes:
     # driver_opts:
     #   share_name: ${AZ_SHARE_NAME}
     #   storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  postgres_data:

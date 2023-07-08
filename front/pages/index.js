@@ -28,7 +28,7 @@ export default function Home() {
   // 유저 등록
   async function registerUser(username, email, password) {
     const response = await axios.post(
-      "http://localhost:8000/api/v1/user/register/",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/register/`,
       {
         username: username,
         email: email,
@@ -40,7 +40,7 @@ export default function Home() {
   // JWT 토큰 발급 받기
   async function loginUser(email, password) {
     const response = await axios.post(
-      "http://localhost:8000/api/v1/user/login/",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/login/`,
       {
         email: email,
         password: password,
@@ -52,7 +52,7 @@ export default function Home() {
   // JWT 토큰 검증
   async function verifyToken(token) {
     const response = await axios.post(
-      "http://localhost:8000/api/v1/user/token/verify/",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/token/verify/`,
       {
         token: token,
       }
@@ -63,7 +63,7 @@ export default function Home() {
   // JWT 토큰 새로 발급받기
   async function refreshToken(refresh) {
     const response = await axios.post(
-      "http://localhost:8000/api/v1/user/token/refresh/",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/token/refresh/`,
       {
         refresh: refresh,
       }
@@ -74,7 +74,7 @@ export default function Home() {
   // 유저 프로필 가져오기
   async function getUserProfile(userId, token) {
     const response = await axios.get(
-      `http://localhost:8000/api/v1/user/${userId}/profile/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${userId}/profile/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -87,7 +87,7 @@ export default function Home() {
   // 유저 검색
   async function searchUser(username, token) {
     const response = await axios.get(
-      "http://localhost:8000/api/v1/user/search/",
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/search/`,
       {
         params: {
           username: username,
@@ -103,7 +103,7 @@ export default function Home() {
   //유저 삭제
   async function deleteUser(userId, token) {
     const response = await axios.delete(
-      `http://localhost:8000/api/v1/user/${user_id}/withdrawal/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${user_id}/withdrawal/`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

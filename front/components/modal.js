@@ -55,7 +55,7 @@ export default function EditProfileModal({ isOpen, onClose, userName, setUserNam
         console.log('이미지 확인 = ' + imgObject);
         try{
             const response = await axios.put(
-                    `http://localhost:8000/api/v1/user/${loginState.user.user_id}/profile/`,
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${loginState.user.user_id}/profile/`,
                     formData,
                     {
                         headers: {
