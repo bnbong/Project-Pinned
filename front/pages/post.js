@@ -13,8 +13,8 @@ import { useMutation } from "react-query";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import apiMapper from "@/components/apiMapper";
 import withAuth from "@/HOC/withAuth";
-
-export default withAuth(function Post({ html, setHtml }) {
+//withAuth 벗겨놓음
+export default function Post({ html, setHtml }) {
   const ReactQuill = dynamic(
     async () => {
       const { default: RQ } = await import("react-quill");
@@ -208,4 +208,4 @@ export default withAuth(function Post({ html, setHtml }) {
       </div>
     </div>
   );
-});
+}

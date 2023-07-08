@@ -3,7 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import EditProfileModal from "@/components/modal";
-import PostLayout from '@/components/postLayout';
+import PostLayout from '@/components/PostLayout';
 import NewPostLayout from '@/components/NewPostLayout';
 
 import withAuth from "@/HOC/withAuth";
@@ -139,7 +139,7 @@ const MyPage = () => {
       {console.log(userName)}
       {console.log(posts)}
       {console.log(posts.length)}
-      <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md">
+      <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
         <div className="flex items-center">
           <img
             className="w-12 h-12 rounded-full object-cover mr-5"
@@ -203,5 +203,5 @@ const MyPage = () => {
     </div>
   );
 };
-
-export default withAuth(MyPage);
+//withAuth 벗겨놓음
+export default MyPage;
