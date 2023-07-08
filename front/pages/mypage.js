@@ -3,8 +3,7 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import EditProfileModal from "@/components/modal";
-import NewPostLayout from "@/components/NewPostLayout";
-
+import NewPostLayout from "@/components/PostLayout";
 import withAuth from "@/HOC/withAuth";
 
 const MyPage = () => {

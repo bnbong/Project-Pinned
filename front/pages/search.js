@@ -1,8 +1,9 @@
 import { AuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
-import { useContext, useEffect } from "react";
+import { useState, useContext, useEffect } from "react";
 import withAuth from "@/HOC/withAuth";
 import { users } from '@/components/user';
+import UserCard from '@/components/UserCardLayout';
 
 export default function SearchPage() {
   const { loginState } = useContext(AuthContext);
@@ -42,19 +43,9 @@ export default function SearchPage() {
           클릭 = User 이동 로직
         </Link> 
         <div className="mt-10">
-            {results.map(user => (
-                <div key={user.id} className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-l m-3">
-                    <div className="md:flex">
-                        <div className="md:flex-shrink-0">
-                            <img className="ml-1 rounded-full h-28 w-full  md:w-28" src={user.image} alt={user.name} />
-                        </div>
-                        <div className="p-8">
-                            <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">{user.name}</div>
-                            <p className="mt-2 text-gray-500">{user.email}</p>
-                        </div>
-                    </div>
-                </div>
-            ))}
+                {results.map((user,index) => (
+                    <UserCard key={index} userId={user.id} userName={user.name} userImg={user.image} userEmail={user.email}/>
+                ))}
         </div>
     </div>
 );
