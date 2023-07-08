@@ -7,10 +7,12 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
+          cpus: '0.8'
     container_name: azure-redis
     volumes:
       - redis-data:/data
+    ports:
+      - "6379:6379"
 
   backend:
     image: ${ACR_LOGIN_SERVER}/project-pinned-backend:latest
@@ -23,6 +25,8 @@ services:
       - django-static-volume:/app/static
     environment:
       - DJANGO_SETTINGS_MODULE=project_pinned.settings.prod
+    ports:
+      - "8000:8000"
 
   frontend:
     image: ${ACR_LOGIN_SERVER}/project-pinned-frontend:latest
@@ -31,6 +35,8 @@ services:
         limits:
           cpus: '1'
     container_name: azure-frontend
+    ports:
+      - "3000:3000"
 
   nginx:
     image: ${ACR_LOGIN_SERVER}/project-pinned-nginx:latest
@@ -41,8 +47,23 @@ services:
     container_name: azure-nginx
     volumes:
       - django-static-volume:/data/static
+      - certbot-letsencrypt:/etc/letsencrypt
+      - certbot-www:/var/www/certbot
     ports:
       - "80:80"
+      - "443:443"
+
+  certbot:  #certbot 컨테이너 추가 
+    image: certbot/certbot
+    deploy:
+      resources:
+        limits:
+          cpus: '0.1'
+    restart: unless-stopped
+    container_name: certbot
+    volumes: 
+        - certbot-letsencrypt:/etc/letsencrypt
+        - certbot-www:/var/www/certbot
 
 
 volumes:
@@ -52,6 +73,16 @@ volumes:
       share_name: ${AZ_SHARE_NAME}
       storage_account_name: ${AZ_STORAGE_ACCOUNT}
   django-static-volume:
+    driver: azure_file
+    driver_opts:
+      share_name: ${AZ_SHARE_NAME}
+      storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  certbot-www:
+    driver: azure_file
+    driver_opts:
+      share_name: ${AZ_SHARE_NAME}
+      storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  certbot-letsencrypt:
     driver: azure_file
     driver_opts:
       share_name: ${AZ_SHARE_NAME}

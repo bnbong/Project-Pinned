@@ -2,7 +2,7 @@
 # docker compose -f docker-compose.prod.yml down --volumes
 
 echo "building container..."
-docker compose -f docker-compose.prod.yml up --build -d
+docker compose -f docker-compose.prod.yml up --domainname mypinnedlandmark --build -d
 
 # echo "Applying Schemas to Database..."
 # docker exec -it "project-pinned-backend-1" python manage.py migrate

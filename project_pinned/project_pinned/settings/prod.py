@@ -6,13 +6,14 @@ from .base import *  # noqa: F401, F403
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ["0.0.0.0", "localhost"]
+ALLOWED_HOSTS = ["0.0.0.0", "localhost", "20.214.219.68"]
 
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
     "http://0.0.0.0:3000",
-    "http://localhost"
+    "http://localhost",
+    "http://20.214.219.68"
 ]
 
 # Database

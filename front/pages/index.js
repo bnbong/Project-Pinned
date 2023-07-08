@@ -119,7 +119,7 @@ export default function Home() {
       // console.log(registerResult);
 
       // 로그인 요청
-      const loginResult = await loginUser("Test@example.com", "password");
+      const loginResult = await loginUser("user1@test.com", "password123");
       console.log(loginResult);
 
       // JWT 검증
