@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { AuthContext } from "@/contexts/AuthContext";
 import { getToken, getMessaging } from "firebase/messaging";
 import { messaging } from "@/components/firebase";
-import NewPostLayout from "@/components/NewPostLayout";
+import NewPostLayout from "@/components/PostLayout";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 
 export default function Home() {
