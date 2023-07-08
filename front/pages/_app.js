@@ -10,7 +10,7 @@ export default function App({ Component, pageProps }) {
   //React와는 달리 페이지 이동시 _app.js부터 새롭게 랜더링되 useState를 이용해 단 한번만 선언되게 해야한다.
   const [queryClient] = useState(() => new QueryClient());
   const router = useRouter();
-  const { loginState } = useContext(AuthContext);
+  
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={true} />
