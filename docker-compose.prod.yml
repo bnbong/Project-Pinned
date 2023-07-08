@@ -1,0 +1,58 @@
+version: '3.8'
+
+services:
+
+  redis:
+    image: ${ACR_LOGIN_SERVER}/project-pinned-redis:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+    container_name: azure-redis
+    volumes:
+      - redis-data:/data
+
+  backend:
+    image: ${ACR_LOGIN_SERVER}/project-pinned-backend:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+    container_name: azure-backend
+    volumes:
+      - django-static-volume:/app/static
+    environment:
+      - DJANGO_SETTINGS_MODULE=project_pinned.settings.prod
+
+  frontend:
+    image: ${ACR_LOGIN_SERVER}/project-pinned-frontend:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+    container_name: azure-frontend
+
+  nginx:
+    image: ${ACR_LOGIN_SERVER}/project-pinned-nginx:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+    container_name: azure-nginx
+    volumes:
+      - django-static-volume:/data/static
+    ports:
+      - "80:80"
+
+
+volumes:
+  redis-data:
+    driver: azure_file
+    driver_opts:
+      share_name: ${AZ_SHARE_NAME}
+      storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  django-static-volume:
+    driver: azure_file
+    driver_opts:
+      share_name: ${AZ_SHARE_NAME}
+      storage_account_name: ${AZ_STORAGE_ACCOUNT}
