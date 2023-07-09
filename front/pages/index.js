@@ -268,7 +268,12 @@ export default function Home() {
   //post 가져오기
   const getPost = (param = OFFSET) => {
     axiosBaseURL
-      .get(`api/v1/post/${param}`)
+      .get(`api/v1/post/feed`, {
+        params: {
+          limit: OFFSET,
+          offset: param,
+        },
+      })
       .then((res) => {
         console.log(res);
         return res;
@@ -285,7 +290,11 @@ export default function Home() {
     isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
     status, // loading, error, success 중 하나의 상태, string
   } = useInfiniteQuery(["post"], getPost, {
-    getNextPageParam: (lastPage, page) => {},
+    getNextPageParam: (lastPage, page) => {
+      console.log("log", lastPage, page);
+      if (page == null) return false;
+      return page + 1;
+    },
   });
 
   // useObserver로 넘겨줄 callback, entry로 넘어오는 HTMLElement가
@@ -331,7 +340,8 @@ export default function Home() {
           // group을 map으로 한번 더 돌리는 이중 배열 구조이다.
           // get api를 통해 받은 res를 컴포넌트에 props로 전달해줘서 랜더링해야할거 같음.
           <div key={index}>
-            {group.results.map((post) => (
+            {console.log(group)}
+            {group.data.results.map((post) => (
               <p key={post.post_id}>post 컴포넌트가 들어가야한다.</p>
             ))}
           </div>

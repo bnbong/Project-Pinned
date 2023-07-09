@@ -26,7 +26,7 @@ const MyPage = () => {
   const [postNumber, setPostNumber] = useState(0);
   //img 파일 관리하는 state
   const [img, setImg] = useState(
-    user?.profile_image.replace("localhost:3000", "localhost:8000") ||
+    user?.profile_image?.replace("localhost:3000", "localhost:8000") ||
       "https://via.placeholder.com/150"
   );
   //post 관리하는 state
