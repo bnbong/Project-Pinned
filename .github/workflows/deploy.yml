@@ -20,6 +20,7 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
              echo "${{ secrets.DOCKER_USER_PW }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
+             cd /home/ubuntu/Project-Pinned
              docker compose stop
              docker pull ${{ secrets.DOCKER_REPONAME }}/frontend
              docker pull ${{ secrets.DOCKER_REPONAME }}/backend
