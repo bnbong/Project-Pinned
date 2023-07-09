@@ -44,11 +44,10 @@ class UserManager(BaseUserManager):
         )
 
         user.is_superuser = True
+        user.is_staff = True
+
         user.save(using=self._db)
         return user
-
-    def get_by_natural_key(self, user_id):
-        return self.get(**{self.model.USERID_FIELD: user_id})
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -74,11 +73,18 @@ class User(AbstractBaseUser, PermissionsMixin):
     following = models.ManyToManyField(
         "self", through="Follow", related_name="followers", symmetrical=False
     )
+    date_joined = models.DateTimeField(auto_now_add=True)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_('Designates whether the user can log into admin site.'),
+    )
 
     EMAIL_FIELD = "email"
     USERID_FIELD = "user_id"
-    USERNAME_FIELD = "user_id"
-    REQUIRED_FIELDS = ["email"]
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username"]
 
     objects = UserManager()
 
@@ -112,3 +118,10 @@ class Follow(BaseModel):
 
     class Meta:
         unique_together = ["follower", "following"]
+
+
+class UserDevice(BaseModel):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="device"
+    )
+    fcmToken = models.CharField(max_length=500, null=True, blank=True)

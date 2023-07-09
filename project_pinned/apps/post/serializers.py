@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Post, Image, Landmark
+from .models import Post, Image, Landmark, Comment
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -56,6 +56,8 @@ class PostSerializer(serializers.ModelSerializer):
     landmark_lon = serializers.DecimalField(
         source="landmark.location_lon", max_digits=20, decimal_places=10, required=False
     )
+    likes = serializers.SerializerMethodField(required=False)
+    comments = serializers.SerializerMethodField(required=False)
 
     def update(self, instance, data):
         instance.title = data.get("post_title", instance.title)
@@ -72,6 +74,12 @@ class PostSerializer(serializers.ModelSerializer):
         instance.save()
         return instance
 
+    def get_likes(self, instance):
+        return instance.likes.count()
+
+    def get_comments(self, instance):
+        return instance.comments.count()
+
     class Meta:
         model = Post
         fields = (
@@ -83,5 +91,22 @@ class PostSerializer(serializers.ModelSerializer):
             "landmark_name",
             "landmark_lat",
             "landmark_lon",
+            "created_at",
+            "likes",
+            "comments",
+        )
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField(source="id", required=False)
+    username = serializers.CharField(source="user.username", required=False)
+    comment_content = serializers.CharField(source="content")
+
+    class Meta:
+        model = Comment
+        fields = (
+            "comment_id",
+            "username",
+            "comment_content",
             "created_at",
         )

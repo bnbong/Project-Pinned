@@ -8,7 +8,13 @@ module.exports = {
   ],
 
   theme: {
+    minWidth: {
+      'tagsize' : '52px',
+    },
     extend: {
+      maxWidth: {
+        'tagsize' : '25%',
+      },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

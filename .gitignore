@@ -1,7 +1,16 @@
 pinn-venv/
 .env
+.coverage
 
 __pycache__/
 
 # misc
 .DS_Store
+
+serviceAccountKey.json
+
+# Nginx 로그 파일
+logs/
+
+# pgAdmin4 데이터 파일
+data/

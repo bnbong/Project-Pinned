@@ -1,0 +1,28 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install SSH client
+      run: sudo apt-get install openssh-client -y
+
+    - name: Deploy to server
+      env:
+        DEPLOY_SERVER: ${{ secrets.DEPLOY_SERVER }}
+        DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+        DEPLOY_PASSWORD: ${{ secrets.DEPLOY_PASSWORD }}
+      run: |
+        sshpass -p $DEPLOY_PASSWORD ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_SERVER <<EOF
+        cd /home/bnbong/Project-Pinned
+        git pull origin main
+        bash scripts/build_prod.sh
+        EOF

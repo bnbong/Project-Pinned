@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_DB: pinned_db
+      POSTGRES_USER: pinned
+      POSTGRES_PASSWORD: pinned
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: "redis:alpine"
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./project_pinned
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+    volumes:
+      - django-static-volume:/app/static
+    environment:
+      - DJANGO_SETTINGS_MODULE=project_pinned.settings.prod
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+      args:
+      - NGINX_CONF_FILE=nginx.conf
+    volumes:
+      - django-static-volume:/data/static
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
+    ports:
+      - "80:80"
+      - "443:443"
+
+
+volumes:
+  redis-data:
+    # driver: azure_file
+    # driver_opts:
+    #   share_name: ${AZ_SHARE_NAME}
+    #   storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  django-static-volume:
+    # driver: azure_file
+    # driver_opts:
+    #   share_name: ${AZ_SHARE_NAME}
+    #   storage_account_name: ${AZ_STORAGE_ACCOUNT}
+  postgres_data:

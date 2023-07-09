@@ -13,12 +13,13 @@ import os
 
 from datetime import timedelta
 from pathlib import Path
+from firebase_admin import credentials
 from dotenv import load_dotenv
 
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 
 # Quick-start development settings - unsuitable for production
@@ -26,11 +27,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
-
-ALLOWED_HOSTS = ["0.0.0.0", "localhost"]
 
 
 # Application definition
@@ -42,16 +38,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-
     "apps.user",
     "apps.post",
     "apps.landmark",
-
     "rest_framework",
     "rest_framework_simplejwt",
-    'rest_framework_simplejwt.token_blacklist',
-
+    "rest_framework_simplejwt.token_blacklist",
     "dj_rest_auth",
+    "corsheaders",
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +57,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = "project_pinned.urls"
@@ -82,29 +78,9 @@ TEMPLATES = [
     },
 ]
 
+CORS_ALLOW_CREDENTIALS = True
+
 WSGI_APPLICATION = "project_pinned.wsgi.application"
-
-
-# Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "pinned_db",
-        "USER": "pinned",
-        "PASSWORD": "pinned",
-        "HOST": "db",
-        "PORT": "5432",
-    }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://redis:6379",
-    }
-}
 
 
 # Password validation
@@ -138,15 +114,6 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = "static/"
-
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-MEDIA_URL = "media/"
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -165,24 +132,21 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = "user.User"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=5),
     "ROTATE_REFRESH_TOKENS": True,
-    "BLACKLIST_AFTER_ROTATION": True,
+    "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
-
     # User request's header will contain Access Token like:
     # Authorization: Bearer <token>
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "user_id",
     "USER_ID_CLAIM": "user_id",
-
     # Default authentication rule is checking a user has is_active == True.
     "USER_AUTHENTICATION_RULE": "rest_framework_simplejwt.authentication.default_user_authentication_rule",
-
     "TOKEN_OBTAIN_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
     "TOKEN_REFRESH_SERIALIZER": "rest_framework_simplejwt.serializers.TokenRefreshSerializer",
     "TOKEN_VERIFY_SERIALIZER": "rest_framework_simplejwt.serializers.TokenVerifySerializer",
@@ -191,11 +155,27 @@ SIMPLE_JWT = {
 
 REST_AUTH = {
     "USE_JWT": True,
-    "JWT_SERIALIZER": "apps.user.serializer.UserLoginResponseSerializer",
+    "JWT_SERIALIZER": "apps.user.serializers.UserLoginResponseSerializer",
     "JWT_TOKEN_CLAIMS_SERIALIZER": "rest_framework_simplejwt.serializers.TokenObtainPairSerializer",
-    'JWT_AUTH_HTTPONLY': False,
+    "JWT_AUTH_HTTPONLY": False,
+    "TOKEN_MODEL": None,
+    "LOGIN_SERIALIZER": "apps.user.serializers.UserLoginSerializer",
 
-    'TOKEN_MODEL': None,
+    'JWT_AUTH_REFRESH_COOKIE': 'refresh_token',  # Cookie name. Enables cookies if value is set.
+    'JWT_AUTH_SAMESITE': 'Lax',
+    'JWT_AUTH_RETURN_EXPIRATION': False,
+    'JWT_AUTH_COOKIE_USE_CSRF': False,
+    'JWT_AUTH_COOKIE_ENFORCE_CSRF_ON_UNAUTHENTICATED': False,
+}
 
-    "LOGIN_SERIALIZER": "apps.user.serializer.UserLoginSerializer",
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+    "SECURITY_DEFINITIONS": {
+        "Bearer": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header",
+            "description": "JWT 토큰을 전달하세요. (예: Bearer {토큰})",
+        },
+    },
 }
