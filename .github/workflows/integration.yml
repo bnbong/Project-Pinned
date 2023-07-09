@@ -29,8 +29,8 @@ jobs:
         echo "NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}" >> ./.env
 
         docker buildx build -t project-pinned-frontend --platform linux/amd64 .
-        docker tag project-pinned-frontend:latest bnbong/project-pinned:frontend
-        docker push bnbong/project-pinned:frontend
+        docker tag project-pinned-frontend:latest ${{ secrets.DOCKER_REPONAME }}:frontend
+        docker push ${{ secrets.DOCKER_REPONAME }}:frontend
       shell: bash
 
     - name: Build Backend image and Push it to DockerHub
@@ -43,8 +43,8 @@ jobs:
         echo "PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}" >> ./.env
 
         docker buildx build -t project-pinned-backend --platform linux/amd64 .
-        docker tag project-pinned-backend:latest bnbong/project-pinned:backend
-        docker push bnbong/project-pinned:backend
+        docker tag project-pinned-backend:latest ${{ secrets.DOCKER_REPONAME }}:backend
+        docker push ${{ secrets.DOCKER_REPONAME }}:backend
       shell: bash
 
 
