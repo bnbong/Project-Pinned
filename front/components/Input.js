@@ -2,7 +2,7 @@ import { useEffect, forwardRef } from "react";
 
 export default forwardRef(function Input(prop, ref) {
   useEffect(() => {
-    ref.current.focus();
+    if (ref) ref.current.focus();
   }, []);
   return (
     <div>

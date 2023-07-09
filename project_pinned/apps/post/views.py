@@ -54,7 +54,7 @@ class PostCreate(APIView):
             },
             required=["post_title", "post_content", "landmark_name"],
         ),
-        responses={201: "게시물 작성 성공", 400: "존재하지 않는 게시물", 401: "사용자 인증 실패"},
+        responses={201: "게시물 작성 성공", 400: "존재하지 않는 랜드마크", 401: "사용자 인증 실패"},
     )
     def post(self, request):
         serializer = self.serializer_class(
