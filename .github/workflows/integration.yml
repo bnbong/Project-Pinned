@@ -29,7 +29,7 @@ jobs:
         echo "NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}" >> ./.env
 
         docker buildx build -t project-pinned-frontend --platform linux/amd64 .
-        docker tag project-pinned-frontend:latest ${{ secrets.DOCKER_REPONAME }}:frontend
+        docker tag project-pinned-frontend ${{ secrets.DOCKER_REPONAME }}:frontend
         docker push ${{ secrets.DOCKER_REPONAME }}:frontend
       shell: bash
 
@@ -43,7 +43,7 @@ jobs:
         echo "PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}" >> ./.env
 
         docker buildx build -t project-pinned-backend --platform linux/amd64 .
-        docker tag project-pinned-backend:latest ${{ secrets.DOCKER_REPONAME }}:backend
+        docker tag project-pinned-backend ${{ secrets.DOCKER_REPONAME }}:backend
         docker push ${{ secrets.DOCKER_REPONAME }}:backend
       shell: bash
 
