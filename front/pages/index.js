@@ -21,7 +21,7 @@ export default function Home() {
   );
 
   //page offset
-  const OFFSET = 1;
+  const OFFSET = 5;
   const bottom = useRef(null);
   const { loginState, setLoginState } = useContext(AuthContext);
 
@@ -343,9 +343,11 @@ export default function Home() {
           // group을 map으로 한번 더 돌리는 이중 배열 구조이다.
           // get api를 통해 받은 res를 컴포넌트에 props로 전달해줘서 랜더링해야할거 같음.
           <div key={index}>
-            {console.log(group)}
+            {/* {console.log(group)} */}
             {group.data.trending_posts.map((post) => (
-              <p key={post.post_id}>post 컴포넌트가 들어가야한다.</p>
+              <p key={post.post_id}>
+                {/* {console.log(post)}post 컴포넌트가 들어가야한다. */}
+              </p>
             ))}
           </div>
         ))}

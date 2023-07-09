@@ -9,9 +9,11 @@ axiosBaseURL.interceptors.request.use(
   (config) => {
     // 모든 Request Header에 Access토큰을 넣어주는 역할
     if (!config.headers["Authorization"]) {
-      config.headers["Authorization"] = `Bearer ${localStorage.getItem(
-        "access_token"
-      )}`;
+      config.headers["Authorization"] = `Bearer ${
+        typeof window !== "undefined"
+          ? localStorage.getItem("access_token")
+          : null
+      }`;
       config.headers["Content-Type"] = "application/json";
     }
     return config;
