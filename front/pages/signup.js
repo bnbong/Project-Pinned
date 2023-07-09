@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useMutation } from "react-query";
 import apiMapper from "@/components/apiMapper";
 import axiosBaseURL from "@/components/axiosBaseUrl";
-import { contextType } from "react-quill";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
