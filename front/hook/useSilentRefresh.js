@@ -1,8 +1,8 @@
 import axiosBaseURL from "@/components/axiosBaseUrl";
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useQuery } from "react-query";
 import useAuth from "@/hook/useAuth";
-import { AuthContext } from "@/contexts/AuthContext";
+
 //access token이 만료되기 전에 refresh token을 이용해 access token을 받아온다.
 
 export const useSilentRefresh = () => {
