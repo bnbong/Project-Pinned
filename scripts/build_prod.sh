@@ -1,10 +1,6 @@
 # echo "deleting exist docker volumes..."
 # docker compose -f docker-compose.prod.yml down --volumes
 
-echo "pulling images from Docker Hub..."
-docker pull bnbong/project-pinned:frontend
-docker pull bnbong/project-pinned:backend
-
 echo "building container..."
 # docker compose -f docker-compose.prod.yml up --domainname mypinnedlandmark --build -d
 docker compose -f docker-compose.prod.yml up --build -d
