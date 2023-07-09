@@ -190,7 +190,7 @@ class PostTests(TestCase):
         self.assertEqual(len(response.data["trending_posts"]), 3)
         self.assertEqual(response.data["trending_posts"][0]["post_id"], self.post.id)
         self.assertEqual(len(response.data["recommended_posts"]), 3)
-    
+
     def test_get_feed_with_offset(self):
         url = reverse("post-feed")
         self.client.force_authenticate(user=self.user)
@@ -202,17 +202,14 @@ class PostTests(TestCase):
                 title=f"Test Post {i}",
                 content=f"This is a test content {i}",
             )
-        
-        response_firstpage = self.client.get(url+"?offset=0&limit=10")
+
+        response_firstpage = self.client.get(url + "?offset=0&limit=10")
         self.assertEqual(response_firstpage.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response_firstpage.data.get("trending_posts")), 10)
-        print(response_firstpage.data.get("trending_posts"))
 
-
-        response_secondpage = self.client.get(url+"?offset=10&limit=10")
+        response_secondpage = self.client.get(url + "?offset=10&limit=10")
         self.assertEqual(response_secondpage.status_code, status.HTTP_200_OK)
-        # self.assertEqual(len(response_secondpage.data.get("trending_posts")), 3)
-        print(response_secondpage.data.get("trending_posts"))
+        self.assertEqual(len(response_secondpage.data.get("trending_posts")), 7)
 
     def test_create_comment(self):
         url = reverse("comment-create", kwargs={"post_id": self.post.id})
