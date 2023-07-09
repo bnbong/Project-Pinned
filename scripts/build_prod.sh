@@ -1,7 +1,5 @@
 # echo "deleting exist docker volumes..."
 # docker compose -f docker-compose.prod.yml down --volumes
-echo "logging in to Docker Hub..."
-docker login
 
 echo "pulling images from Docker Hub..."
 docker pull bnbong/project-pinned:frontend
