@@ -19,7 +19,9 @@ export default function Layout({ children }) {
     refetchIntervalInBackground: true,
     onError: () => {
       setRefreshStop(true);
-      typeof window !== "undefined" ? localStorage.setItem("") : null;
+      typeof window !== "undefined"
+        ? localStorage.setItem("access_token", "")
+        : null;
     },
     onSuccess: (data) => {
       const token = data?.data?.access_token;
