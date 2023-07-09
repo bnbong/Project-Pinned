@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMutation } from "react-query";
 import apiMapper from "@/components/apiMapper";
 import axiosBaseURL from "@/components/axiosBaseUrl";
+import { contextType } from "react-quill";
 
 export default function Login() {
   const [inputs, setInputs] = useState({
@@ -74,8 +75,13 @@ export default function Login() {
     mutationFn: (userInformation) => {
       return axiosBaseURL.post(apiMapper.user.post.REGISTER, userInformation);
     },
-    onError: (e) => {
-      setErrorMessage(e.response.data);
+    onSuccess: (data, variables, context) => {
+      console.log(data);
+      alert("회원가입 성공");
+    },
+    onError: (err, variables, context) => {
+      console.log(err);
+      setErrorMessage(err);
     },
   });
 
