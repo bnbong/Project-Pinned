@@ -26,8 +26,10 @@ const MyPage = () => {
   const [postNumber, setPostNumber] = useState(0);
   //img 파일 관리하는 state
   const [img, setImg] = useState(
-    user?.profile_image.replace(`${process.env.NEXT_PUBLIC_API_URL}`, `${process.env.NEXT_PUBLIC_API_URL}/api`) ||
-      "https://via.placeholder.com/150"
+    user?.profile_image.replace(
+      `${process.env.NEXT_PUBLIC_API_URL}`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api`
+    ) || "https://via.placeholder.com/150"
   );
   //post 관리하는 state
 

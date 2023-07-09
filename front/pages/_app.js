@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useContext, useState } from "react";
+import useLocalStorage from "use-local-storage";
 
 export default function App({ Component, pageProps }) {
   //React와는 달리 페이지 이동시 _app.js부터 새롭게 랜더링되 useState를 이용해 단 한번만 선언되게 해야한다.
