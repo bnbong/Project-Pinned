@@ -19,6 +19,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
+             echo "${{ secrets.DOCKER_USER_PW }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
              docker compose stop
              docker pull ${{ secrets.DOCKER_REPONAME }}/frontend
              docker pull ${{ secrets.DOCKER_REPONAME }}/backend
