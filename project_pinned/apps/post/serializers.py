@@ -29,9 +29,10 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
         landmark_name = request.data.get("landmark_name")
 
-        landmark = Landmark.objects.get(
-            name=landmark_name,
-        )
+        try:
+            landmark = Landmark.objects.get(name=landmark_name)
+        except Landmark.DoesNotExist:
+            raise serializers.ValidationError("Landmark does not exist.", code=400)
 
         post = Post.objects.create(
             user=user,
