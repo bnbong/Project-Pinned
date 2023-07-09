@@ -238,34 +238,49 @@ class PostFeed(APIView):
         responses={200: "성공 (응답 참고)", 401: "사용자 인증 실패"},
     )
     def get(self, request, offset=0, limit=10):
-        cache_key = f"user_{request.user.id}_feed"
-        data = cache.get(cache_key)
+        # cache_key = f"user_{request.user.id}_feed_{offset}_{limit}"
+        # data = cache.get(cache_key)
 
-        if not data:
-            following_posts, most_liked_posts, recommended_posts = self.get_posts(
-                request, offset, limit
-            )
+        # if not data:
+        #     following_posts, most_liked_posts, recommended_posts = self.get_posts(
+        #         request, offset, limit
+        #     )
 
-            data = {
-                "followed_posts": self.serializer_class(
-                    following_posts, many=True
-                ).data,
-                "trending_posts": self.serializer_class(
-                    most_liked_posts, many=True
-                ).data,
-                "recommended_posts": self.serializer_class(
-                    recommended_posts, many=True
-                ).data,
-            }
+        #     data = {
+        #         "followed_posts": self.serializer_class(
+        #             following_posts, many=True
+        #         ).data,
+        #         "trending_posts": self.serializer_class(
+        #             most_liked_posts, many=True
+        #         ).data,
+        #         "recommended_posts": self.serializer_class(
+        #             recommended_posts, many=True
+        #         ).data,
+        #     }
 
-            cache.set(cache_key, data, 60 * 60 * 24)
+        #     cache.set(cache_key, data, 60 * 60 * 24)
+        following_posts, most_liked_posts, recommended_posts = self.get_posts(
+            request, offset, limit
+        )
+
+        data = {
+            "followed_posts": self.serializer_class(
+                following_posts, many=True
+            ).data,
+            "trending_posts": self.serializer_class(
+                most_liked_posts, many=True
+            ).data,
+            "recommended_posts": self.serializer_class(
+                recommended_posts, many=True
+            ).data,
+        }
 
         return Response(
             data,
             status=status.HTTP_200_OK,
         )
 
-    def get_posts(self, request, offset=0, limit=10):
+    def get_posts(self, request, offset, limit):
         following_posts = Post.objects.filter(
             user__in=request.user.following.all()
         ).order_by("-created_at")[offset : offset + limit]

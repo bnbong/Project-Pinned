@@ -3,11 +3,6 @@ version: '3.8'
 services:
   db:
     image: postgres
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 1024M
     environment:
       POSTGRES_DB: pinned_db
       POSTGRES_USER: pinned
@@ -19,10 +14,6 @@ services:
 
   redis:
     image: "redis:alpine"
-    deploy:
-      resources:
-        limits:
-          cpus: '0.8'
     volumes:
       - redis-data:/data
     ports:
@@ -47,10 +38,6 @@ services:
     build:
       context: ./front
       dockerfile: Dockerfile
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
     ports:
       - "3000:3000"
 
@@ -60,12 +47,10 @@ services:
       dockerfile: Dockerfile
       args:
       - NGINX_CONF_FILE=nginx.conf
-    deploy:
-      resources:
-        limits:
-          cpus: '1'
     volumes:
       - django-static-volume:/data/static
+      - /etc/letsencrypt:/etc/letsencrypt
+      - /var/lib/letsencrypt:/var/lib/letsencrypt
     ports:
       - "80:80"
       - "443:443"
