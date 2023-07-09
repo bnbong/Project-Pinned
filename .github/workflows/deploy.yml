@@ -1,0 +1,29 @@
+# name: Deploy
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v2
+#       - name: SSH Remote Commands
+#         uses: appleboy/ssh-action@v0.1.4
+#         with:
+#             host: ${{ secrets.DEPLOY_SERVER }}
+#             username: ${{ secrets.DEPLOY_USER }}
+#             password: ${{ secrets.DEPLOY_PASSWORD }}
+#             port: 22
+#             timeout: 30s
+#             script: |
+#               echo "Connected to Cloud!"
+
+#       - name: Deploy to server
+#         run: |
+#           cd /home/bnbong/Project-Pinned
+#           git pull origin main
+#           bash scripts/build_prod.sh
