@@ -6,6 +6,11 @@ from .base import *  # noqa: F401, F403
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+CSRF_COOKIE_SECURE = True
+CSRF_TRUSTED_ORIGINS = ['https://mypinnedlandmark.bnbong.tk']
+
+# SESSION_COOKIE_SECURE = True
+
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "mypinnedlandmark.bnbong.tk"]
 
 CORS_ORIGIN_WHITELIST = [
