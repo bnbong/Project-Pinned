@@ -28,9 +28,7 @@ jobs:
         echo "NEXT_PUBLIC_vapid_key=${{ secrets.NEXT_PUBLIC_vapid_key }}" >> ./.env
         echo "NEXT_PUBLIC_URL=${{ secrets.NEXT_PUBLIC_URL }}" >> ./.env
 
-        docker buildx build -t project-pinned-frontend --platform linux/amd64 .
-        docker tag project-pinned-frontend ${{ secrets.DOCKER_REPONAME }}:frontend
-        docker push ${{ secrets.DOCKER_REPONAME }}:frontend
+        docker buildx build --push -t ${{ secrets.DOCKER_REPONAME }}:frontend --platform linux/amd64 .
       shell: bash
 
     - name: Build Backend image and Push it to DockerHub
@@ -42,9 +40,7 @@ jobs:
         echo "PROD_DB_USER_PASSWORD=${{ secrets.PROD_DB_USER_PASSWORD }}" >> ./.env
         echo "PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}" >> ./.env
 
-        docker buildx build -t project-pinned-backend --platform linux/amd64 .
-        docker tag project-pinned-backend ${{ secrets.DOCKER_REPONAME }}:backend
-        docker push ${{ secrets.DOCKER_REPONAME }}:backend
+        docker buildx build --push -t ${{ secrets.DOCKER_REPONAME }}:backend --platform linux/amd64 .
       shell: bash
 
 
