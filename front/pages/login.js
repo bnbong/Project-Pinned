@@ -31,8 +31,15 @@ export default function Login() {
     },
     onSuccess: (data, variables, context) => {
       //data에 서버 resonse값이 저장됨
-      console.log(data, variables, context);
+
       console.log("success");
+      localStorage.setItem("access_token", data.data.access_token);
+      // setLoginState({
+      //   ...loginState,
+      //   isLoggedIn: true,
+      //   accessToken: data.data.access_token,
+      //   user: data.data.user,
+      // });
       alert("로그인 성공");
       router.push("/");
     },
@@ -42,6 +49,7 @@ export default function Login() {
       setErrorMessage(e.response.data);
     },
   });
+
   return (
     <>
       <section className="bg-gray-50 dark:bg-gray-900">

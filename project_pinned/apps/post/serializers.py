@@ -29,9 +29,10 @@ class PostCreateSerializer(serializers.ModelSerializer):
 
         landmark_name = request.data.get("landmark_name")
 
-        landmark = Landmark.objects.get(
-            name=landmark_name,
-        )
+        try:
+            landmark = Landmark.objects.get(name=landmark_name)
+        except Landmark.DoesNotExist:
+            raise serializers.ValidationError("Landmark does not exist.", code=400)
 
         post = Post.objects.create(
             user=user,
@@ -46,6 +47,7 @@ class PostCreateSerializer(serializers.ModelSerializer):
 class PostSerializer(serializers.ModelSerializer):
     post_id = serializers.IntegerField(source="id", required=False)
     user_id = serializers.CharField(source="user.user_id", required=False)
+    username = serializers.CharField(source="user.username", required=False)
     post_title = serializers.CharField(source="title")
     post_content = serializers.CharField(source="content")
     post_image = ImageSerializer(source="images", many=True)
@@ -85,6 +87,7 @@ class PostSerializer(serializers.ModelSerializer):
         fields = (
             "post_id",
             "user_id",
+            "username",
             "post_title",
             "post_content",
             "post_image",

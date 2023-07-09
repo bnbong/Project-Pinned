@@ -48,10 +48,8 @@ class UserRegister(APIView):
     permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
-        operation_description="Post를 작성할 때 사용되는 API\n\
-        Header에 JWT 토큰 인증 필요",
         request_body=RegisterSerializer(),
-        responses={201: "회원가입 성공", 400: "이미 존재하는 이메일", 401: "사용자 인증 실패"},
+        responses={201: "회원가입 성공", 400: "이미 존재하는 이메일"},
     )
     def post(self, request):
         serializer = RegisterSerializer(data=request.data)

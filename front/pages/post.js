@@ -1,20 +1,16 @@
 import dynamic from "next/dynamic";
-import {
-  useRef,
-  useState,
-  useMemo,
-  useEffect,
-  createRef,
-  useCallback,
-} from "react";
+import { useRef, useState, useMemo, createRef, useCallback } from "react";
 import Input from "@/components/Input";
 import "react-quill/dist/quill.snow.css";
 import { useMutation } from "react-query";
 import axiosBaseURL from "@/components/axiosBaseUrl";
-import apiMapper from "@/components/apiMapper";
 import withAuth from "@/HOC/withAuth";
+import { headers } from "@/next.config";
+import { useForm } from "react-hook-form";
+import { useRouter } from "next/router";
+
 //withAuth 벗겨놓음
-export default function Post({ html, setHtml }) {
+export default withAuth(function Post({ html, setHtml }) {
   const ReactQuill = dynamic(
     async () => {
       const { default: RQ } = await import("react-quill");
@@ -26,9 +22,16 @@ export default function Post({ html, setHtml }) {
   );
   const quillRef = useRef(false);
   const titleInput = useRef();
+  const router = useRouter();
   const [title, setTitle] = useState("");
   const [place, setPlace] = useState("");
   const [content, setContent] = useState("");
+
+  //내용쓰다가 제목수정하면 내용이 변경되는 오류 수정이 필요하다.
+  const { register, handleSubmit, setValue, trigger, getValues } = useForm({
+    mode: "onChange", // onChange가 일어나면 알려줘
+  });
+
   //함수컴포넌트는 인스턴트를 가지지않기 때문에 ref객체를 자식 컴포넌트에 넘길 수 없다.
 
   const imageHandler = () => {
@@ -92,18 +95,19 @@ export default function Post({ html, setHtml }) {
     (e) => {
       if (e.target.id == "title") {
         setTitle(e.target.value);
-        console.log(title);
       }
       if (e.target.id == "place") {
         setPlace(e.target.value);
-        console.log(place);
-      }
-      if (e.target.id == "content") {
-        setContent(e.target.value);
       }
     },
-    [title]
+    [title, place]
   );
+  const handleContent = useCallback((value) => {
+    setValue("content", value);
+
+    trigger("content");
+    console.log(getValues("content"));
+  }, []);
 
   const handleEnter = (e) => {
     if (e.key === "Enter") {
@@ -113,19 +117,20 @@ export default function Post({ html, setHtml }) {
   //authorization 토큰 추가 필요
   const { mutate, data, isLoading, isError } = useMutation({
     mutationFn: (postInformation) => {
-      return axiosBaseURL.post("api/v1/post/{post_id}", postInformation);
+      return axiosBaseURL.post("api/v1/post/", postInformation);
     },
     onError: (error, variables, context) => {
-      alert("에러발생");
+      alert("게시글 작성에 실패했습니다.");
     },
     onSuccess: (data, variables, context) => {
-      console.log("success");
+      console.log("success", data);
       alert("게시글이 등록되었습니다.");
+      router.replace("/");
     },
   });
 
   return (
-    <div className="mx-10 mt-10">
+    <div className="mx-10 mt-10 text-editor">
       <div className="mb-6">
         <Input
           name="위치"
@@ -145,12 +150,13 @@ export default function Post({ html, setHtml }) {
           placeholder="제목을 작성하세요"
         />
       </div>
-      <div>
+      <div className="text-editor">
         <ReactQuill
           className="h-60  rounded-lg"
           id="content"
           forwardedRef={quillRef}
-          onChange={onChange}
+          value={content}
+          onChange={handleContent}
           modules={modules}
           formats={formats}
           placeholder={"내용을 작성해 주세요!"}
@@ -161,7 +167,15 @@ export default function Post({ html, setHtml }) {
       <div className="flex pl-0 space-x-1 sm:pl-2 mt-20">
         <button
           type="submit"
-          onClick={() => mutate({ title, place, content })}
+          onClick={() => {
+            setContent(getValues("content"));
+            console.log(place);
+            mutate({
+              post_title: title,
+              post_content: content,
+              landmark_name: place,
+            });
+          }}
           className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
         >
           작성하기
@@ -208,4 +222,4 @@ export default function Post({ html, setHtml }) {
       </div>
     </div>
   );
-}
+});
