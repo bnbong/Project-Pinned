@@ -13,6 +13,10 @@ CSRF_TRUSTED_ORIGINS = ['https://mypinnedlandmark.bnbong.tk']
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost", "mypinnedlandmark.bnbong.tk"]
 
+INSTALLED_APPS += [
+    'storages',
+]
+
 CORS_ORIGIN_WHITELIST = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
@@ -42,6 +46,16 @@ CACHES = {
     }
 }
 
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME")
+AWS_REGION = 'ap-northeast-2'
+AWS_S3_OBJECT_PARAMETERS = {
+    'CacheControl': 'max-age=86400',
+}
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_S3_CUSTOM_DOMAIN = f's3.{AWS_REGION}.amazonaws.com/{AWS_STORAGE_BUCKET_NAME}'
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
@@ -51,4 +65,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-MEDIA_URL = "media/"
+MEDIA_URL = f'https://{AWS_S3_CUSTOM_DOMAIN}/'
