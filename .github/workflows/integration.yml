@@ -39,6 +39,9 @@ jobs:
         echo "PROD_DB_USER=${{ secrets.PROD_DB_USER }}" >> ./.env
         echo "PROD_DB_USER_PASSWORD=${{ secrets.PROD_DB_USER_PASSWORD }}" >> ./.env
         echo "PROD_DB_HOST=${{ secrets.PROD_DB_HOST }}" >> ./.env
+        echo "AWS_ACCESS_KEY_ID=${{ secrets.AWS_ACCESS_KEY_ID }}" >> ./.env
+        echo "AWS_SECRET_ACCESS_KEY=${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> ./.env
+        echo "AWS_STORAGE_BUCKET_NAME=${{ secrets.AWS_STORAGE_BUCKET_NAME }}" >> ./.env
 
         docker buildx build --push -t ${{ secrets.DOCKER_REPONAME }}:backend --platform linux/amd64 .
       shell: bash
