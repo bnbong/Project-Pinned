@@ -35,11 +35,11 @@ urlpatterns = [
     path(
         "<user_id>/followings/", views.UserFollowings.as_view(), name="user-followings"
     ),
-    path("mypage/", views.UserMyPage.as_view(), name="user_mypage"),
+    path("mypage/", views.UserMyPage.as_view(), name="user-mypage"),
 
     # For user's token validate & refresh
     path("token/", include(token_patterns)),
-    
+
     # For user's device token
     path("device/", views.UserFCMToken.as_view(), name="user-device-token"),
 ]
