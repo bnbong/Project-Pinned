@@ -6,6 +6,7 @@ import EditProfileModal from "@/components/modal";
 import NewPostLayout from "@/components/PostLayout";
 import withAuth from "@/HOC/withAuth";
 import axiosBaseURL from "@/components/axiosBaseUrl";
+import { data } from "autoprefixer";
 
 const MyPage = () => {
   const router = useRouter();
@@ -20,11 +21,12 @@ const MyPage = () => {
   const closeEdit = () => setEdit(false);
 
   //user_Id, user_name, follower, following 관리
-  const [userID, setUserID] = useState(user?.user_id || "");
+  const [userID, setUserID] = useState();
   const [userName, setUserName] = useState(user?.username);
   const [follower, setFollower] = useState(user?.followers);
   const [following, setFollowing] = useState(user?.followings);
   const [postNumber, setPostNumber] = useState(0);
+  const [response, setResponse] = useState({});
   //img 파일 관리하는 state
   const [img, setImg] = useState(
     user?.profile_image.replace(
@@ -36,115 +38,124 @@ const MyPage = () => {
 
   const [posts, setPosts] = useState([]);
 
-  const dummyData = [
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile2.jpg",
-      username: "Username2",
-      postImage: "https://via.placeholder.com/150",
-      likes: 500,
-      description: "Post Description 2...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile2.jpg",
+  //     username: "Username2",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 500,
+  //     description: "Post Description 2...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  // ];
+  const fetchUsers = async () => {
+    try {
+      const { data } = await axiosBaseURL.get(`api/v1/user/mypage/`);
+      // console.log(data);
+      setUserID(data.user_id);
+      // setPosts(response.data.user_posts);
+      // setPostNumber(posts.length);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchPosts = async () => {
+    const response = await axiosBaseURL
+      .get(`api/v1/post/posts/${userID}/`)
+      .then((res) => {
+        setResponse(res.data.user_posts);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    // console.log(response);
+
+    return response;
+  };
 
   //게시물 로딩
   useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const response = await axiosBaseURL.get(
-          `api/v1/post/posts/${userID}/`,
-          {
-            headers: {
-              Authorization: `Bearer ${loginState.accessToken}`,
-            },
-          }
-        );
-        setPosts(response.data.user_posts);
-        setPostNumber(posts.length);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-    fetchPosts();
-  }, [userID]);
+    fetchUsers().then(fetchPosts());
+  }, []);
 
   //프로필 fetch
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axiosBaseURL.get(
-          `api/v1/user/${userID}/profile/`,
-          {
-            headers: {
-              Authorization: `Bearer ${loginState.accessToken}`,
-            },
-          }
-        );
-        console.log("프로필 fetch = " + response.data.profile_image);
-        setUserName(response.data.username);
-        setImg(response.data.profile_image);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUser = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${userID}/profile/`,
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${loginState.accessToken}`,
+  //           },
+  //         }
+  //       );
+  //       console.log("프로필 fetch = " + response.data.profile_image);
+  //       setUserName(response.data.username);
+  //       setImg(response.data.profile_image);
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    if (user) {
-      fetchUser();
-    }
-  }, [user, userID, loginState]);
+  //   if (user) {
+  //     fetchUser();
+  //   }
+  // }, [user, userID, loginState]);
 
   useEffect(() => {
     setImg(user?.profile_image || "https://via.placeholder.com/150");
   }, [user?.profile_image]);
-
+  console.log(response.map((post) => console.log(post.username)));
   return (
     <div className="p-5 bg-neutral-50">
-      {console.log(user)}
+      {/* {console.log(user)}
       {console.log(userID)}
       {console.log(userName)}
       {console.log(posts)}
-      {console.log(posts.length)}
+      {console.log(posts.length)} */}
       <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
         <div className="flex items-center">
           <img
@@ -188,23 +199,25 @@ const MyPage = () => {
         </div>
       </div>
       <div className="grid-cols-1 items-center justify-center">
-        {dummyData.map((post, index) => (
-          <NewPostLayout
-            key={index}
-            author={post.username}
-            location="보정동"
-            title="이것은 게시글입니다"
-            content={"This is Fucking first description"}
-          />
-          // <PostLayout
-          //   key={index}
-          //   profileImage= {post.profileImage}
-          //   username= {post.username}
-          //   postImage={post.postImage}
-          //   likes={post.likes}
-          //   description={post.description}
-          // />
+        {response.map((post, index) => (
+          <div key={index}>
+            {post.username}
+            <NewPostLayout
+              author={post.username}
+              location={post.landmark_name}
+              title={post.post_title}
+              content={post.post_content}
+            />
+          </div>
         ))}
+        {/* <PostLayout
+          key={index}
+          profileImage={post.profileImage}
+          username={post.username}
+          postImage={post.postImage}
+          likes={post.likes}
+          description={post.description}
+        /> */}
       </div>
     </div>
   );
