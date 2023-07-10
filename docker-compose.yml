@@ -50,22 +50,19 @@ services:
       - db
       - redis
 
-  frontend:
-    build:
-      context: ./front
-      dockerfile: Dockerfile
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 2048M
-    volumes:
-      - ./front:/app
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_BACKEND_URL=http://backend:8000
-    command: ["npm", "run", "dev"]
+  # frontend:
+  #   build:
+  #     context: ./front
+  #     dockerfile: Dockerfile
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 2048M
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - REACT_APP_BACKEND_URL=http://backend:8000
 
   nginx:
     build:

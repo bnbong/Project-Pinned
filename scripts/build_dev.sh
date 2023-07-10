@@ -1,13 +1,6 @@
 echo "Delete dangling images..."
 docker rmi $(docker images -f "dangling=true" -q)
 
-echo "Checking if .next or node_modules directory exist..."
-if [ ! -d "./front/.next" ] || [ ! -d "./front/node_modules" ]; then
-  echo ".next or node_modules directory not found. Running npm install and build..."
-  cd front && npm install && npm run build
-  cd ..
-fi
-
 echo "Checking if Docker volumes exist..."
 VOLUME=$(docker volume ls -q | grep "postgres_data")
 

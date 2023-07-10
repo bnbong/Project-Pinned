@@ -8,7 +8,7 @@ VOLUME=$(docker volume ls -q | grep "postgres_data")
 if [[ -z "$VOLUME" ]]; then
   echo "No Docker volumes exist..."
   echo "Deleting exist docker volumes..."
-  docker compose -f docker-compose.yml down --volumes
+  docker compose -f docker-compose.prod.yml down --volumes
 
   docker rmi $(docker images -f "dangling=true" -q)
 else
