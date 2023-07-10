@@ -346,7 +346,14 @@ export default function Home() {
             {/* {console.log(group)} */}
             {group.data.trending_posts.map((post) => (
               <p key={post.post_id}>
-                {/* {console.log(post)}post 컴포넌트가 들어가야한다. */}
+                <div className="grid-cols-1 items-center justify-center">
+                  <NewPostLayout
+                    author={post.username}
+                    location={post.landmark_name}
+                    title={post.post_title}
+                    content={post.post_content}
+                  />
+                </div>
               </p>
             ))}
           </div>
@@ -355,17 +362,6 @@ export default function Home() {
       {isFetchingNextPage && <p>continue loading</p>}
       <button onClick={() => fetchNextPage()}>더 불러오기</button>
       <button onClick={requestPermission}>FCM</button>
-      <div className="grid-cols-1 items-center justify-center">
-        {dummyData.map((post, index) => (
-          <NewPostLayout
-            key={index}
-            author={post.username}
-            location="보정동"
-            title="이것은 게시글입니다"
-            content={"This is Fucking first description"}
-          />
-        ))}
-      </div>
     </div>
   );
 }
