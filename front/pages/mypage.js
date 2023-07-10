@@ -26,7 +26,7 @@ const MyPage = () => {
   const [follower, setFollower] = useState(user?.followers);
   const [following, setFollowing] = useState(user?.followings);
   const [postNumber, setPostNumber] = useState(0);
-  const [response, setResponse] = useState({});
+  const [response, setResponse] = useState([]);
   //img 파일 관리하는 state
   const [img, setImg] = useState(
     user?.profile_image.replace(

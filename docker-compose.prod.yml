@@ -25,6 +25,7 @@ services:
     image: bnbong/project-pinned:frontend
     ports:
       - "3000:3000"
+    command: ["npm", "start"]
 
   nginx:
     build:
