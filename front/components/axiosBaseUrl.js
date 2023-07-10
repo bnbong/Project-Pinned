@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosBaseURL = axios.create({
-  baseURL: "http://localhost/",
+  baseURL: "http://localhost/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
   withCredentials: true,
 });
 

@@ -41,6 +41,7 @@ services:
           memory: 2048M
     volumes:
       - django_static_volume:/app/static
+      - ./project_pinned:/app
     environment:
       - DJANGO_SETTINGS_MODULE=project_pinned.settings.dev
     ports:
@@ -58,10 +59,13 @@ services:
         limits:
           cpus: '0.5'
           memory: 2048M
+    volumes:
+      - ./front:/app
     ports:
       - "3000:3000"
     environment:
       - REACT_APP_BACKEND_URL=http://backend:8000
+    command: ["npm", "run", "dev"]
 
   nginx:
     build:
