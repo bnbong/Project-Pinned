@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import EditProfileModal from "@/components/modal";
 import NewPostLayout from "@/components/PostLayout";
 import withAuth from "@/HOC/withAuth";
+import axiosBaseURL from "@/components/axiosBaseUrl";
 
 const MyPage = () => {
   const router = useRouter();
@@ -91,8 +92,8 @@ const MyPage = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/post/posts/${userID}/`,
+        const response = await axiosBaseURL.get(
+          `api/v1/post/posts/${userID}/`,
           {
             headers: {
               Authorization: `Bearer ${loginState.accessToken}`,
@@ -112,8 +113,8 @@ const MyPage = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${userID}/profile/`,
+        const response = await axiosBaseURL.get(
+          `api/v1/user/${userID}/profile/`,
           {
             headers: {
               Authorization: `Bearer ${loginState.accessToken}`,
