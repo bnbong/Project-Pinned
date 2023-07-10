@@ -11,6 +11,7 @@
   "dependencies": {
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
+    "cookies-next": "^2.1.2",
     "draft-js": "^0.11.7",
     "draftjs-to-html": "^0.9.1",
     "eslint": "8.43.0",
@@ -18,6 +19,7 @@
     "firebase": "^9.23.0",
     "flowbite-react": "^0.4.9",
     "next": "13.4.7",
+    "next-cookies": "^2.0.3",
     "postcss": "8.4.24",
     "prettier": "^2.8.8",
     "react": "18.2.0",

@@ -6,7 +6,8 @@ import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
 
-export default function Login() {
+export default function Login({ cookie }) {
+  console.log("cookie", cookie);
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState({});
@@ -132,3 +133,11 @@ export default function Login() {
     </>
   );
 }
+export const getServerSideProps = (context) => {
+  const cookie = context.req ? context.req.headers.cookie : "";
+
+  // const refreshToken = getCookie("refresh_token");
+  return {
+    props: { cookie },
+  };
+};

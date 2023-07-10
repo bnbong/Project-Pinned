@@ -3,9 +3,11 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import axiosBaseURL from "./axiosBaseUrl";
 import apiMapper from "./apiMapper";
-// import { cookies } from "next/headers";
+import cookies from "next-cookies";
+import { getCookie } from "cookies-next";
 
-export default function Layout({ children }) {
+export default function Layout({ children, cookie }) {
+  console.log("cookie", cookie);
   const [refreshStop, setRefreshStop] = useState(false);
   // const cookieStore = cookies();
   // const refreshToken = cookieStore.get("refresh_token");
@@ -44,3 +46,12 @@ export default function Layout({ children }) {
     </div>
   );
 }
+
+export const getServerSideProps = (context) => {
+  const cookie = context.req ? context.req.headers.cookie : "";
+
+  const refreshToken = getCookie("refresh_token");
+  return {
+    props: cookie,
+  };
+};
