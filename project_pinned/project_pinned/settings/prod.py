@@ -6,6 +6,8 @@ from .base import *  # noqa: F401, F403
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
+CORS_ALLOW_CREDENTIALS = True
+
 CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = ['https://mypinnedlandmark.bnbong.tk']
 
