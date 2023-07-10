@@ -242,6 +242,27 @@ class UserProfile(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class UserMyPage(APIView):
+    """
+    토큰을 통해 프로필 정보를 확인하는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="토큰을 통해 프로필 정보를 확인하는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: UserProfileSerializer(), 401: "사용자 인증 실패"},
+    )
+    def get(self, request):
+        serializer = UserProfileSerializer(
+            instance=request.user,
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class UserFollow(APIView):
     """
     URL 중 <user_id>에 해당하는 유저를 팔로우.
