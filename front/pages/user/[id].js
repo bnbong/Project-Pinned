@@ -1,5 +1,5 @@
 
-import { AuthContext } from "@/contexts/AuthContext";
+import { AuthContext } from "@/contexts/Context";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import axiosBaseURL from '@/components/axiosBaseUrl';
@@ -11,7 +11,7 @@ export default function UserPage () {
   //현재 페이지는 다른 유저의 페이지.
   const router = useRouter();
   if (!router.isReady) return null;
-  const { id } = router.query;  // 바로 userID로 사용
+  const { id } = router.query; 
 
   const [userID, setUserID] = useState('');
   const [active, setActive] = useState(true);
@@ -21,26 +21,22 @@ export default function UserPage () {
   const [postNumber, setPostNumber] = useState(0); 
 
   const [posts, setPosts] = useState([]);
-
-  const dummyData = [
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1..."
-    },
-    {
-      profileImage: "profile2.jpg",
-      username: "Username2",
-      postImage: "https://via.placeholder.com/150",
-      likes: 500,
-      description: "Post Description 2..."
-    },
-  ];
-
-  
-
+  const [followerCheck, setFollowerCheck] = ([])
+  const followCheck = async (user_id) => {
+    try{
+      const res = axiosBaseURL.get(`api/v1/user/${user_id}/followings`);
+    }catch(error){
+      console.log(error)
+    }
+  }
+  const getMyId = async () => {
+    try{
+      const res = axiosBaseURL.get(`api/v1/user/mypage/`);
+      return (await res).data.user_id;
+    } catch(error){
+      console.log(error);
+    }
+  }
   const handleClick = async () => {
     setActive(!active);
     //팔로우 했을때 안했을때 나눠서 적용.
@@ -69,6 +65,7 @@ export default function UserPage () {
 
   useEffect(() => {
     setUserID(router.query.id);
+    //getMyId().then((userId)=>followCheck(userId));
   }, [id]);
 
   useEffect(() => {

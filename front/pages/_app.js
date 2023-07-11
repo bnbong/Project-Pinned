@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { useContext, useEffect, useState } from "react";
-
+import { PostProvider } from '@/contexts/PostContext';
 import { Toaster } from "react-hot-toast";
 
 export default function App({ Component, pageProps }) {
@@ -20,16 +20,18 @@ export default function App({ Component, pageProps }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ReactQueryDevtools initialIsOpen={true} />
-      <AuthProvider>
-        {mounted && <Toaster />}
-        {router.pathname == "/login" || router.pathname == "/signup" ? (
-          <Component {...pageProps} />
-        ) : (
-          <Layout>
+      <PostProvider>
+        <AuthProvider>
+          {mounted && <Toaster />}
+          {router.pathname == "/login" || router.pathname == "/signup" ? (
             <Component {...pageProps} />
-          </Layout>
-        )}
-      </AuthProvider>
+          ) : (
+            <Layout>
+              <Component {...pageProps} />
+            </Layout>
+          )}
+        </AuthProvider>
+      </PostProvider>
     </QueryClientProvider>
   );
 }
