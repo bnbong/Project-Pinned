@@ -37,6 +37,7 @@ const Card = ({ author, location, title, content, images, onClick }) => {
           <img
             className="h-48 w-full object-cover md:w-48"
             src={images[0]?.image || "https://via.placeholder.com/150"}
+            onError={(e)=>{e.target.onerror = null; e.target.src="https://via.placeholder.com/150"}}
             alt="A random image"
           />
         </div>

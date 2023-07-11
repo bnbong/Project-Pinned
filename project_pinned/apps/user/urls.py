@@ -22,7 +22,7 @@ urlpatterns = [
 
     # Basic user login & registration
     path("login/", views.UserLogin.as_view(), name="user-login"),
-    path("logout/", LogoutView.as_view(), name="user-logout"),
+    path("logout/", views.UserLogout.as_view(), name="user-logout"),
     path("register/", views.UserRegister.as_view(), name="user-register"),
     path("search/", views.UserSearch.as_view(), name="user-search"),
     

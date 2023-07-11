@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import get_user_model
 
-from dj_rest_auth.views import LoginView
+from dj_rest_auth.views import LoginView, LogoutView
 from dj_rest_auth.jwt_auth import set_jwt_cookies
 
 from rest_framework import permissions, status
@@ -147,6 +147,17 @@ class UserLogin(LoginView):
             self.refresh_token,
         )
         return response
+
+
+class UserLogout(LogoutView):
+    """
+    Cookie에 있는 refresh token을 사용하여 로그아웃하는 API.
+    """
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh_token")
+        request.data['refresh'] = refresh_token
+
+        return super().post(request, *args, **kwargs)
 
 
 class UserDelete(APIView):
