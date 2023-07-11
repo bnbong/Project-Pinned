@@ -15,7 +15,7 @@ class Post(BaseModel):
 
 class Image(BaseModel):
     post = models.ForeignKey(Post, related_name='images', on_delete=models.CASCADE)
-    image = models.ImageField(null=True, blank=True, upload_to='post_images/')
+    image = models.ImageField(null=True, blank=True, upload_to='post_images/', max_length=500)
 
 
 class Comment(BaseModel):
