@@ -2,8 +2,10 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 const getNewAccessToken = async () => {
-  const { access } = await axiosBaseURL.post("api/v1/user/token/refresh/");
-  console.log(access);
+  const {
+    data: { access },
+  } = await axiosBaseURL.post("api/v1/user/token/refresh/");
+
   localStorage.setItem("access_token", access);
 };
 
@@ -12,7 +14,7 @@ const axiosBaseURL = axios.create({
   withCredentials: true,
 });
 
-const request = axiosBaseURL.interceptors.request.use(
+axiosBaseURL.interceptors.request.use(
   (config) => {
     console.log(config.url);
     // 모든 Request Header에 Access토큰을 넣어주는 역할
@@ -37,22 +39,23 @@ const request = axiosBaseURL.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-const response = axiosBaseURL.interceptors.response.use(
+axiosBaseURL.interceptors.response.use(
   (response) => response,
   async (error) => {
     const prevRequest = error?.config;
-
+    console.log("조건문 실행전");
     if (error?.response?.status === 401 && !prevRequest?.sent) {
+      console.log("뭐지");
       getNewAccessToken().catch((err) => {
         toast.error("다시 로그인 해주세요!");
       });
       prevRequest.sent = true;
-      prevRequest.headers["Authorization"] = `Bearer ${accessToken}}`;
+      prevRequest.headers["Authorization"] = `Bearer ${localStorage.getItem(
+        "access_token"
+      )}}`;
     }
     return Promise.reject(error);
   }
 );
-axiosBaseURL.interceptors.request.eject(request);
-axiosBaseURL.interceptors.response.eject(response);
 
 export default axiosBaseURL;

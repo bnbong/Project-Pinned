@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 const withAuth = (Component) => {
   const Auth = () => {
     const [mounted, setMounted] = useState(false);
+    const router = useRouter();
 
     //브라우저와 SSR HTML 불일치로 인해 useEffect를 이용해 랜더링된 후 업데이트되게 해준다.
     useEffect(() => {
@@ -15,8 +16,6 @@ const withAuth = (Component) => {
       typeof window !== "undefined"
         ? localStorage.getItem("access_token")
         : null;
-
-    const router = useRouter();
 
     if (!token || token === "") {
       // Login 컴포넌트를 출력하거나
