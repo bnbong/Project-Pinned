@@ -1,0 +1,90 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
+    environment:
+      POSTGRES_DB: pinned_db
+      POSTGRES_USER: pinned
+      POSTGRES_PASSWORD: pinned
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: "redis:alpine"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1024M
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+
+  backend:
+    build:
+      context: ./project_pinned
+      dockerfile: Dockerfile
+    command: python manage.py runserver 0.0.0.0:8000
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+    volumes:
+      - django_static_volume:/app/static
+      - ./project_pinned:/app
+    environment:
+      - DJANGO_SETTINGS_MODULE=project_pinned.settings.dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+      - redis
+
+  frontend:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_BACKEND_URL=http://backend:8000
+
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile
+      args:
+      - NGINX_CONF_FILE=nginx-test.conf
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 2048M
+    volumes:
+      - django_static_volume:/data/static
+      - ./logs:/var/log/nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+
+
+volumes:
+  postgres_data:
+  redis_data:
+  django_static_volume:
