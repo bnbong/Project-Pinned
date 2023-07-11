@@ -2,32 +2,49 @@ import React from "react";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import axiosBaseURL from "@/components/axiosBaseUrl";
+import ReactQuill from "react-quill";
 
-export default function Post(title, content, comment) {
+export default function Post({ data }) {
+  //   if (typeof window === "undefined") {
+  //     return null;
+  //   }
+  console.log(data);
   const router = useRouter();
   const [post, setPost] = useState({
     title: "",
     content: "",
   });
-  console.log(router.query.id);
 
-  const getPost = async () => {
-    const res = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
-    console.log(res);
-  };
+  const { title, content } = post;
 
-  useEffect(async () => {
-    getPost();
-  }, []);
+  //추후에 react query이용해서 상태관리 해보자
+  //   const getPost = async () => {
+  //     try {
+  //       const { data } = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
+  //       console.log(data);
+  //       setPost({
+  //         ...post,
+  //         title: data.post_title,
+  //         content: data.post_content,
+  //       });
+  //     } catch (err) {
+  //       console.log(err);
+  //     }
+  //   };
+
+  //   useEffect(() => {
+  //     getPost().catch((err) => console.log(err));
+  //   }, []);
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
       <div className="min-h-screen max-w-3xl mx-auto py-8">
         <div className="min-h-screen bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-4">title</h1>
-          <p className="text-gray-600">content</p>
+          <h1 className="text-2xl font-bold mb-4">{title}</h1>
+          <ReactQuill value={content} readOnly={true} theme={"bubble"} />
+          <br></br>
           <section className="not-format">
             <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
                 댓글 수 (20)
               </h2>
             </div>
@@ -129,7 +146,8 @@ export default function Post(title, content, comment) {
                 Very straight-to-point article. Really worth time reading. Thank
                 you! But tools are just the instruments for the UX designers.
                 The knowledge of the design tools are as important as the
-                creation of the design strategy.
+                creation of the design strategy.import from
+                './../../.next/static/webpack/pages/login.08dbf1e182efe799.hot-update';
               </p>
               <div className="flex items-center mt-4 space-x-4">
                 <button
@@ -460,3 +478,11 @@ export default function Post(title, content, comment) {
     </div>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   console.log(context);
+//   //   const { data } = await axiosBaseURL.get(`api/v1/post/${params.first}`);
+//   return {
+//     props: context,
+//   };
+// }
