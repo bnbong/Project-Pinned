@@ -294,8 +294,7 @@ export default function Home() {
   });
 
   return (
-    <div className="p-5 bg-neutral-50">
-   
+    <div className="p-5 bg-neutral-50 mb-20">
       <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
         <div className="flex justify-between mx-auto">
           <div className="flex">
@@ -332,6 +331,7 @@ export default function Home() {
               <p key={post.post_id}>
                 <div className="grid-cols-1 items-center justify-center">
                   <NewPostLayout
+                    postId={post.post_id}
                     author={post.username}
                     location={post.landmark_name}
                     title={post.post_title}

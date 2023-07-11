@@ -10,20 +10,19 @@ const getNewAccessToken = async () => {
 };
 
 const axiosBaseURL = axios.create({
-  baseURL: "http://localhost/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
+  baseURL: "http://localhost:8000/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
   withCredentials: true,
 });
+
+const accessToken =
+  typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
 
 axiosBaseURL.interceptors.request.use(
   (config) => {
     console.log(config.url);
     // 모든 Request Header에 Access토큰을 넣어주는 역할
-    if (!config.headers["Authorization"]) {
-      config.headers["Authorization"] = `Bearer ${
-        typeof window !== "undefined"
-          ? localStorage.getItem("access_token")
-          : null
-      }`;
+    if (!config.headers["Authorization"] && accessToken !== "" && accessToken) {
+      config.headers["Authorization"] = `Bearer ${accessToken}`;
       config.headers["Content-Type"] = "application/json";
     }
     //login & signup 페이지에선 access_token을 header에서 없앤다.
@@ -42,7 +41,6 @@ axiosBaseURL.interceptors.request.use(
 axiosBaseURL.interceptors.response.use(
   (response) => response,
   async (error) => {
-    console.log(response);
     const prevRequest = error?.config;
 
     if (error?.response?.status === 401 && !prevRequest?.sent) {
@@ -50,9 +48,7 @@ axiosBaseURL.interceptors.response.use(
         toast.error("다시 로그인 해주세요!");
       });
       prevRequest.sent = true;
-      prevRequest.headers["Authorization"] = `Bearer ${localStorage.getItem(
-        "access_token"
-      )}}`;
+      prevRequest.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     if (error?.response?.status >= 500) {
       toast.error("서버 에러가 발생했습니다.");
