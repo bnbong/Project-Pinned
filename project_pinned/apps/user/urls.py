@@ -12,7 +12,7 @@ from . import views
 
 token_patterns = [
     path("verify/", TokenVerifyView.as_view(), name="jwt-verify"),
-    path("refresh/", TokenRefreshView.as_view(), name="jwt-refresh"),
+    path("refresh/", views.CookieTokenRefreshView.as_view(), name="jwt-refresh"),
     path("blacklist/", TokenBlacklistView.as_view(), name="jwt-blacklist"),
 ]
 

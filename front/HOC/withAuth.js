@@ -1,8 +1,14 @@
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 const withAuth = (Component) => {
   const Auth = () => {
+    const [mounted, setMounted] = useState(false);
+
+    //브라우저와 SSR HTML 불일치로 인해 useEffect를 이용해 랜더링된 후 업데이트되게 해준다.
+    useEffect(() => {
+      setMounted(true);
+    }, []);
     // context 등의 상태를 통해 조건부 처리를 한다
     const token =
       typeof window !== "undefined"
@@ -20,9 +26,9 @@ const withAuth = (Component) => {
         router.replace("/login");
       }, []);
 
-      return <></>;
+      return mounted && <></>;
     }
-    return <Component />;
+    return mounted && <Component />;
   };
 
   return Auth;
