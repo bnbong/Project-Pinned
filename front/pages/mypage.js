@@ -50,7 +50,7 @@ const MyPage = withAuth(() => {
   const logout = async () => {
     try{
       const res = await axiosBaseURL.post(`api/v1/user/logout/`);
-      localStorage.clear();
+      localStorage.removeItem("access_token");
       router.push('/');
     } catch(error){
       console.log(error);
