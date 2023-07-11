@@ -15,7 +15,7 @@ else
 fi
 
 echo "building container..."
-docker compose -f docker-compose.yml up -d
+docker compose -f docker-compose.yml up -d --build
 
 if [[ -z "$VOLUME" ]]; then
   echo "Applying Schemas to Database..."

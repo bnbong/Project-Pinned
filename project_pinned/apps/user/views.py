@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.notification import send_notifiaction
 
@@ -466,3 +467,11 @@ class UserFCMToken(APIView):
                 {"is_success": False, "detail": "FCM Token is not provided"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh_token")
+        request.data['refresh'] = refresh_token
+
+        return super().post(request, *args, **kwargs)
