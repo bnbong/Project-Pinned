@@ -1,4 +1,13 @@
 import axios from "axios";
+import toast from "react-hot-toast";
+
+const getNewAccessToken = async () => {
+  const {
+    data: { access },
+  } = await axiosBaseURL.post("api/v1/user/token/refresh/");
+
+  localStorage.setItem("access_token", access);
+};
 
 const axiosBaseURL = axios.create({
   baseURL: "http://localhost/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
@@ -28,6 +37,25 @@ axiosBaseURL.interceptors.request.use(
     return config;
   },
   (error) => Promise.reject(error)
+);
+
+axiosBaseURL.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const prevRequest = error?.config;
+    console.log("조건문 실행전");
+    if (error?.response?.status === 401 && !prevRequest?.sent) {
+      console.log("뭐지");
+      getNewAccessToken().catch((err) => {
+        toast.error("다시 로그인 해주세요!");
+      });
+      prevRequest.sent = true;
+      prevRequest.headers["Authorization"] = `Bearer ${localStorage.getItem(
+        "access_token"
+      )}}`;
+    }
+    return Promise.reject(error);
+  }
 );
 
 export default axiosBaseURL;
