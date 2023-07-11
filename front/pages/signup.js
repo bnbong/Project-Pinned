@@ -131,7 +131,11 @@ export default function Login() {
       router.push("/");
     },
     onError: (err, variables, context) => {
-      toast.error("에러가 발생했습니다.");
+      if (err.response.status === 400) {
+        toast.error("이미 가입된 계정입니다.");
+      } else {
+        toast.error("에러가 발생했습니다.");
+      }
       setErrorMessage(err);
     },
   });
