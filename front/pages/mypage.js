@@ -50,7 +50,8 @@ const MyPage = withAuth(() => {
   const logout = async () => {
     try{
       const res = await axiosBaseURL.post(`api/v1/user/logout/`);
-
+      localStorage.clear();
+      router.push('/');
     } catch(error){
       console.log(error);
     }
