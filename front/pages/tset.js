@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 
 
 export default function NavBar() {
+  
   const [activeTab, setActiveTab] = useState('trending');
   const [posts, setPosts] = useState([]);
 
