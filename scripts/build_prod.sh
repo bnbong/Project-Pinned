@@ -11,14 +11,10 @@ if [[ -z "$VOLUME" ]]; then
   docker compose -f docker-compose.prod.yml down --volumes
 
   docker rmi $(docker images -f "dangling=true" -q)
-else
-  echo "Docker volumes exist. Skip deleting and creating volumes..."
-fi
 
-echo "building container..."
-docker compose -f docker-compose.prod.yml up --build -d
+  echo "building container..."
+  docker compose -f docker-compose.prod.yml up --build -d
 
-if [[ -z "$VOLUME" ]]; then
   echo "Applying Schemas to Database..."
   docker exec -it "project-pinned-backend-1" python manage.py migrate
 
@@ -40,4 +36,9 @@ if [[ -z "$VOLUME" ]]; then
   Post.objects.create(user=User.objects.filter(username='user3').first(), landmark=Landmark.objects.filter(name='대학로거리').first(), title='대학로거리는 최강의 대학로다.', content='한대앞 자취방 월세 하락 기원 134일차')
   Post.objects.create(user=User.objects.filter(username='user3').first(), landmark=Landmark.objects.filter(name='경주월드').first(), title='진짜 겁나 무서운 놀이공원', content='힝 놀이기구 무서워')
   "
+else
+  echo "Docker volumes exist. Skip deleting and creating volumes..."
+
+  echo "building container..."
+  docker compose -f docker-compose.prod.yml up --build -d
 fi
