@@ -294,8 +294,7 @@ export default function Home() {
   });
 
   return (
-    <div className="p-5 bg-neutral-50">
-   
+    <div className="p-5 bg-neutral-50 mb-20">
       <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
         <div className="flex justify-between mx-auto">
           <div className="flex">
@@ -327,15 +326,15 @@ export default function Home() {
           // group을 map으로 한번 더 돌리는 이중 배열 구조이다.
           // get api를 통해 받은 res를 컴포넌트에 props로 전달해줘서 랜더링해야할거 같음.
           <div key={index}>
-            {/* {console.log(group)} */}
             {group.data.trending_posts.map((post) => (
               <p key={post.post_id}>
                 <div className="grid-cols-1 items-center justify-center">
                   <NewPostLayout
+                    postId={post.post_id}
                     author={post.username}
                     location={post.landmark_name}
                     title={post.post_title}
-                    content={post.post_content}
+                    content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
                     images={post.post_image}
                   />
                 </div>

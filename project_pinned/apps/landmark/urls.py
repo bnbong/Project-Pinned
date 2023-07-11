@@ -6,6 +6,8 @@ from . import views
 urlpatterns = [
     path("recommends/", views.Get3RandomLandmarks.as_view(), name="get-3-landmarks"),
     path("search/", views.SearchLandmark.as_view(), name="landmark-search"),
+    path("landmarks/", views.GetAllLandmarks.as_view(), name="landmark-list"),
+
 
     path("<landmark_id>/", views.GetLandmark.as_view(), name="landmark-info"),
     path(

@@ -36,7 +36,7 @@ export default function Login() {
       console.log("success");
       localStorage.setItem("access_token", data.data.access_token);
       toast.success("로그인 성공했습니다.");
-      router.push("/");
+      router.replace("/");
     },
     onError: (error, variables, context) => {
       if (error) {
@@ -55,7 +55,7 @@ export default function Login() {
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
-            Pinned
+            핀드 - 내 추억 속의 랜드마크
           </a>
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
