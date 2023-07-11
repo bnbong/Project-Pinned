@@ -133,11 +133,11 @@ export default function Login({ cookie }) {
     </>
   );
 }
-export const getServerSideProps = (context) => {
-  const cookie = context.req ? context.req.headers.cookie : "";
+// export const getServerSideProps = (context) => {
+//   const cookie = context.req ? context.req.headers.cookie : "";
 
-  // const refreshToken = getCookie("refresh_token");
-  return {
-    props: { cookie },
-  };
-};
+//   // const refreshToken = getCookie("refresh_token");
+//   return {
+//     props: { cookie },
+//   };
+// };
