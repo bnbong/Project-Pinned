@@ -1,4 +1,5 @@
 import axios from "axios";
+import toast from "react-hot-toast";
 
 const axiosBaseURL = axios.create({
   baseURL: "http://localhost:8000/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
@@ -30,4 +31,15 @@ axiosBaseURL.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+axiosBaseURL.interceptors.response.use(
+  (res) => res.data,
+  (err) => {
+    const { status } = err.response;
+    if (status >= 500) {
+      toast.error(
+        "서버 오류가 발생했어요." + "\n" + "잠시 후에 다시 시도해보세요."
+      );
+    }
+  }
+);
 export default axiosBaseURL;

@@ -8,7 +8,7 @@ import withAuth from "@/HOC/withAuth";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import { data } from "autoprefixer";
 
-const MyPage = () => {
+const MyPage = withAuth(() => {
   const router = useRouter();
 
   // loginState = 유저의 데이터
@@ -124,13 +124,12 @@ const MyPage = () => {
 
   //게시물 로딩
   useEffect(() => {
-    fetchUsers()
-    .then((userID) => fetchPosts(userID));
+    fetchUsers().then((userID) => fetchPosts(userID));
   }, []);
 
-  useEffect(()=>{
+  useEffect(() => {
     setPostNumber(response.length);
-  },[response]);
+  }, [response]);
 
   //프로필 fetch
   // useEffect(() => {
@@ -234,7 +233,6 @@ const MyPage = () => {
       </div>
     </div>
   );
-};
+});
 //withAuth 벗겨놓음
 export default MyPage;
-

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Login({ cookie }) {
   console.log("cookie", cookie);
@@ -41,18 +42,23 @@ export default function Login({ cookie }) {
       //   accessToken: data.data.access_token,
       //   user: data.data.user,
       // });
-      alert("로그인 성공");
+      toast.success("로그인 성공했습니다.");
       router.push("/");
     },
     onError: (error, variables, context) => {
-      console(error, variables, context);
-      alert("로그인 실패");
-      setErrorMessage(e.response.data);
+      if (error) {
+        toast.error("아이디 또는 비밀번호가 유효하지 않습니다.");
+      } else {
+        toast.error("예상치 못한 오류가 발생했습니다.");
+      }
     },
   });
 
   return (
     <>
+      <div>
+        <Toaster />
+      </div>
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a
@@ -80,6 +86,11 @@ export default function Login({ cookie }) {
                   value={password}
                   onChange={onChange}
                   placeholder="••••••••"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      mutate({ email, password });
+                    }
+                  }}
                 />
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
