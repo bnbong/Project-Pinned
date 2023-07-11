@@ -7,6 +7,7 @@ import NewPostLayout from "@/components/PostLayout";
 import withAuth from "@/HOC/withAuth";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import { data } from "autoprefixer";
+import { FaCog } from 'react-icons/fa';
 
 const MyPage = withAuth(() => {
   const router = useRouter();
@@ -27,6 +28,7 @@ const MyPage = withAuth(() => {
   const [following, setFollowing] = useState(user?.followings);
   const [postNumber, setPostNumber] = useState(0);
   const [response, setResponse] = useState([]);
+
   //img 파일 관리하는 state
   const [img, setImg] = useState(
     user?.profile_image.replace(
@@ -35,60 +37,24 @@ const MyPage = withAuth(() => {
     ) || "https://via.placeholder.com/150"
   );
   //post 관리하는 state
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [posts, setPosts] = useState([]);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
-  // const dummyData = [
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile2.jpg",
-  //     username: "Username2",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 500,
-  //     description: "Post Description 2...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  // ];
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const logout = async () => {
+    try{
+      const res = await axiosBaseURL.post(`api/v1/user/logout/`);
+
+    } catch(error){
+      console.log(error);
+    }
+  }
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -131,31 +97,6 @@ const MyPage = withAuth(() => {
     setPostNumber(response.length);
   }, [response]);
 
-  //프로필 fetch
-  // useEffect(() => {
-  //   const fetchUser = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${userID}/profile/`,
-  //         {
-  //           headers: {
-  //             Authorization: `Bearer ${loginState.accessToken}`,
-  //           },
-  //         }
-  //       );
-  //       console.log("프로필 fetch = " + response.data.profile_image);
-  //       setUserName(response.data.username);
-  //       setImg(response.data.profile_image);
-  //     } catch (error) {
-  //       console.log(error);
-  //     }
-  //   };
-
-  //   if (user) {
-  //     fetchUser();
-  //   }
-  // }, [user, userID, loginState]);
-
   useEffect(() => {
     setImg(user?.profile_image || "https://via.placeholder.com/150");
   }, [user?.profile_image]);
@@ -179,11 +120,34 @@ const MyPage = withAuth(() => {
           <button
             onClick={openEdit}
             className={
-              "bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer"
+              "w-14 bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer"
             }
           >
             Edit
           </button>
+          <FaCog
+            className="w-6 h-6 ml-2 text-gray-600 cursor-pointer"
+            onClick={openModal}
+          />
+          {isModalOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+              <div className="w-40 h-20 bg-white p-6 rounded shadow-md">
+                <div className="flex flex-col justify-center h-full">
+                  <div className="mb-1">
+                    <button className="mx-auto block" onClick={logout}>
+                      로그아웃
+                    </button>
+                  </div>
+                  <hr />
+                  <div className="mt-1">
+                    <button className="mx-auto block" onClick={closeModal}>
+                      닫기
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
           <EditProfileModal
             isOpen={edit}
             onClose={closeEdit}

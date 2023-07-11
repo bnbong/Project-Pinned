@@ -14,7 +14,7 @@ export default function UserPage () {
   const { id } = router.query;  // 바로 userID로 사용
 
   const [userID, setUserID] = useState('');
-  const [active, setActive] = useState(false);
+  const [active, setActive] = useState(true);
   const [userName, setUserName] = useState("로딩중...");
   const [follower, setFollower] = useState(0);
   const [following, setFollowing] = useState(0);
@@ -110,7 +110,7 @@ export default function UserPage () {
           />
           <h2 className="text-2xl font-bold mb-0">{userName}</h2>
           <button onClick={handleClick}
-            className={`${active ? 'bg-black' : 'bg-green-500'} text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer`}
+            className={`${active ? 'bg-gray-500' : 'bg-indigo-600'} w-14 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer`}
           >팔로우</button>
         </div>
         <div className="flex list-none p-0 m-0 mt-2">
