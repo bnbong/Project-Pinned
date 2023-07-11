@@ -49,6 +49,8 @@ export default function UserPage () {
         console.log("팔로우 시작");
         const res = await axiosBaseURL.post( `api/v1/user/${userID}/follow/`);
         console.log(res);
+        //야매로 팔로우 변동 현황 컨트롤
+        setFollower(follower+1);
       } catch(error) {
         console.log(error);
       }     
@@ -57,6 +59,8 @@ export default function UserPage () {
         console.log("팔로우 해제");
         const res = await axiosBaseURL.post(`api/v1/user/${userID}/unfollow/`);
         console.log(res);
+        //야매로 팔로우 변동 현황 컨트롤
+        setFollower(follower-1);
       } catch(error) {
           console.log(error);
       }
