@@ -91,21 +91,28 @@ const MyPage = () => {
   // ];
   const fetchUsers = async () => {
     try {
-      const { data } = await axiosBaseURL.get(`api/v1/user/mypage/`);
-      // console.log(data);
-      setUserID(data.user_id);
+      const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
+      // console.log("여기는 res!");
+      // console.log(res.data);
+      // console.log(res.data.user_id);
+      setUserName(res.data.username);
+      setFollower(res.data.followers);
+      setFollowing(res.data.followings);
       // setPosts(response.data.user_posts);
       // setPostNumber(posts.length);
+      return res.data.user_id;
     } catch (error) {
       console.log(error);
     }
   };
 
-  const fetchPosts = async () => {
+  const fetchPosts = async (userID) => {
+    console.log(userID);
     const response = await axiosBaseURL
       .get(`api/v1/post/posts/${userID}/`)
       .then((res) => {
         setResponse(res.data.user_posts);
+        setUserID(userID);
       })
       .catch((err) => {
         console.log(err);
@@ -117,8 +124,13 @@ const MyPage = () => {
 
   //게시물 로딩
   useEffect(() => {
-    fetchUsers().then(fetchPosts());
+    fetchUsers()
+    .then((userID) => fetchPosts(userID));
   }, []);
+
+  useEffect(()=>{
+    setPostNumber(response.length);
+  },[response]);
 
   //프로필 fetch
   // useEffect(() => {
@@ -149,6 +161,7 @@ const MyPage = () => {
     setImg(user?.profile_image || "https://via.placeholder.com/150");
   }, [user?.profile_image]);
   console.log(response.map((post) => console.log(post.username)));
+
   return (
     <div className="p-5 bg-neutral-50">
       {/* {console.log(user)}
@@ -224,3 +237,4 @@ const MyPage = () => {
 };
 //withAuth 벗겨놓음
 export default MyPage;
+
