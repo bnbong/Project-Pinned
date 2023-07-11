@@ -1,12 +1,9 @@
 
-import { AuthContext } from "@/contexts/Context";
 import React, { useContext, useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import axiosBaseURL from '@/components/axiosBaseUrl';
 import NewPostLayout from '@/components/PostLayout';
 export default function UserPage () {
-  //이 uesr 는 사용자 자신을 의미. 일단 내비두기.
-  const { user } = useContext(AuthContext);
 
   //현재 페이지는 다른 유저의 페이지.
   const router = useRouter();
@@ -22,17 +19,20 @@ export default function UserPage () {
 
   const [posts, setPosts] = useState([]);
   const [followerCheck, setFollowerCheck] = ([])
+
   const followCheck = async (user_id) => {
     try{
-      const res = axiosBaseURL.get(`api/v1/user/${user_id}/followings`);
+      const res = await axiosBaseURL.get(`api/v1/user/${user_id}/followings`);
+      console.log(res.data);
+      return res.data.followings_list.some((obj) => obj.user_id === id);
     }catch(error){
       console.log(error)
     }
   }
   const getMyId = async () => {
     try{
-      const res = axiosBaseURL.get(`api/v1/user/mypage/`);
-      return (await res).data.user_id;
+      const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
+      return res.data.user_id;
     } catch(error){
       console.log(error);
     }
@@ -65,11 +65,16 @@ export default function UserPage () {
 
   useEffect(() => {
     setUserID(router.query.id);
-    //getMyId().then((userId)=>followCheck(userId));
+    getMyId().then((userId)=>{
+      followCheck(userId).then((isFollowing)=>{
+        if(isFollowing){
+          setActive(false);
+        }
+      });
+    });
   }, [id]);
 
   useEffect(() => {
-    
     const fetchPosts = async () => {
       if (userID == 'undefined' || userID == null) return;
       console.log(userID);
