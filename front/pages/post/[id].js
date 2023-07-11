@@ -1,15 +1,30 @@
 import React from "react";
 import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import axiosBaseURL from "@/components/axiosBaseUrl";
 
-export default function Post() {
+export default function Post(title, content, comment) {
   const router = useRouter();
+  const [post, setPost] = useState({
+    title: "",
+    content: "",
+  });
   console.log(router.query.id);
+
+  const getPost = async () => {
+    const res = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
+    console.log(res);
+  };
+
+  useEffect(async () => {
+    getPost();
+  }, []);
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
       <div className="min-h-screen max-w-3xl mx-auto py-8">
         <div className="min-h-screen bg-white rounded-lg shadow-md p-6">
-          <h1 className="text-2xl font-bold mb-4">제목</h1>
-          <p className="text-gray-600">본문 내용이 들어갈 자리</p>
+          <h1 className="text-2xl font-bold mb-4">title</h1>
+          <p className="text-gray-600">content</p>
           <section className="not-format">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">

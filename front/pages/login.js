@@ -36,7 +36,7 @@ export default function Login() {
       console.log("success");
       localStorage.setItem("access_token", data.data.access_token);
       toast.success("로그인 성공했습니다.");
-      router.push("/");
+      router.replace("/");
     },
     onError: (error, variables, context) => {
       if (error) {

@@ -5,7 +5,10 @@ const getNewAccessToken = async () => {
   const {
     data: { access },
   } = await axiosBaseURL.post("api/v1/user/token/refresh/");
-
+  if (!data) {
+    console.log("data 없음");
+    throw Error;
+  }
   localStorage.setItem("access_token", access);
 };
 
@@ -19,7 +22,7 @@ const accessToken =
 
 axiosBaseURL.interceptors.request.use(
   (config) => {
-    console.log(config.url);
+    console.log("requeset interceptor", config.url);
     // 모든 Request Header에 Access토큰을 넣어주는 역할
     if (!config.headers["Authorization"] && accessToken !== "" && accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
@@ -42,9 +45,9 @@ axiosBaseURL.interceptors.response.use(
   (response) => response,
   async (error) => {
     const prevRequest = error?.config;
-
+    console.log("error response interceptor", accessToken);
     if (error?.response?.status === 401 && !prevRequest?.sent) {
-      getNewAccessToken().catch((err) => {
+      await getNewAccessToken().catch((err) => {
         toast.error("다시 로그인 해주세요!");
       });
       prevRequest.sent = true;

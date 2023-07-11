@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
 
 const Card = ({ author, location, title, content, images, onClick }) => {
