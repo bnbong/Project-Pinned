@@ -1,9 +1,12 @@
 import React from "react";
 import { useRouter } from "next/router";
 
-const Card = ({ author, location, title, content, images }) => {
+const Card = ({ author, location, title, content, images, onClick }) => {
   return (
-    <div className="max-w-l mx-auto bg-white shadow-md rounded overflow-hidden md:max-w-xl m-2">
+    <div
+      onClick={onClick}
+      className="max-w-l mx-auto bg-white shadow-md rounded overflow-hidden md:max-w-xl m-2"
+    >
       <div className="md:flex items-center bg-purple-200">
         <div className="m-1 rounded-full h-8 w-8 flex-shrink-0 bg-gray-400">
           <img
@@ -48,10 +51,13 @@ export default function NewPostLayout({
   title,
   content,
   images = [],
+  postId,
 }) {
+  const router = useRouter();
   return (
     <div className="justify-around items-start">
       <Card
+        onClick={() => router.push(`/post/${postId}`)}
         author={author}
         location={location}
         title={title}

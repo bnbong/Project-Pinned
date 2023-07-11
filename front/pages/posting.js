@@ -11,7 +11,7 @@ import { useRouter } from "next/router";
 import toast from "react-hot-toast";
 
 //withAuth 벗겨놓음
-export default withAuth(function Post({ html, setHtml }) {
+export default withAuth(function Posting({ html, setHtml }) {
   const ReactQuill = dynamic(
     async () => {
       const { default: RQ } = await import("react-quill");
