@@ -12,6 +12,7 @@ function PostCard() {
             location="보정동"
             title="이것은 게시글입니다"
             content={"This is Fucking first description"}
+            images=""
           />
       <div>
         <SkeletonCard/>

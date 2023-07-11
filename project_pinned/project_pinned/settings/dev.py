@@ -41,4 +41,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-MEDIA_URL = "media/"
+MEDIA_URL = os.getenv("AWS_S3_BUCKET_URL")

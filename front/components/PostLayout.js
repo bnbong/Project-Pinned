@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Card = ({ author, location, title, content }) => {
+const Card = ({ author, location, title, content, images }) => {
   return (
     <div className="max-w-l mx-auto bg-white shadow-md rounded overflow-hidden md:max-w-xl m-2">
       <div className="md:flex items-center bg-purple-200">
@@ -20,18 +20,18 @@ const Card = ({ author, location, title, content }) => {
           <p className="mt-2 text-gray-500">{content}</p>
         </div>
         <div className="md:flex-shrink-0">
-          <img className="h-48 w-full object-cover md:w-48" src="https://via.placeholder.com/150" alt="A random image"/>
+          <img className="h-48 w-full object-cover md:w-48" src={images[0]?.image || 'https://via.placeholder.com/150'} alt="A random image"/>
         </div>
       </div>
     </div>
   );
 };
 
-export default function NewPostLayout({author, location, title, content}) {
+export default function NewPostLayout({author, location, title, content, images = []}) {
   
   return (
     <div className="justify-around items-start" >
-      <Card author={author} location={location} title={title} content={content}></Card>
+      <Card author={author} location={location} title={title} content={content} images={images}></Card>
     </div>
   )
 }
