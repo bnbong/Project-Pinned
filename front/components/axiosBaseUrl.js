@@ -42,10 +42,10 @@ axiosBaseURL.interceptors.request.use(
 axiosBaseURL.interceptors.response.use(
   (response) => response,
   async (error) => {
+    console.log(response);
     const prevRequest = error?.config;
-    console.log("조건문 실행전");
+
     if (error?.response?.status === 401 && !prevRequest?.sent) {
-      console.log("뭐지");
       getNewAccessToken().catch((err) => {
         toast.error("다시 로그인 해주세요!");
       });
@@ -53,6 +53,9 @@ axiosBaseURL.interceptors.response.use(
       prevRequest.headers["Authorization"] = `Bearer ${localStorage.getItem(
         "access_token"
       )}}`;
+    }
+    if (error?.response?.status >= 500) {
+      toast.error("서버 에러가 발생했습니다.");
     }
     return Promise.reject(error);
   }
