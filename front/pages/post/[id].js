@@ -1,23 +1,24 @@
 import React from "react";
-//후순위로 미뤄둬야겠다.
+import { useRouter } from "next/router";
+
 export default function Post() {
+  const router = useRouter();
+  console.log(router.query.id);
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
       <div className="min-h-screen max-w-3xl mx-auto py-8">
         <div className="min-h-screen bg-white rounded-lg shadow-md p-6">
           <h1 className="text-2xl font-bold mb-4">제목</h1>
-          <p className="text-gray-600">
-            This is the detailed view of post. Add your content here.
-          </p>
+          <p className="text-gray-600">본문 내용이 들어갈 자리</p>
           <section className="not-format">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg lg:text-2xl font-bold text-gray-900 dark:text-white">
-                Discussion (20)
+                댓글 수 (20)
               </h2>
             </div>
             <form className="mb-6">
               <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                <label for="comment" className="sr-only">
+                <label htmlFor="comment" className="sr-only">
                   Your comment
                 </label>
                 <textarea
@@ -30,9 +31,9 @@ export default function Post() {
               </div>
               <button
                 type="submit"
-                className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
+                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
               >
-                Post comment
+                댓글 남기기
               </button>
             </form>
             <article className="p-6 mb-6 text-base bg-white rounded-lg dark:bg-gray-900">
@@ -49,7 +50,7 @@ export default function Post() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     <time
                       pubdate
-                      datetime="2022-02-08"
+                      dateTime="2022-02-08"
                       title="February 8th, 2022"
                     >
                       Feb. 8, 2022
@@ -129,9 +130,9 @@ export default function Post() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     ></path>
                   </svg>
@@ -153,7 +154,7 @@ export default function Post() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     <time
                       pubdate
-                      datetime="2022-02-12"
+                      dateTime="2022-02-12"
                       title="February 12th, 2022"
                     >
                       Feb. 12, 2022
@@ -228,9 +229,9 @@ export default function Post() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     ></path>
                   </svg>
@@ -252,7 +253,7 @@ export default function Post() {
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     <time
                       pubdate
-                      datetime="2022-03-12"
+                      dateTime="2022-03-12"
                       title="March 12th, 2022"
                     >
                       Mar. 12, 2022
@@ -331,9 +332,9 @@ export default function Post() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     ></path>
                   </svg>
@@ -353,7 +354,7 @@ export default function Post() {
                     Helene Engels
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
-                    <time pubdate datetime="2022-06-23" title="June 23rd, 2022">
+                    <time pubdate dateTime="2022-06-23" title="June 23rd, 2022">
                       Jun. 23, 2022
                     </time>
                   </p>
@@ -428,9 +429,9 @@ export default function Post() {
                     xmlns="http://www.w3.org/2000/svg"
                   >
                     <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     ></path>
                   </svg>
