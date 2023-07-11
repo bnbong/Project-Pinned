@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const withAuth = (Component) => {
   const Auth = () => {
@@ -21,7 +22,7 @@ const withAuth = (Component) => {
       // Login 컴포넌트를 출력하거나
       // 이미 로그인 화면이 구현된 페이지를 사용하고 라우팅
       // router.push("/login");
-
+      toast.error("로그인을 해주세요!");
       useEffect(() => {
         router.replace("/login");
       }, []);

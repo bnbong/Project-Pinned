@@ -5,10 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 
-export default function Login({ cookie }) {
-  console.log("cookie", cookie);
+export default function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState({});
@@ -36,12 +35,6 @@ export default function Login({ cookie }) {
 
       console.log("success");
       localStorage.setItem("access_token", data.data.access_token);
-      // setLoginState({
-      //   ...loginState,
-      //   isLoggedIn: true,
-      //   accessToken: data.data.access_token,
-      //   user: data.data.user,
-      // });
       toast.success("로그인 성공했습니다.");
       router.push("/");
     },
@@ -56,9 +49,6 @@ export default function Login({ cookie }) {
 
   return (
     <>
-      <div>
-        <Toaster />
-      </div>
       <section className="bg-gray-50 dark:bg-gray-900">
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
           <a
@@ -144,11 +134,3 @@ export default function Login({ cookie }) {
     </>
   );
 }
-// export const getServerSideProps = (context) => {
-//   const cookie = context.req ? context.req.headers.cookie : "";
-
-//   // const refreshToken = getCookie("refresh_token");
-//   return {
-//     props: { cookie },
-//   };
-// };

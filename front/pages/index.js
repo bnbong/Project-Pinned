@@ -9,6 +9,7 @@ import axiosBaseURL from "@/components/axiosBaseUrl";
 import { useInfiniteQuery } from "react-query";
 import { useObserver } from "@/hook/useObserver";
 import { LazyLoadImage } from "react-lazy-load-image-component";
+import { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [isSupported] = useState(
@@ -27,76 +28,58 @@ export default function Home() {
 
   // 유저 등록
   async function registerUser(username, email, password) {
-    const response = await axiosBaseURL.post(
-      "api/v1/user/register/",
-      {
-        username: username,
-        email: email,
-        password: password,
-      }
-    );
+    const response = await axiosBaseURL.post("api/v1/user/register/", {
+      username: username,
+      email: email,
+      password: password,
+    });
     return response.data;
   }
   // JWT 토큰 발급 받기
   async function loginUser(email, password) {
-    const response = await axiosBaseURL.post(
-      "api/v1/user/login/",
-      {
-        email: email,
-        password: password,
-      }
-    );
+    const response = await axiosBaseURL.post("api/v1/user/login/", {
+      email: email,
+      password: password,
+    });
     return response.data;
   }
 
   // JWT 토큰 검증
   async function verifyToken(token) {
-    const response = await axiosBaseURL.post(
-      "api/v1/user/token/verify/",
-      {
-        token: token,
-      }
-    );
+    const response = await axiosBaseURL.post("api/v1/user/token/verify/", {
+      token: token,
+    });
     return response.data;
   }
 
   // JWT 토큰 새로 발급받기
   async function refreshToken(refresh) {
-    const response = await axiosBaseURL.post(
-      "api/v1/user/token/refresh/",
-      {
-        refresh: refresh,
-      }
-    );
+    const response = await axiosBaseURL.post("api/v1/user/token/refresh/", {
+      refresh: refresh,
+    });
     return response.data;
   }
 
   // 유저 프로필 가져오기
   async function getUserProfile(userId, token) {
-    const response = await axiosBaseURL.get(
-      `api/v1/user/${userId}/profile/`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosBaseURL.get(`api/v1/user/${userId}/profile/`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   }
 
   // 유저 검색
   async function searchUser(username, token) {
-    const response = await axiosBaseURL.get(
-      "api/v1/user/search/",
-      {
-        params: {
-          username: username,
-        },
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosBaseURL.get("api/v1/user/search/", {
+      params: {
+        username: username,
+      },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   }
 
@@ -213,57 +196,57 @@ export default function Home() {
   //     });
   // }, []);
 
-  const dummyData = [
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile2.jpg",
-      username: "Username2",
-      postImage: "https://via.placeholder.com/150",
-      likes: 500,
-      description: "Post Description 2...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-    {
-      profileImage: "profile1.jpg",
-      username: "Username1",
-      postImage: "https://via.placeholder.com/150",
-      likes: 999,
-      description: "Post Description 1...",
-    },
-  ];
+  // const dummyData = [
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile2.jpg",
+  //     username: "Username2",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 500,
+  //     description: "Post Description 2...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  //   {
+  //     profileImage: "profile1.jpg",
+  //     username: "Username1",
+  //     postImage: "https://via.placeholder.com/150",
+  //     likes: 999,
+  //     description: "Post Description 1...",
+  //   },
+  // ];
 
   //post 가져오기
   const getPost = (param = OFFSET) => {
@@ -312,6 +295,7 @@ export default function Home() {
 
   return (
     <div className="p-5 bg-neutral-50">
+   
       <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
         <div className="flex justify-between mx-auto">
           <div className="flex">
