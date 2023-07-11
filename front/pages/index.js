@@ -306,13 +306,13 @@ export default function Home() {
           <div className="ml-10">
             <div className="flex">
               <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-white">보정동</h2>
+                <h2 className="text-white">문화의거리</h2>
               </div>
               <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-white">행궁동</h2>
+                <h2 className="text-white">병천순대골목</h2>
               </div>
               <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-gray-100">판교</h2>
+                <h2 className="text-gray-100">하동숲길</h2>
               </div>
             </div>
           </div>
@@ -336,6 +336,7 @@ export default function Home() {
                     location={post.landmark_name}
                     title={post.post_title}
                     content={post.post_content}
+                    images={post.post_image}
                   />
                 </div>
               </p>
