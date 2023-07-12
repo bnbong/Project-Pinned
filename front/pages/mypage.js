@@ -30,10 +30,10 @@ const MyPage = () => {
 
   //user_Id, user_name, follower, following 관리
   const [userID, setUserID] = useState();
-  const [userName, setUserName] = useState(user?.username);
-  const [follower, setFollower] = useState(user?.followers);
-  const [following, setFollowing] = useState(user?.followings);
-  const [postNumber, setPostNumber] = useState(0);
+  const [userName, setUserName] = useState();
+  const [follower, setFollower] = useState();
+  const [following, setFollowing] = useState();
+  const [postNumber, setPostNumber] = useState();
   const [response, setResponse] = useState([]);
 
   //img 파일 관리하는 state
@@ -57,6 +57,7 @@ const MyPage = () => {
   const logout = async () => {
     try {
       const res = await axiosBaseURL.post(`api/v1/user/logout/`);
+      
       localStorage.removeItem("access_token");
       router.push("/");
     } catch (error) {
@@ -99,9 +100,8 @@ const MyPage = () => {
   //게시물 로딩
 
   useEffect(() => {
-    fetchUsers().then((userID) => fetchPosts(userID));
+      fetchUsers().then((userID) => fetchPosts(userID));
   }, []);
-
   useEffect(() => {
     setPostNumber(response.length);
   }, [response]);
@@ -158,6 +158,7 @@ const MyPage = () => {
             </div>
           )}
           <EditProfileModal
+            id={userID}
             isOpen={edit}
             onClose={closeEdit}
             userName={userName}
