@@ -10,6 +10,7 @@ import { useInfiniteQuery } from "react-query";
 import { useObserver } from "@/hook/useObserver";
 import { LazyLoadImage } from "react-lazy-load-image-component";
 import { Toaster } from "react-hot-toast";
+import SkeletonCard from "@/components/SkeletonPostLayout";
 
 export default function Home() {
   const [isSupported] = useState(
@@ -315,7 +316,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {status === "loading" && <p>loading</p>}
+      {status === "loading" && <SkeletonCard />}
       {status === "error" && <p>{error.message}</p>}
       {status === "success" &&
         data &&

@@ -17,7 +17,7 @@ const withAuth = (Component) => {
         ? localStorage.getItem("access_token")
         : null;
 
-    if (!token || token === "") {
+    if ((!token || token === "") && router.pathname !== "/signup") {
       // Login 컴포넌트를 출력하거나
       // 이미 로그인 화면이 구현된 페이지를 사용하고 라우팅
       // router.push("/login");
