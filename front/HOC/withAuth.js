@@ -17,16 +17,20 @@ const withAuth = (Component) => {
         ? localStorage.getItem("access_token")
         : null;
 
-    if ((!token || token === "") && router.pathname !== "/signup") {
+    if (!token || token === "") {
       // Login 컴포넌트를 출력하거나
       // 이미 로그인 화면이 구현된 페이지를 사용하고 라우팅
       // router.push("/login");
-      mounted && toast.error("로그인을 해주세요!");
-      useEffect(() => {
-        router.replace("/login");
-      }, []);
+      if (router.pathname !== "/signup" && router.pathname !== "/login") {
+        mounted && toast.error("로그인을 해주세요!");
+        useEffect(() => {
+          router.replace("/login");
+        }, []);
 
-      return mounted && <></>;
+        return mounted && <Component />;
+      } else {
+        return mounted && <Component />;
+      }
     } else {
       if (router.pathname === "/login" || router.pathname === "/signup") {
         toast.error("이미 로그인 상태입니다.");

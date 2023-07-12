@@ -30,22 +30,22 @@ export default function App({ Component, pageProps }) {
   }, []);
 
   return (
-    <Suspense fallback={<Spinner />}>
-      <QueryClientProvider client={queryClient}>
-        <ReactQueryDevtools initialIsOpen={true} />
-        <PostProvider>
-          <AuthProvider>
-            {mounted && <Toaster />}
-            {router.pathname == "/login" || router.pathname == "/signup" ? (
+    // <Suspense fallback={<Spinner />}>
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen={true} />
+      <PostProvider>
+        <AuthProvider>
+          {mounted && <Toaster />}
+          {router.pathname == "/login" || router.pathname == "/signup" ? (
+            <Component {...pageProps} />
+          ) : (
+            <Layout>
               <Component {...pageProps} />
-            ) : (
-              <Layout>
-                <Component {...pageProps} />
-              </Layout>
-            )}
-          </AuthProvider>
-        </PostProvider>
-      </QueryClientProvider>
-    </Suspense>
+            </Layout>
+          )}
+        </AuthProvider>
+      </PostProvider>
+    </QueryClientProvider>
+    // </Suspense>
   );
 }
