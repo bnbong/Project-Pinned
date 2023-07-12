@@ -23,7 +23,7 @@ export default function SearchPage() {
         },
       });
       console.log("Setting Results...");
-      console.log(res.data.searched_users);
+
       setResults(res.data.searched_users);
     } catch (error) {
       console.log(error);
@@ -41,6 +41,11 @@ export default function SearchPage() {
           placeholder="Search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch();
+            }
+          }}
         />
         <div className="p-4">
           <button
