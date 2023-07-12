@@ -229,7 +229,7 @@ class PostFeed(APIView):
     """
 
     authentication_classes = [JWTAuthentication]
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     serializer_class = PostSerializer
 
     @swagger_auto_schema(
@@ -238,36 +238,57 @@ class PostFeed(APIView):
         responses={200: "성공 (응답 참고)", 401: "사용자 인증 실패"},
     )
     def get(self, request):
-        offset = request.query_params.get("offset", 0)
-        limit = request.query_params.get("limit", 10)
-        offset = int(offset)
-        limit = int(limit)
-        cache_key = f"user_{request.user.id}_feed_{offset}_{limit}"
-        data = cache.get(cache_key)
+        if request.user.is_authenticated:
+            offset = request.query_params.get("offset", 0)
+            limit = request.query_params.get("limit", 10)
+            offset = int(offset)
+            limit = int(limit)
+            cache_key = f"user_{request.user.id}_feed_{offset}_{limit}"
+            data = cache.get(cache_key)
 
-        if not data:
-            following_posts, most_liked_posts, recommended_posts = self.get_posts(
-                request, offset, limit
+            if not data:
+                following_posts, most_liked_posts, recommended_posts = self.get_posts(
+                    request, offset, limit
+                )
+
+                data = {
+                    "followed_posts": self.serializer_class(
+                        following_posts, many=True
+                    ).data,
+                    "trending_posts": self.serializer_class(
+                        most_liked_posts, many=True
+                    ).data,
+                    "recommended_posts": self.serializer_class(
+                        recommended_posts, many=True
+                    ).data,
+                }
+
+                cache.set(cache_key, data, 60 * 60 * 24)
+
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
             )
+        else:
+            offset = request.query_params.get("offset", 0)
+            limit = request.query_params.get("limit", 10)
+            offset = int(offset)
+            limit = int(limit)
+
+            most_liked_posts = Post.objects.annotate(
+                like_count=Count("likes")
+            ).order_by("-like_count")[offset : offset + limit]
 
             data = {
-                "followed_posts": self.serializer_class(
-                    following_posts, many=True
-                ).data,
                 "trending_posts": self.serializer_class(
                     most_liked_posts, many=True
                 ).data,
-                "recommended_posts": self.serializer_class(
-                    recommended_posts, many=True
-                ).data,
             }
 
-            cache.set(cache_key, data, 60 * 60 * 24)
-
-        return Response(
-            data,
-            status=status.HTTP_200_OK,
-        )
+            return Response(
+                data,
+                status=status.HTTP_200_OK,
+            )
 
     def get_posts(self, request, offset: int, limit: int):
         following_posts = Post.objects.filter(

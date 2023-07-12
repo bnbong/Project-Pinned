@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.core.cache import cache
 
 from rest_framework import status
 from rest_framework.views import APIView
@@ -117,3 +118,23 @@ class GetLandmarkPosts(APIView):
         serializer = self.serializer_class(posts, many=True)
 
         return Response({"landmark_posts": serializer.data}, status=status.HTTP_200_OK)
+
+
+class GetAllLandmarks(APIView):
+    """
+    DB 에 있는 모든 랜드마크를 가져오는 API.
+    """
+    permission_classes = [AllowAny]
+    serializer_class = LandmarkSerializer
+
+    def get(self, request):
+        cache_key = "all_landmark_list"
+        data = cache.get(cache_key)
+
+        if not data:
+            landmarks = Landmark.objects.all()
+            serializer = self.serializer_class(landmarks, many=True)
+            data = serializer.data
+            cache.set(cache_key, data)
+
+        return Response(data, status=status.HTTP_200_OK)

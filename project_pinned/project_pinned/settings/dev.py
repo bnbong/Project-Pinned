@@ -8,12 +8,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["0.0.0.0", "localhost"]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "http://0.0.0.0:3000",
-    "http://localhost"
-]
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -45,4 +41,4 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
-MEDIA_URL = "media/"
+MEDIA_URL = os.getenv("AWS_S3_BUCKET_URL")

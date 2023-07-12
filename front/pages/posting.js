@@ -8,9 +8,10 @@ import withAuth from "@/HOC/withAuth";
 import { headers } from "@/next.config";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
 //withAuth 벗겨놓음
-export default withAuth(function Post({ html, setHtml }) {
+export default withAuth(function Posting({ html, setHtml }) {
   const ReactQuill = dynamic(
     async () => {
       const { default: RQ } = await import("react-quill");
@@ -114,23 +115,23 @@ export default withAuth(function Post({ html, setHtml }) {
       quillRef.current.focus();
     }
   };
-  //authorization 토큰 추가 필요
+
   const { mutate, data, isLoading, isError } = useMutation({
     mutationFn: (postInformation) => {
       return axiosBaseURL.post("api/v1/post/", postInformation);
     },
     onError: (error, variables, context) => {
-      alert("게시글 작성에 실패했습니다.");
+      console.log(error.response);
+      toast.error("게시글 작성에 실패했습니다.");
     },
     onSuccess: (data, variables, context) => {
-      console.log("success", data);
-      alert("게시글이 등록되었습니다.");
+      toast.success("게시글이 등록되었습니다.");
       router.replace("/");
     },
   });
 
   return (
-    <div className="mx-10 mt-10 text-editor">
+    <div className="mx-10 mt-10 mb-20 text-editor">
       <div className="mb-6">
         <Input
           name="위치"

@@ -80,6 +80,14 @@ class UserAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], "user1")
 
+    def test_get_mypage(self):
+        url = reverse("user-mypage")
+        self.client.force_authenticate(user=self.user1)
+        response = self.client.get(url)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["username"], "user1")
+
     def create_profile_image(self):
         file = BytesIO()
         image = Image.new("RGBA", size=(100, 100), color=(155, 0, 0))

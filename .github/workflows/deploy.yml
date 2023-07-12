@@ -22,7 +22,7 @@ jobs:
              cd /home/ubuntu/Project-Pinned
              echo "${{ secrets.DOCKER_USER_PW }}" | docker login -u "${{ secrets.DOCKER_USER }}" --password-stdin
              docker compose stop
-             docker pull ${{ secrets.DOCKER_REPONAME }}/frontend
-             docker pull ${{ secrets.DOCKER_REPONAME }}/backend
+             docker pull ${{ secrets.DOCKER_REPONAME }}:frontend
+             docker pull ${{ secrets.DOCKER_REPONAME }}:backend
              bash scripts/build_prod.sh
 

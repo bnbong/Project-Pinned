@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-export default function SkeletonCard (){
+export default function SkeletonCard() {
   return (
     <div className="max-w-l mx-auto bg-gray-300 shadow-md rounded overflow-hidden md:max-w-xl m-2 animate-pulse">
       <div className="md:flex items-center bg-gray-300">
@@ -25,5 +25,4 @@ export default function SkeletonCard (){
       </div>
     </div>
   );
-};
-
+}
