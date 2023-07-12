@@ -63,7 +63,6 @@ const MyPage = () => {
       console.log(error);
     }
   };
-  console.log(accessToken);
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -198,7 +197,6 @@ const MyPage = () => {
             />
           </div>
         ))}
-    
       </div>
     </div>
   );

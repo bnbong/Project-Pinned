@@ -69,6 +69,7 @@ axiosBaseURL.interceptors.response.use(
 
     //mypage api에선 로그아웃 연장이 안된다.
     if (error?.response?.status === 401 && !prevRequest?.sent) {
+      console.log("token");
       const accessToken = await getNewAccessToken()
         .then((res) => {
           localStorage.removeItem("access_token");
