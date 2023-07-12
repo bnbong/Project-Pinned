@@ -131,7 +131,7 @@ export default withAuth(function Posting({ html, setHtml }) {
   });
 
   return (
-    <div className="mx-10 mt-10 text-editor">
+    <div className="mx-10 mt-10 mb-20 text-editor">
       <div className="mb-6">
         <Input
           name="위치"

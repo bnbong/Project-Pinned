@@ -140,6 +140,7 @@ export default function UserPage() {
       <div className="grid-cols-1 items-center justify-center">
         {posts.map((post, index) => (
           <NewPostLayout
+            postId={post.post_id}
             author={post.username}
             location={post.landmark_name}
             title={post.post_title}

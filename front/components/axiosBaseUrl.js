@@ -51,7 +51,8 @@ axiosBaseURL.interceptors.request.use(
     //login & signup 페이지에선 access_token을 header에서 없앤다.
     if (
       config.url === "api/v1/user/login/" ||
-      config.url === "api/v1/user/register/"
+      config.url === "api/v1/user/register/" ||
+      config.url === "api/v1/landmark/landmarks"
     ) {
       config.headers["Authorization"] = "";
       config.headers["Content-Type"] = "application/json";
@@ -81,7 +82,7 @@ axiosBaseURL.interceptors.response.use(
       prevRequest.headers["Authorization"] = `Bearer ${accessToken}`;
     }
     if (error?.response?.status >= 500) {
-      toast.error("서버 에러가 발생했습니다. 로그인을 다시 해주세요!");
+      toast.error("서버 에러가 발생했습니다.");
     }
     return Promise.reject(error);
   }
