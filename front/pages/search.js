@@ -49,7 +49,6 @@ const handleSearch = async () => {
           🔍</button>
         </div>
       </div>
-      <h4>Search Page</h4>
       <div className="mt-10">
         {/* <Link href={`/user/${id}`}>
             <UserCard  userId="id" userName="user3" userImg={null} userEmail="ddddddddddd"/>

@@ -1,4 +1,5 @@
-export default function Comment() {
+import React from 'react';
+export default function Comment({name,date,content}) {
   return (
     <>
       <article className="p-6 mb-6 text-base bg-white rounded-lg dark:bg-gray-900">
@@ -10,11 +11,11 @@ export default function Comment() {
                 src="https://flowbite.com/docs/images/people/profile-picture-2.jpg"
                 alt="Michael Gough"
               />
-              Michael Gough
+              {name}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
-                Feb. 8, 2022
+                {date}
               </time>
             </p>
           </div>
@@ -72,11 +73,7 @@ export default function Comment() {
           </div>
         </footer>
         <p>
-          Very straight-to-point article. Really worth time reading. Thank you!
-          But tools are just the instruments for the UX designers. The knowledge
-          of the design tools are as important as the creation of the design
-          strategy.import from './../../.next/static/webpack/paimport from
-          'react-quill'; ges/login.08dbf1e182efe799.hot-update';
+          {content}
         </p>
         <div className="flex items-center mt-4 space-x-4">
           <button
