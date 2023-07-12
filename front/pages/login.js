@@ -12,7 +12,7 @@ import withAuth from "@/HOC/withAuth";
 export default withAuth(function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState({});
+
   const router = useRouter();
   const onChange = useCallback(
     (e) => {

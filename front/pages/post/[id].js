@@ -7,7 +7,7 @@ import { toast } from "react-hot-toast";
 import { useState } from "react";
 import Comment from "@/components/Comment";
 
-export default function Post({ id, data }) {
+export default function Post({ data }) {
   const ReactQuill = dynamic(() => import("react-quill"), {
     ssr: false,
   });
@@ -17,6 +17,7 @@ export default function Post({ id, data }) {
   const landmark = data.landmark_name;
   const username = data.username;
   const created = data.created_at;
+  const id = data.post_id;
   const [comment, setComment] = useState("");
 
   const onChange = (e) => {
@@ -36,10 +37,10 @@ export default function Post({ id, data }) {
     },
   });
   //해당 포스트 댓글 가져오기
-  const comments = useQuery({
-    queryKey: ["comments"],
-    queryFn: () => axiosBaseURL.get("api/v1/post/2/comments/"),
-  });
+  // const { status, data, error } = useQuery({
+  //   queryKey: ["comments"],
+  //   queryFn: () => axiosBaseURL.get("api/v1/post/2/comments/"),
+  // });
 
   return (
     <div className="min-h-screen bg-gray-100 mb-20">

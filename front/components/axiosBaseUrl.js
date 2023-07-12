@@ -15,10 +15,10 @@ const getNewAccessToken = mem(
       const {
         data: { access },
       } = await axiosBaseURL.post("api/v1/user/token/refresh/");
-      localStorage.setItem("access_token", access);
+
       return access;
     } catch (err) {
-      console.log("get Access_token error");
+      toast.error("다시 로그인해주세요.");
       localStorage.removeItem("access_token");
     }
   },
@@ -43,10 +43,10 @@ axiosBaseURL.interceptors.request.use(
         config.headers["Authorization"] = "";
         config.headers["Content-Type"] = "application/json";
       } else {
-        console.log("request interceptor 동작");
         config.headers["Authorization"] = `Bearer ${accessToken}`;
         config.headers["Content-Type"] = "application/json";
       }
+      return config;
     }
     //login & signup 페이지에선 access_token을 header에서 없앤다.
     if (
@@ -65,12 +65,18 @@ axiosBaseURL.interceptors.response.use(
   (response) => response,
   async (error) => {
     const prevRequest = error?.config;
-    console.log("error response interceptor", accessToken);
 
+    //mypage api에선 로그아웃 연장이 안된다.
     if (error?.response?.status === 401 && !prevRequest?.sent) {
-      const accessToken = await getNewAccessToken().catch((err) => {
-        toast.error("다시 로그인 해주세요!");
-      });
+      const accessToken = await getNewAccessToken()
+        .then((res) => {
+          localStorage.setItem("access_token", res);
+        })
+        .catch((err) => {
+          toast.error("다시 로그인 해주세요!");
+          throw err;
+        });
+
       prevRequest.sent = true;
       prevRequest.headers["Authorization"] = `Bearer ${accessToken}`;
     }

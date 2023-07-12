@@ -101,45 +101,37 @@ export default function Home() {
       //유저 등록
       // const registerResult = await registerUser('newUsername1', 'Test@example.com', 'password');
       // console.log(registerResult);
-
       // 로그인 요청
-      const loginResult = await loginUser("user1@test.com", "password123");
-      console.log(loginResult);
-
-      // JWT 검증
-      const verifyResult = await verifyToken(loginResult.access_token);
-      console.log(verifyResult);
-
-      let userId = loginResult.user.user_id;
-      let userName = loginResult.user.username;
-
-      console.log(userId);
-      console.log(userName);
+      // const loginResult = await loginUser("user1@test.com", "password123");
+      // console.log(loginResult);
+      // // JWT 검증
+      // const verifyResult = await verifyToken(loginResult.access_token);
+      // console.log(verifyResult);
+      // let userId = loginResult.user.user_id;
+      // let userName = loginResult.user.username;
+      // console.log(userId);
+      // console.log(userName);
       // JWT 새로 발급
       // const refreshResult = await refreshToken(loginResult.refresh_token);
       // console.log(refreshResult);
-
       // 유저 프로필 조회 => 마이페이지에서 사용해야 할듯
-      const userProfile = await getUserProfile(
-        userId,
-        loginResult.access_token
-      );
-      console.log(userProfile);
-
-      setLoginState({
-        isLoggedIn: true,
-        user: loginResult.user,
-        accessToken: null,
-        refreshToken: null,
-      });
-      console.log("loginState.user : " + loginState.user);
-      console.log("loginState.accessToken" + loginState.accessToken);
+      // const userProfile = await getUserProfile(
+      //   userId,
+      //   loginResult.access_token
+      // );
+      // console.log(userProfile);
+      // setLoginState({
+      //   isLoggedIn: true,
+      //   user: loginResult.user,
+      //   accessToken: null,
+      //   refreshToken: null,
+      // });
+      // console.log("loginState.user : " + loginState.user);
+      // console.log("loginState.accessToken" + loginState.accessToken);
       //refreshResult.access
-
       // // 유저 검색
       // const searchResult = await searchUser(userName, loginResult.access_token);
       // console.log(searchResult);
-
       // const deleteResult = await deleteUser(loginResult.user.user_id, loginResult.access_token);
       // console.log(deleteResult);
     } catch (error) {
@@ -250,8 +242,8 @@ export default function Home() {
   // ];
 
   //post 가져오기
-  const getPost = (param = OFFSET) => {
-    const res = axiosBaseURL
+  const getPost = async (param = 1) => {
+    const res = await axiosBaseURL
       .get(`api/v1/post/feed`, {
         params: {
           limit: OFFSET,
@@ -274,11 +266,14 @@ export default function Home() {
     isFetching, // 첫 페이지 fetching 여부, Boolean, 잘 안쓰인다
     isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
     status, // loading, error, success 중 하나의 상태, string
-  } = useInfiniteQuery(["post"], getPost, {
+  } = useInfiniteQuery(["posts"], getPost, {
     getNextPageParam: (lastPage, page) => {
+      const count = 1;
       console.log("log", lastPage, page);
-      if (page == null) return false;
-      return page + 1;
+      console.log(count);
+      if (count === lastPage.config.params.limit) return false;
+
+      return count + 1;
     },
   });
 
@@ -344,7 +339,7 @@ export default function Home() {
       <div ref={bottom} />
       {isFetchingNextPage && <p>continue loading</p>}
       <button onClick={() => fetchNextPage()}>더 불러오기</button>
-      <button onClick={requestPermission}>FCM</button>
+      <button onClick={() => requestPermission}>FCM</button>
     </div>
   );
 }

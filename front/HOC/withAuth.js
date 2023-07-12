@@ -22,11 +22,11 @@ const withAuth = (Component) => {
       // 이미 로그인 화면이 구현된 페이지를 사용하고 라우팅
       // router.push("/login");
       if (router.pathname !== "/signup" && router.pathname !== "/login") {
-        mounted && toast.error("로그인을 해주세요!");
+        console.log("mypage api 보내기 전");
+        toast.error("로그인을 해주세요!");
         useEffect(() => {
           router.replace("/login");
         }, []);
-
         return mounted && <Component />;
       } else {
         return mounted && <Component />;
