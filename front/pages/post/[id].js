@@ -2,7 +2,7 @@ import React from "react";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.bubble.css";
-import { useMutation, useQueries, useQuery } from "react-query";
+import { useMutation, useQueries, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 import Comment from "@/components/Comment";
@@ -11,6 +11,8 @@ export default function Post({ id, data }) {
   const ReactQuill = dynamic(() => import("react-quill"), {
     ssr: false,
   });
+
+  const queryClient = useQueryClient();
 
   const title = data.post_title;
   const content = data.post_content;
@@ -30,15 +32,17 @@ export default function Post({ id, data }) {
     },
     onSuccess: (data, variables, context) => {
       toast.success("댓글 작성 성공");
+      queryClient.invalidateQueries(['comments', id]);
     },
     onError: (error, variables, context) => {
       toast.error("댓글 작성 실패");
     },
   });
+  
   //해당 포스트 댓글 가져오기
   const comments = useQuery({
     queryKey: ["comments"],
-    queryFn: () => axiosBaseURL.get("api/v1/post/2/comments/"),
+    queryFn: () => axiosBaseURL.get("api/v1/post/5/comments/"),
   });
 
   return (
@@ -88,8 +92,13 @@ export default function Post({ id, data }) {
                 댓글 남기기
               </button>
             </div>
-            <Comment />
-            <article className="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
+            <>
+              {console.log(JSON.stringify(comments.data.data.comments))}
+              {comments.data.data.comments && comments.data.data.comments.map((post,index) => (
+                  <Comment name={post.username} date={post.created_at.slice(0,10)} content={post.comment_content}/>
+                ))}
+            </>
+            {/* <article className="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
               <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
                   <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
@@ -187,9 +196,7 @@ export default function Post({ id, data }) {
                   Reply
                 </button>
               </div>
-            </article>
-            <Comment />
-            <Comment />
+            </article> */}
           </section>
         </div>
       </div>
