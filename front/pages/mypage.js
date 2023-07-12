@@ -7,11 +7,18 @@ import NewPostLayout from "@/components/PostLayout";
 import withAuth from "@/HOC/withAuth";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import { data } from "autoprefixer";
-import { FaCog } from 'react-icons/fa';
+import { FaCog } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const MyPage = withAuth(() => {
   const router = useRouter();
-
+  const accessToken =
+    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
+  if (!accessToken || accessToken === "") {
+    toast.error("로그인이 필요합니다.");
+    router.replace("/login");
+    return null;
+  }
   // loginState = 유저의 데이터
   const { loginState, setLoginState } = useContext(AuthContext);
   const user = loginState.user;
@@ -48,14 +55,14 @@ const MyPage = withAuth(() => {
   };
 
   const logout = async () => {
-    try{
+    try {
       const res = await axiosBaseURL.post(`api/v1/user/logout/`);
       localStorage.removeItem("access_token");
-      router.push('/');
-    } catch(error){
+      router.push("/");
+    } catch (error) {
       console.log(error);
     }
-  }
+  };
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -90,6 +97,7 @@ const MyPage = withAuth(() => {
   };
 
   //게시물 로딩
+
   useEffect(() => {
     fetchUsers().then((userID) => fetchPosts(userID));
   }, []);
@@ -200,5 +208,5 @@ const MyPage = withAuth(() => {
     </div>
   );
 });
-//withAuth 벗겨놓음
+
 export default MyPage;
