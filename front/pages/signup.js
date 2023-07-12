@@ -180,12 +180,14 @@ export default withAuth(function Login() {
                 id="password"
                 onChange={onChange}
                 value={password}
+                type={"password"}
                 placeholder="••••••••"
                 valid_text={passwordError}
               />
               <Input
                 name="비밀번호 확인"
                 id="confirm_password"
+                type={"password"}
                 onChange={onChange}
                 value={confirm_password}
                 placeholder="••••••••"

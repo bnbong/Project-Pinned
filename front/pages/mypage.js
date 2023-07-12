@@ -193,19 +193,12 @@ const MyPage = () => {
               author={post.username}
               location={post.landmark_name}
               title={post.post_title}
-              content={post.post_content}
+              content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
               images={post.post_image}
             />
           </div>
         ))}
-        {/* <PostLayout
-          key={index}
-          profileImage={post.profileImage}
-          username={post.username}
-          postImage={post.postImage}
-          likes={post.likes}
-          description={post.description}
-        /> */}
+    
       </div>
     </div>
   );

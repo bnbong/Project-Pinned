@@ -21,7 +21,7 @@ export default function UserPage() {
   const followCheck = async (user_id) => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/${user_id}/followings`);
-      console.log(res.data);
+
       return res.data.followings_list.some((obj) => obj.user_id === id);
     } catch (error) {
       console.log(error);
@@ -42,7 +42,7 @@ export default function UserPage() {
       try {
         console.log("팔로우 시작");
         const res = await axiosBaseURL.post(`api/v1/user/${userID}/follow/`);
-        console.log(res);
+
         //야매로 팔로우 변동 현황 컨트롤
         setFollower(follower + 1);
       } catch (error) {
@@ -52,7 +52,7 @@ export default function UserPage() {
       try {
         console.log("팔로우 해제");
         const res = await axiosBaseURL.post(`api/v1/user/${userID}/unfollow/`);
-        console.log(res);
+
         //야매로 팔로우 변동 현황 컨트롤
         setFollower(follower - 1);
       } catch (error) {
@@ -144,7 +144,7 @@ export default function UserPage() {
             author={post.username}
             location={post.landmark_name}
             title={post.post_title}
-            content={post.post_content}
+            content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
             images={post.post_image}
           />
         ))}

@@ -71,6 +71,7 @@ axiosBaseURL.interceptors.response.use(
     if (error?.response?.status === 401 && !prevRequest?.sent) {
       const accessToken = await getNewAccessToken()
         .then((res) => {
+          localStorage.removeItem("access_token");
           localStorage.setItem("access_token", res);
         })
         .catch((err) => {
