@@ -49,7 +49,6 @@ export default function Post({ data }) {
       toast.error("댓글 가져오기에 실패하였습니다.");
     },
   });
-  console.log(comments);
 
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
@@ -99,7 +98,6 @@ export default function Post({ data }) {
               </button>
             </div>
             <>
-              {console.log(JSON.stringify(comments.data?.data?.comments))}
               {comments.data?.data?.comments &&
                 comments.data.data.comments.map((post, index) => (
                   <Comment

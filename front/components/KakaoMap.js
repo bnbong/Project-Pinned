@@ -97,7 +97,7 @@ export default memo(function KakaoMap({ searchKeyword }) {
       console.log(err);
     }
   };
-  console.log(info);
+
   return (
     <>
       {modal ? (

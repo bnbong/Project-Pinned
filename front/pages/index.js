@@ -251,8 +251,6 @@ export default function Home() {
         },
       })
       .then((res) => {
-        console.log(res?.data);
-
         return res;
       })
       .catch((err) => console.log(err));
@@ -270,7 +268,6 @@ export default function Home() {
   } = useInfiniteQuery(["posts"], getPost, {
     getNextPageParam: (lastPage) => {
       const count = 1;
-      console.log("log", lastPage);
 
       if (count === lastPage.config.params.limit) return false;
 

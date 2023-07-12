@@ -19,11 +19,9 @@ export default withAuth(function Login() {
       const { id, value } = e.target;
       if (id == "email") {
         setEmail(value);
-        console.log(email);
       }
       if (id == "password") {
         setPassword(value);
-        console.log(password);
       }
     },
     [email, password]
@@ -76,6 +74,7 @@ export default withAuth(function Login() {
                 <Input
                   name="비밀번호"
                   id="password"
+                  type="password"
                   value={password}
                   onChange={onChange}
                   placeholder="••••••••"
