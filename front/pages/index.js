@@ -265,8 +265,6 @@ export default function Home() {
     return res;
   };
 
-  console.log(getPost());
-
   const {
     data, //data.pages를 갖고 있는 배열
     error, // error 객체

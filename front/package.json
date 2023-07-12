@@ -18,6 +18,7 @@
     "eslint-config-next": "13.4.7",
     "firebase": "^9.23.0",
     "flowbite-react": "^0.4.9",
+    "mem": "^9.0.2",
     "next": "13.4.7",
     "next-cookies": "^2.0.3",
     "postcss": "8.4.24",

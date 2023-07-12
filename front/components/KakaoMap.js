@@ -10,13 +10,13 @@ export default memo(function KakaoMap({ searchKeyword }) {
 
   const location = searchKeyword || "판교역 신분당선";
 
-  useEffect(() => {
-    // Load all landmarks from the server
-    axiosBaseURL.get('api/v1/landmark/landmarks')
-      .then((response) => {
-        setLandmarks(response.data);
-      });
-  }, []);
+  // useEffect(() => {
+  //   // Load all landmarks from the server
+  //   axiosBaseURL.get('api/v1/landmark/landmarks')
+  //     .then((response) => {
+  //       setLandmarks(response.data);
+  //     });
+  // }, []);
 
   useEffect(() => {
     if (!map) return;
@@ -36,26 +36,33 @@ export default memo(function KakaoMap({ searchKeyword }) {
   useEffect(() => {
     if (!map || !landmarks) return;
 
-    kakao.maps.event.addListener(map, 'idle', function() {
+    kakao.maps.event.addListener(map, "idle", function () {
       const bounds = map.getBounds();
       const sw = bounds.getSouthWest();
       const ne = bounds.getNorthEast();
-  
+
       // 현재 보여지고 있는 지도 범위에 있는 랜드마크만 필터링합니다.
-      const visibleLandmarks = landmarks.filter(landmark => {
+      const visibleLandmarks = landmarks.filter((landmark) => {
         const lat = parseFloat(landmark.landmark_longitude);
         const lng = parseFloat(landmark.landmark_latitute);
-        return (sw.getLat() <= lat && lat <= ne.getLat()) && (sw.getLng() <= lng && lng <= ne.getLng());
+        return (
+          sw.getLat() <= lat &&
+          lat <= ne.getLat() &&
+          sw.getLng() <= lng &&
+          lng <= ne.getLng()
+        );
       });
-  
+
       // 필터링한 랜드마크에 대해 마커를 생성합니다.
-      setMarkers(visibleLandmarks.map(landmark => ({
-        position: {
-          lat: parseFloat(landmark.landmark_longitude),
-          lng: parseFloat(landmark.landmark_latitute),
-        },
-        content: landmark.landmark_name,
-      })));
+      setMarkers(
+        visibleLandmarks.map((landmark) => ({
+          position: {
+            lat: parseFloat(landmark.landmark_longitude),
+            lng: parseFloat(landmark.landmark_latitute),
+          },
+          content: landmark.landmark_name,
+        }))
+      );
     });
   }, [map, landmarks]);
 
