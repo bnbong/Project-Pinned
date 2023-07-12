@@ -1,47 +1,51 @@
 import React from "react";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import axiosBaseURL from "@/components/axiosBaseUrl";
-import ReactQuill from "react-quill";
+import dynamic from "next/dynamic";
+import "react-quill/dist/quill.bubble.css";
 
-export default function Post({ data }) {
-  //   if (typeof window === "undefined") {
-  //     return null;
-  //   }
-  console.log(data);
-  const router = useRouter();
-  const [post, setPost] = useState({
-    title: "",
-    content: "",
+export default function Post({ id, data }) {
+  const ReactQuill = dynamic(() => import("react-quill"), {
+    ssr: false,
   });
-
-  const { title, content } = post;
+  console.log("서버사이드 데이터", id, data);
+  const title = data.post_title;
+  const content = data.post_content;
+  const landmark = data.landmark_name;
+  const username = data.username;
+  const created = data.created_at;
 
   //추후에 react query이용해서 상태관리 해보자
-  //   const getPost = async () => {
-  //     try {
-  //       const { data } = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
-  //       console.log(data);
-  //       setPost({
-  //         ...post,
-  //         title: data.post_title,
-  //         content: data.post_content,
-  //       });
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
+  // const getPost = async () => {
+  //   try {
+  //     const res = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
+  //     console.log(res);
+  //     setPost({
+  //       ...post,
+  //       title: data.post_title,
+  //       content: data.post_content,
+  //     });
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw err;
+  //   }
+  // };
 
-  //   useEffect(() => {
-  //     getPost().catch((err) => console.log(err));
-  //   }, []);
+  // useEffect(() => {
+  //   getPost().catch((err) => console.log(err));
+  // }, []);
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
       <div className="min-h-screen max-w-3xl mx-auto py-8">
-        <div className="min-h-screen bg-white rounded-lg shadow-md p-6">
+        <div className="min-h-screen bg-white rounded-lg shadow-md p-10">
           <h1 className="text-2xl font-bold mb-4">{title}</h1>
+          <hr></hr>
+          <br></br>
+          <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
+            생성일자 : {created.slice(0, 10)}
+          </time>
           <ReactQuill value={content} readOnly={true} theme={"bubble"} />
           <br></br>
+
           <section className="not-format">
             <div className="flex justify-between items-center mb-6">
               <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
@@ -147,7 +151,8 @@ export default function Post({ data }) {
                 you! But tools are just the instruments for the UX designers.
                 The knowledge of the design tools are as important as the
                 creation of the design strategy.import from
-                './../../.next/static/webpack/pages/login.08dbf1e182efe799.hot-update';
+                './../../.next/static/webpack/paimport from 'react-quill';
+                ges/login.08dbf1e182efe799.hot-update';
               </p>
               <div className="flex items-center mt-4 space-x-4">
                 <button
@@ -479,10 +484,20 @@ export default function Post({ data }) {
   );
 }
 
-// export async function getServerSideProps(context) {
-//   console.log(context);
-//   //   const { data } = await axiosBaseURL.get(`api/v1/post/${params.first}`);
-//   return {
-//     props: context,
-//   };
-// }
+export async function getServerSideProps(context) {
+  const { id } = context.params; // context를 사용해 만든 쿼리 정보
+  try {
+    const res = await axiosBaseURL.get(`api/v1/post/${id}`); // 상세 페이지 데이터
+
+    if (res.status === 200) {
+      const data = res.data;
+
+      return { props: { id: id, data: data } }; // 컴포넌트에 넘겨줄 props
+    }
+
+    return { props: { id } };
+  } catch (error) {
+    console.log(error);
+    return { props: { id } };
+  }
+}
