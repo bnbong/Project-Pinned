@@ -1,6 +1,7 @@
 import { AuthContext } from '@/contexts/AuthContext';
 import { useCallback, useContext, useEffect, useRef, useState } from 'react';
 import axios from 'axios';
+import axiosBaseURL from './axiosBaseUrl';
 
 
 const SettingUserThumbnail = ({ newImg, setNewImg, imgObject, setImgObject}) =>{
@@ -40,7 +41,7 @@ const SettingUserThumbnail = ({ newImg, setNewImg, imgObject, setImgObject}) =>{
 
 
 
-export default function EditProfileModal({ isOpen, onClose, userName, setUserName, img, setImg }) {
+export default function EditProfileModal({ id, isOpen, onClose, userName, setUserName, img, setImg }) {
     const {loginState, setLoginState} = useContext(AuthContext)
     const [name, setName] = useState(userName);
     const [newImg, setNewImg] = useState('');
@@ -51,23 +52,19 @@ export default function EditProfileModal({ isOpen, onClose, userName, setUserNam
     const handleSubmit = async () => {
         const formData = new FormData();
         formData.append('username',name);
-        formData.append('profile_image',imgObject);
-        console.log('이미지 확인 = ' + imgObject);
+        console.log(name);
+        console.log(id);
+        //formData.append('profile_image',imgObject);
+        //console.log('이미지 확인 = ' + imgObject);
         try{
-            const response = await axios.put(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/v1/user/${loginState.user.user_id}/profile/`,
+            const response = await axiosBaseURL.put(
+                    `/api/v1/user/${id}/profile/`,
                     formData,
-                    {
-                        headers: {
-                            "Authorization": `Bearer ${loginState.accessToken}`,
-                            "Content-Type": "multipart/form-data",
-                        },
-                    }
                 );
 
                 if(response.data.is_success){
                     setUserName(name);
-                    setImg(newImg);
+                    //setImg(newImg);
                 }
         }catch (error){
             console.log(error);  

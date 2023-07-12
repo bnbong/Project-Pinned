@@ -1,8 +1,31 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
+import axiosBaseURL from "@/components/axiosBaseUrl";
+import React, { useState, useEffect } from 'react';
+
 
 export default function NavBar() {
+  
+  const [activeTab, setActiveTab] = useState('trending');
+  const [posts, setPosts] = useState([]);
+
+  useEffect(() => {
+    async function fetchData() {
+      const response = await axiosBaseURL.get('api/v1/post/feed');
+  
+      if (activeTab === 'followed') {
+        setPosts(response.data.followed_posts);
+      } else if (activeTab === 'trending') {
+        setPosts(response.data.trending_posts);
+      } else if (activeTab === 'recommended') {
+        setPosts(response.data.recommended_posts);
+      }
+    }
+  
+    fetchData();
+  }, [activeTab]); 
+
   return (
     <>
       <div className="fixed bottom-0 z-50 w-full -translate-x-1/2 bg-white border-t border-gray-200 left-1/2 dark:bg-gray-700 dark:border-gray-600">
@@ -14,20 +37,23 @@ export default function NavBar() {
             <button
               type="button"
               className="px-5 py-1.5 text-xs font-medium text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => setActiveTab('followed')}
             >
-              New
+              Following
             </button>
             <button
               type="button"
               className="px-5 py-1.5 text-xs font-medium text-white bg-gray-900 dark:bg-gray-300 dark:text-gray-900 rounded-lg"
+              onClick={() => setActiveTab('trending')}
             >
-              Popular
+              Trending
             </button>
             <button
               type="button"
               className="px-5 py-1.5 text-xs font-medium text-gray-900 hover:bg-gray-200 dark:text-white dark:hover:bg-gray-700 rounded-lg"
+              onClick={() => setActiveTab('recommended')}
             >
-              Following
+              Recommended
             </button>
           </div>
         </div>
@@ -90,7 +116,7 @@ export default function NavBar() {
               type="button"
               className="inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800"
             >
-              <Link href="/posting">
+              <Link href="/post">
                 <svg
                   className="w-6 h-6 text-white"
                   fill="currentColor"

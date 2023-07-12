@@ -5,22 +5,23 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
+import toast from "react-hot-toast";
+import { Spinner } from "flowbite-react";
+import withAuth from "@/HOC/withAuth";
 
-export default function Login() {
+export default withAuth(function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
-  const [errorMessage, setErrorMessage] = useState({});
+
   const router = useRouter();
   const onChange = useCallback(
     (e) => {
       const { id, value } = e.target;
       if (id == "email") {
         setEmail(value);
-        console.log(email);
       }
       if (id == "password") {
         setPassword(value);
-        console.log(password);
       }
     },
     [email, password]
@@ -34,19 +35,15 @@ export default function Login() {
 
       console.log("success");
       localStorage.setItem("access_token", data.data.access_token);
-      // setLoginState({
-      //   ...loginState,
-      //   isLoggedIn: true,
-      //   accessToken: data.data.access_token,
-      //   user: data.data.user,
-      // });
-      alert("로그인 성공");
-      router.push("/");
+      toast.success("로그인 성공했습니다.");
+      router.replace("/");
     },
     onError: (error, variables, context) => {
-      console(error, variables, context);
-      alert("로그인 실패");
-      setErrorMessage(e.response.data);
+      if (error) {
+        toast.error("아이디 또는 비밀번호가 유효하지 않습니다.");
+      } else {
+        toast.error("예상치 못한 오류가 발생했습니다.");
+      }
     },
   });
 
@@ -58,12 +55,13 @@ export default function Login() {
             href="#"
             className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
           >
-            Pinned
+            핀드 - 내 추억 속의 랜드마크
           </a>
+
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                로그인하기
+                로그인하기{isLoading && <Spinner />}
               </h1>
               <div className="space-y-4 md:space-y-6">
                 <Input
@@ -76,9 +74,15 @@ export default function Login() {
                 <Input
                   name="비밀번호"
                   id="password"
+                  type="password"
                   value={password}
                   onChange={onChange}
                   placeholder="••••••••"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      mutate({ email, password });
+                    }
+                  }}
                 />
                 <div className="flex items-center justify-between">
                   <div className="flex items-start">
@@ -114,7 +118,7 @@ export default function Login() {
                 >
                   로그인하기
                 </button>
-                {isError ? <div>{errorMessage.detail}</div> : null}
+
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   계정이 아직 없으신가요?{" "}
                   <Link
@@ -131,4 +135,4 @@ export default function Login() {
       </section>
     </>
   );
-}
+});

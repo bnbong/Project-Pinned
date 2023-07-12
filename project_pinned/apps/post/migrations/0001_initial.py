@@ -95,7 +95,7 @@ class Migration(migrations.Migration):
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 (
                     "image",
-                    models.ImageField(blank=True, null=True, upload_to="post_images/"),
+                    models.ImageField(blank=True, null=True, upload_to="post_images/", max_length=500),
                 ),
                 (
                     "post",

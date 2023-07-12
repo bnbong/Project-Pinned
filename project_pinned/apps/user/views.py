@@ -4,7 +4,7 @@ from django.http import HttpResponse
 from django.views import View
 from django.contrib.auth import get_user_model
 
-from dj_rest_auth.views import LoginView
+from dj_rest_auth.views import LoginView, LogoutView
 from dj_rest_auth.jwt_auth import set_jwt_cookies
 
 from rest_framework import permissions, status
@@ -13,6 +13,7 @@ from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework_simplejwt.views import TokenRefreshView
 
 from apps.notification import send_notifiaction
 
@@ -148,6 +149,17 @@ class UserLogin(LoginView):
         return response
 
 
+class UserLogout(LogoutView):
+    """
+    Cookie에 있는 refresh token을 사용하여 로그아웃하는 API.
+    """
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh_token")
+        request.data['refresh'] = refresh_token
+
+        return super().post(request, *args, **kwargs)
+
+
 class UserDelete(APIView):
     """
     회원 탈퇴 API.
@@ -240,6 +252,27 @@ class UserProfile(APIView):
             )
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserMyPage(APIView):
+    """
+    토큰을 통해 프로필 정보를 확인하는 API.
+    """
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    @swagger_auto_schema(
+        operation_description="토큰을 통해 프로필 정보를 확인하는 API\n\
+        Header에 JWT 토큰 인증 필요",
+        responses={200: UserProfileSerializer(), 401: "사용자 인증 실패"},
+    )
+    def get(self, request):
+        serializer = UserProfileSerializer(
+            instance=request.user,
+        )
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class UserFollow(APIView):
@@ -445,3 +478,11 @@ class UserFCMToken(APIView):
                 {"is_success": False, "detail": "FCM Token is not provided"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+
+
+class CookieTokenRefreshView(TokenRefreshView):
+    def post(self, request, *args, **kwargs):
+        refresh_token = request.COOKIES.get("refresh_token")
+        request.data['refresh'] = refresh_token
+
+        return super().post(request, *args, **kwargs)
