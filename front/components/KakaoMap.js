@@ -10,13 +10,13 @@ export default memo(function KakaoMap({ searchKeyword }) {
 
   const location = searchKeyword || "판교역 신분당선";
 
-  // useEffect(() => {
-  //   // Load all landmarks from the server
-  //   axiosBaseURL.get('api/v1/landmark/landmarks')
-  //     .then((response) => {
-  //       setLandmarks(response.data);
-  //     });
-  // }, []);
+  useEffect(() => {
+    // Load all landmarks from the server
+    axiosBaseURL.get('api/v1/landmark/landmarks')
+      .then((response) => {
+        setLandmarks(response.data);
+      });
+  }, []);
 
   useEffect(() => {
     if (!map) return;

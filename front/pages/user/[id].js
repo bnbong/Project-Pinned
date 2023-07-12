@@ -144,6 +144,7 @@ export default function UserPage() {
             location={post.landmark_name}
             title={post.post_title}
             content={post.post_content}
+            images={post.post_image}
           />
         ))}
       </div>
