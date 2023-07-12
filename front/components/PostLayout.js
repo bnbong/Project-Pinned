@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 
 const Card = ({ author, location, title, content, images, onClick }) => {
@@ -61,7 +61,15 @@ export default function NewPostLayout({
   return (
     <div className="justify-around items-start">
       <Card
-        onClick={() => router.push(`/post/${postId}`)}
+        onClick={() => {
+          const timeout = setTimeout(() => {
+            router.push(`/post/${postId}`);
+          }, 750);
+
+          return function cleanUp() {
+            clearTimeout(timeout);
+          };
+        }}
         author={author}
         location={location}
         title={title}

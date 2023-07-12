@@ -4,13 +4,49 @@ import dynamic from "next/dynamic";
 import "react-quill/dist/quill.bubble.css";
 import { useMutation, useQueries, useQuery, useQueryClient } from "react-query";
 import { toast } from "react-hot-toast";
-import { useState } from "react";
-import Comment from "@/components/Comment";
+import { useState, useEffect } from "react";
 
-export default function Post({ data }) {
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    // Update state so the next render will show the fallback UI.
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    // Example "componentStack":
+    //   in ComponentThatThrows (created by App)
+    //   in ErrorBoundary (created by App)
+    //   in div (created by App)
+    //   in App
+    logErrorToMyService(error, info.componentStack);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      // You can render any custom fallback UI
+      return this.props.fallback;
+    }
+
+    return this.props.children;
+  }
+}
+export default function Post({ id, data }) {
+  const [mounted, setMounted] = useState(true);
+  // if (!id || !data) {
+  //   setMounted(true);
+  // }
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const ReactQuill = dynamic(() => import("react-quill"), {
     ssr: false,
   });
+  const Comment = dynamic(() => import("@/components/Comment"));
 
   const queryClient = useQueryClient();
 
@@ -19,7 +55,6 @@ export default function Post({ data }) {
   const landmark = data.landmark_name;
   const username = data.username;
   const created = data.created_at;
-  const id = data.post_id;
   const [comment, setComment] = useState("");
 
   const onChange = (e) => {
@@ -43,7 +78,7 @@ export default function Post({ data }) {
   // 해당 포스트 댓글 가져오기
   const comments = useQuery({
     queryKey: ["comments"],
-    queryFn: async () => await axiosBaseURL.get("api/v1/post/5/comments/"),
+    queryFn: async () => await axiosBaseURL.get(`api/v1/post/${id}/comments/`),
     onSuccess: () => {},
     onError: () => {
       toast.error("댓글 가져오기에 실패하였습니다.");
@@ -51,64 +86,65 @@ export default function Post({ data }) {
   });
 
   return (
-    <div className="min-h-screen bg-gray-100 mb-20">
-      <div className="min-h-screen max-w-3xl mx-auto py-8">
-        <div className="min-h-screen bg-white rounded-lg shadow-md p-10">
-          <h1 className="text-2xl font-bold mb-4">{title}</h1>
-          <hr></hr>
-          <br></br>
-          <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
-            by {username} 생성일자 : {created.slice(0, 10)}
-          </time>
-          <ReactQuill value={content} readOnly={true} theme={"bubble"} />
-          <br></br>
+    <ErrorBoundary fallback={<p>Something went wrong</p>}>
+      <div className="min-h-screen bg-gray-100 mb-20">
+        <div className="min-h-screen max-w-3xl mx-auto py-8">
+          <div className="min-h-screen bg-white rounded-lg shadow-md p-10">
+            <h1 className="text-2xl font-bold mb-4">{title}</h1>
+            <hr></hr>
+            <br></br>
+            <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
+              by {username} 생성일자 : {created.slice(0, 10)}
+            </time>
+            <ReactQuill value={content} readOnly={true} theme={"bubble"} />
+            <br></br>
 
-          <section className="not-format">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
-                댓글 수 (20)
-              </h2>
-            </div>
-            <div className="mb-6">
-              <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
-                <label htmlFor="comment" className="sr-only">
-                  Your comment
-                </label>
-                <textarea
-                  id="comment"
-                  onChange={(e) => onChange(e)}
-                  rows="6"
-                  className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
-                  placeholder="Write a comment..."
-                  required
-                ></textarea>
+            <section className="not-format">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="text-lg lg:text-xl font-bold text-gray-900 dark:text-white">
+                  댓글 수 (20)
+                </h2>
               </div>
-              <button
-                type="submit"
-                onClick={() => {
-                  if (comment) {
-                    mutate({ comment_content: comment });
-                  } else {
-                    toast.error("댓글 창이 비어있습니다.");
-                  }
-                }}
-                className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
-                댓글 남기기
-              </button>
-            </div>
-            <>
-              {comments.data?.data?.comments &&
-                comments.data.data.comments.map((post, index) => (
-                  <Comment
-                    key={index}
-                    name={post.username}
-                    date={post.created_at.slice(0, 10)}
-                    content={post.comment_content}
-                  />
-                ))}
-            </>
-            {/* <article className="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
+              <div className="mb-6">
+                <div className="py-2 px-4 mb-4 bg-white rounded-lg rounded-t-lg border border-gray-200 dark:bg-gray-800 dark:border-gray-700">
+                  <label htmlFor="comment" className="sr-only">
+                    Your comment
+                  </label>
+                  <textarea
+                    id="comment"
+                    onChange={(e) => onChange(e)}
+                    rows="6"
+                    className="px-0 w-full text-sm text-gray-900 border-0 focus:ring-0 dark:text-white dark:placeholder-gray-400 dark:bg-gray-800"
+                    placeholder="Write a comment..."
+                    required
+                  ></textarea>
+                </div>
+                <button
+                  type="submit"
+                  onClick={() => {
+                    if (comment) {
+                      mutate({ comment_content: comment });
+                    } else {
+                      toast.error("댓글 창이 비어있습니다.");
+                    }
+                  }}
+                  className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                >
+                  댓글 남기기
+                </button>
+              </div>
+              <>
+                {comments.data?.data?.comments &&
+                  comments.data?.data.comments.map((post, index) => (
+                    <Comment
+                      key={index}
+                      name={post?.username}
+                      date={post?.created_at?.slice(0, 10)}
+                      content={post?.comment_content}
+                    />
+                  ))}
+              </>
+              {/* <article className="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">
               <footer className="flex justify-between items-center mb-2">
                 <div className="flex items-center">
                   <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
@@ -207,10 +243,11 @@ export default function Post({ data }) {
                 </button>
               </div>
             </article> */}
-          </section>
+            </section>
+          </div>
         </div>
       </div>
-    </div>
+    </ErrorBoundary>
   );
 }
 
