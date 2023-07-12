@@ -64,7 +64,6 @@ const MyPage = () => {
       console.log(error);
     }
   };
-  console.log(accessToken);
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -83,7 +82,6 @@ const MyPage = () => {
   };
 
   const fetchPosts = async (userID) => {
-    console.log(userID);
     const response = await axiosBaseURL
       .get(`api/v1/post/posts/${userID}/`)
       .then((res) => {
@@ -110,7 +108,7 @@ const MyPage = () => {
   useEffect(() => {
     setImg(user?.profile_image || "https://via.placeholder.com/150");
   }, [user?.profile_image]);
-  console.log(response.map((post) => console.log(post.username)));
+  //  console.log(response.map((post) => console.log(post.username)));
 
   return (
     <div className="p-5 bg-neutral-50 mb-20">
@@ -188,7 +186,6 @@ const MyPage = () => {
       <div className="grid-cols-1 items-center justify-center">
         {response.map((post, index) => (
           <div key={index}>
-            {post.username}
             <NewPostLayout
               postId={post.post_id}
               author={post.username}
