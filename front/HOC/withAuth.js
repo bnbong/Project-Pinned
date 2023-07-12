@@ -27,7 +27,14 @@ const withAuth = (Component) => {
       }, []);
 
       return mounted && <></>;
+    } else {
+      if (router.pathname === "/login" || router.pathname === "/signup") {
+        toast.error("이미 로그인 상태입니다.");
+        router.back();
+        return mounted && <></>;
+      }
     }
+
     return mounted && <Component />;
   };
 

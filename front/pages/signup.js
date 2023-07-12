@@ -6,8 +6,9 @@ import apiMapper from "@/components/apiMapper";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
+import withAuth from "@/HOC/withAuth";
 
-export default function Login() {
+export default withAuth(function Login() {
   const [inputs, setInputs] = useState({
     username: "",
     email: "",
@@ -270,4 +271,4 @@ export default function Login() {
       </div>
     </section>
   );
-}
+});

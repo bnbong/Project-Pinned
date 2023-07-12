@@ -2,7 +2,7 @@ import React from "react";
 import axiosBaseURL from "@/components/axiosBaseUrl";
 import dynamic from "next/dynamic";
 import "react-quill/dist/quill.bubble.css";
-import { useMutation } from "react-query";
+import { useMutation, useQueries, useQuery } from "react-query";
 import { toast } from "react-hot-toast";
 import { useState } from "react";
 
@@ -34,26 +34,12 @@ export default function Post({ id, data }) {
       toast.error("댓글 작성 실패");
     },
   });
+  //해당 포스트 댓글 가져오기
+  const comments = useQuery({
+    queryKey: ["comments"],
+    queryFn: () => axiosBaseURL.get("api/v1/post/2/comments/"),
+  });
 
-  //추후에 react query이용해서 상태관리 해보자
-  // const getPost = async () => {
-  //   try {
-  //     const res = await axiosBaseURL.get(`api/v1/post/${router.query.id}`);
-  //     console.log(res);
-  //     setPost({
-  //       ...post,
-  //       title: data.post_title,
-  //       content: data.post_content,
-  //     });
-  //   } catch (err) {
-  //     console.log(err);
-  //     throw err;
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   getPost().catch((err) => console.log(err));
-  // }, []);
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
       <div className="min-h-screen max-w-3xl mx-auto py-8">
@@ -62,7 +48,7 @@ export default function Post({ id, data }) {
           <hr></hr>
           <br></br>
           <time pubdate dateTime="2022-02-08" title="February 8th, 2022">
-            생성일자 : {created.slice(0, 10)}
+            by {username} 생성일자 : {created.slice(0, 10)}
           </time>
           <ReactQuill value={content} readOnly={true} theme={"bubble"} />
           <br></br>

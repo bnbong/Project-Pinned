@@ -6,8 +6,10 @@ import { useRouter } from "next/router";
 import { useState, useCallback } from "react";
 import { useMutation } from "react-query";
 import toast from "react-hot-toast";
+import { Spinner } from "flowbite-react";
+import withAuth from "@/HOC/withAuth";
 
-export default function Login() {
+export default withAuth(function Login() {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState({});
@@ -57,10 +59,11 @@ export default function Login() {
           >
             핀드 - 내 추억 속의 랜드마크
           </a>
+
           <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                로그인하기
+                로그인하기{isLoading && <Spinner />}
               </h1>
               <div className="space-y-4 md:space-y-6">
                 <Input
@@ -116,7 +119,7 @@ export default function Login() {
                 >
                   로그인하기
                 </button>
-                {isError ? <div>{errorMessage.detail}</div> : null}
+
                 <p className="text-sm font-light text-gray-500 dark:text-gray-400">
                   계정이 아직 없으신가요?{" "}
                   <Link
@@ -133,4 +136,4 @@ export default function Login() {
       </section>
     </>
   );
-}
+});
