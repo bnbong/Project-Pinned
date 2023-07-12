@@ -10,13 +10,13 @@ import { data } from "autoprefixer";
 import { FaCog } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-const MyPage = withAuth(() => {
+const MyPage = () => {
   const router = useRouter();
   const accessToken =
     typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
   if (!accessToken || accessToken === "") {
     toast.error("로그인이 필요합니다.");
-    router.replace("/login");
+    if (typeof window !== "undefined") router.replace("/login");
     return null;
   }
   // loginState = 유저의 데이터
@@ -64,6 +64,7 @@ const MyPage = withAuth(() => {
       console.log(error);
     }
   };
+  console.log(accessToken);
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -112,7 +113,7 @@ const MyPage = withAuth(() => {
   console.log(response.map((post) => console.log(post.username)));
 
   return (
-    <div className="p-5 bg-neutral-50">
+    <div className="p-5 bg-neutral-50 mb-20">
       {/* {console.log(user)}
       {console.log(userID)}
       {console.log(userName)}
@@ -189,25 +190,19 @@ const MyPage = withAuth(() => {
           <div key={index}>
             {post.username}
             <NewPostLayout
+              postId={post.post_id}
               author={post.username}
               location={post.landmark_name}
               title={post.post_title}
-              content={post.post_content}
+              content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
               images={post.post_image}
             />
           </div>
         ))}
-        {/* <PostLayout
-          key={index}
-          profileImage={post.profileImage}
-          username={post.username}
-          postImage={post.postImage}
-          likes={post.likes}
-          description={post.description}
-        /> */}
+    
       </div>
     </div>
   );
-});
+};
 
 export default MyPage;

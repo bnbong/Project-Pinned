@@ -33,18 +33,23 @@ export default function Post({ data }) {
     },
     onSuccess: (data, variables, context) => {
       toast.success("댓글 작성 성공");
-      queryClient.invalidateQueries(['comments', id]);
+      queryClient.invalidateQueries(["comments", id]);
     },
     onError: (error, variables, context) => {
       toast.error("댓글 작성 실패");
     },
   });
-  
-  //해당 포스트 댓글 가져오기
+
+  // 해당 포스트 댓글 가져오기
   const comments = useQuery({
     queryKey: ["comments"],
-    queryFn: () => axiosBaseURL.get("api/v1/post/5/comments/"),
+    queryFn: async () => await axiosBaseURL.get("api/v1/post/5/comments/"),
+    onSuccess: () => {},
+    onError: () => {
+      toast.error("댓글 가져오기에 실패하였습니다.");
+    },
   });
+  console.log(comments);
 
   return (
     <div className="min-h-screen bg-gray-100 mb-20">
@@ -94,9 +99,15 @@ export default function Post({ data }) {
               </button>
             </div>
             <>
-              {console.log(JSON.stringify(comments.data.data.comments))}
-              {comments.data.data.comments && comments.data.data.comments.map((post,index) => (
-                  <Comment name={post.username} date={post.created_at.slice(0,10)} content={post.comment_content}/>
+              {console.log(JSON.stringify(comments.data?.data?.comments))}
+              {comments.data?.data?.comments &&
+                comments.data.data.comments.map((post, index) => (
+                  <Comment
+                    key={index}
+                    name={post.username}
+                    date={post.created_at.slice(0, 10)}
+                    content={post.comment_content}
+                  />
                 ))}
             </>
             {/* <article className="p-6 mb-6 ml-6 lg:ml-12 text-base bg-white rounded-lg dark:bg-gray-900">

@@ -5,6 +5,7 @@ from apps.post.models import Like
 
 
 class LandmarkSerializer(serializers.ModelSerializer):
+    landmark_id = serializers.IntegerField(source="id")
     landmark_name = serializers.CharField(source="name")
     landmark_latitute = serializers.DecimalField(
         source="location_lat", max_digits=20, decimal_places=10
@@ -17,6 +18,7 @@ class LandmarkSerializer(serializers.ModelSerializer):
     class Meta:
         model = Landmark
         fields = (
+            "landmark_id",
             "landmark_name",
             "landmark_latitute",
             "landmark_longitude",
@@ -37,6 +39,7 @@ class LandmarkDetailSerializer(LandmarkSerializer):
     class Meta:
         model = Landmark
         fields = (
+            "landmark_id",
             "landmark_name",
             "landmark_latitute",
             "landmark_longitude",

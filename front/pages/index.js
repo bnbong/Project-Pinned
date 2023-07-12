@@ -242,7 +242,7 @@ export default function Home() {
   // ];
 
   //post 가져오기
-  const getPost = async (param = 1) => {
+  const getPost = async (param = OFFSET) => {
     const res = await axiosBaseURL
       .get(`api/v1/post/feed`, {
         params: {
@@ -251,7 +251,8 @@ export default function Home() {
         },
       })
       .then((res) => {
-        console.log(res);
+        console.log(res?.data);
+
         return res;
       })
       .catch((err) => console.log(err));
@@ -267,13 +268,13 @@ export default function Home() {
     isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
     status, // loading, error, success 중 하나의 상태, string
   } = useInfiniteQuery(["posts"], getPost, {
-    getNextPageParam: (lastPage, page) => {
+    getNextPageParam: (lastPage) => {
       const count = 1;
-      console.log("log", lastPage, page);
-      console.log(count);
+      console.log("log", lastPage);
+
       if (count === lastPage.config.params.limit) return false;
 
-      return count + 1;
+      return OFFSET + 5;
     },
   });
 
@@ -320,26 +321,27 @@ export default function Home() {
           // group을 map으로 한번 더 돌리는 이중 배열 구조이다.
           // get api를 통해 받은 res를 컴포넌트에 props로 전달해줘서 랜더링해야할거 같음.
           <div key={index}>
-            {group.data.trending_posts.map((post) => (
-              <p key={post.post_id}>
-                <div className="grid-cols-1 items-center justify-center">
-                  <NewPostLayout
-                    postId={post.post_id}
-                    author={post.username}
-                    location={post.landmark_name}
-                    title={post.post_title}
-                    content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
-                    images={post.post_image}
-                  />
-                </div>
-              </p>
+            {group.data.trending_posts.map((post, index) => (
+              <div
+                key={index}
+                className="grid-cols-1 items-center justify-center"
+              >
+                <NewPostLayout
+                  postId={post.post_id}
+                  author={post.username}
+                  location={post.landmark_name}
+                  title={post.post_title}
+                  content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
+                  images={post.post_image}
+                />
+              </div>
             ))}
           </div>
         ))}
       <div ref={bottom} />
       {isFetchingNextPage && <p>continue loading</p>}
-      <button onClick={() => fetchNextPage()}>더 불러오기</button>
-      <button onClick={() => requestPermission}>FCM</button>
+      {/* <button onClick={() => fetchNextPage()}>더 불러오기</button>
+      <button onClick={() => requestPermission}>FCM</button> */}
     </div>
   );
 }

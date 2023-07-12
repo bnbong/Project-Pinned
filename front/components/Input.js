@@ -15,7 +15,7 @@ export default forwardRef(function Input(prop, ref) {
       <input
         onChange={prop.onChange}
         onKeyDown={prop.onKeyDown}
-        type={prop.id}
+        type={prop.type}
         name={prop.id}
         ref={ref}
         id={prop.id}
