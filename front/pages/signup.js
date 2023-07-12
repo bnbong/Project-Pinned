@@ -7,6 +7,7 @@ import axiosBaseURL from "@/components/axiosBaseUrl";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/router";
 import withAuth from "@/HOC/withAuth";
+import { Spinner } from "flowbite-react";
 
 export default withAuth(function Login() {
   const [inputs, setInputs] = useState({
@@ -154,8 +155,9 @@ export default withAuth(function Login() {
         <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
           <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              회원가입
+              회원가입 {isLoading && <Spinner />}
             </h1>
+
             <div className="space-y-4 md:space-y-6">
               <Input
                 name="사용자 이름"
