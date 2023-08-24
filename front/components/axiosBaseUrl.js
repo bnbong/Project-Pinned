@@ -26,7 +26,7 @@ const getNewAccessToken = mem(
 );
 
 const axiosBaseURL = axios.create({
-  baseURL: "http://localhost:8000/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
+  baseURL: "https://mypinnedlandmark.bnbong.tk:8000/", // 프로덕션 이미지 빌드 시 실제 URL로 변경
   withCredentials: true,
 });
 
