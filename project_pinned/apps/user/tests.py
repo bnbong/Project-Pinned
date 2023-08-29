@@ -276,11 +276,11 @@ class FCMTest(TestCase):
             username="testuser1",
         )
 
-    # def test_send_notification(self):
-    #     mock_token = "thisistestnotificationtoken"  # 실제 테스트를 하기 위해서는 해당 토큰을 클라이언트로부터 실제로 받아와야 함
-    #     UserDevice.objects.create(user=self.user1, fcmToken=mock_token)
+    def test_send_notification(self):
+        mock_token = "thisistestnotificationtoken"  # 실제 테스트를 하기 위해서는 해당 토큰을 클라이언트로부터 실제로 받아와야 함
+        UserDevice.objects.create(user=self.user1, fcmToken=mock_token)
 
-    #     firebase_manager = FirebaseManager.getInstance()
-    #     firebase_manager.send_notification_with_fcm(
-    #         mock_token, "test_title", "test_body"
-    #     )
+        firebase_manager = FirebaseManager.getInstance()
+        firebase_manager.send_notification_with_fcm(
+            mock_token, "test_title", "test_body"
+        )

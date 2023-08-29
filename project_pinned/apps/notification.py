@@ -21,38 +21,22 @@ def send_notifiaction(target_user, title, content):
 
 
 class FirebaseManager:
-    """
-    Push 알림을 보내기 위한 Firebase admin app manager.
-    해당 firebase admin app은 오직 푸시 알림을 보내는 용도로만 사용하기 때문에
-    firebase app 인스턴스는 하나만 생성하고, 이를 싱글톤으로 관리한다.
-    """
-
     _instance = None
+    _initialized = False
 
     @staticmethod
     def getInstance():
         if FirebaseManager._instance is None:
-            FirebaseManager()
+            FirebaseManager._instance = FirebaseManager()
         return FirebaseManager._instance
 
     def __init__(self):
         if FirebaseManager._instance is not None:
             raise Exception("You Cannot Create Another FirebaseManager Class")
-        else:
-            FirebaseManager._instance = self
+
+        if not FirebaseManager._initialized:
             cred_path = os.path.join(BASE_DIR, "serviceAccountKey.json")
             cred = credentials.Certificate(cred_path)
             self.app = firebase_admin.initialize_app(cred)
+            FirebaseManager._initialized = True
 
-    def send_notification_with_fcm(self, registration_token, title, body):
-        message = messaging.Message(
-            notification=messaging.Notification(title=title, body=body),
-            token=registration_token,
-        )
-
-        try:
-            response = messaging.send(message)
-            print("Successfully sent message:", response)
-
-        except Exception as e:
-            print("Exception occured at notification: ", e)

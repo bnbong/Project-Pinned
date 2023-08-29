@@ -359,6 +359,13 @@ class CommentCreate(APIView):
                 )
 
             comment = serializer.save(user=request.user, post=post)
+
+            target_user = post.user
+
+            title = "좋아요 알림"
+            body = f"{request.user} 님이 당신의 게시물에 댓글을 작성했습니다."
+
+            send_notifiaction(target_user=target_user, title=title, content=body)
             return Response(
                 {"is_success": True, "detail": "comment create success"},
                 status=status.HTTP_201_CREATED,
@@ -484,7 +491,7 @@ class PostLike(APIView):
     permission_classes = [IsAuthenticated]
 
     @swagger_auto_schema(
-        operation_description="특정 게시물에 눌렀던 좋아요를 취소할 때 사용하는 API\n\
+        operation_description="특정 게시물에 좋아요를 누를 때 사용하는 API\n\
         Header에 JWT 토큰 인증 필요",
         responses={
             201: "좋아요 성공",
