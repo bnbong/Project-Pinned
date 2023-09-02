@@ -1,4 +1,5 @@
 import os
+import json
 
 from PIL import Image
 from io import BytesIO
@@ -228,11 +229,10 @@ class UserAPITest(TestCase):
     def test_jwt_refresh(self):
         url = reverse("jwt-refresh")
         test_user_token = RefreshToken.for_user(self.user1)
-        data = {
-            "refresh": str(test_user_token),
-        }
 
-        response = self.client.post(url, data, format="json")
+        self.client.cookies['refresh_token'] = str(test_user_token)
+
+        response = self.client.post(url, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
