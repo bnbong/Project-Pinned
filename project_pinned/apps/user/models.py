@@ -1,4 +1,5 @@
 from uuid import uuid4
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import (
@@ -50,6 +51,14 @@ class UserManager(BaseUserManager):
         return user
 
 
+def user_directory_path(instance, filename):
+    # MEDIA_ROOT/user_<user_id>/<current_year>_<current_month>_<filename>
+    current_year = datetime.now().year
+    current_month = datetime.now().month
+    formatted_month = f"{current_month:02}"
+    return f"profile_images/user_{instance.user_id}/{current_year}_{formatted_month}_{filename}"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     user_id = models.UUIDField(default=uuid4, editable=False, unique=True)
     username = models.CharField(
@@ -60,7 +69,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     )
     email = models.EmailField(_("email address"), blank=True, unique=True)
     profile_image = models.ImageField(
-        null=True, blank=True, upload_to='profile_images/'
+        null=True, blank=True, upload_to=user_directory_path
     )
     is_active = models.BooleanField(
         _("active"),
@@ -76,9 +85,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(
-        _('staff status'),
+        _("staff status"),
         default=False,
-        help_text=_('Designates whether the user can log into admin site.'),
+        help_text=_("Designates whether the user can log into admin site."),
     )
 
     EMAIL_FIELD = "email"
