@@ -27,50 +27,6 @@ export default function Home() {
   const bottom = useRef(null);
   const { loginState, setLoginState } = useContext(AuthContext);
 
-  // 유저 등록
-  async function registerUser(username, email, password) {
-    const response = await axiosBaseURL.post("api/v1/user/register/", {
-      username: username,
-      email: email,
-      password: password,
-    });
-    return response.data;
-  }
-  // JWT 토큰 발급 받기
-  async function loginUser(email, password) {
-    const response = await axiosBaseURL.post("api/v1/user/login/", {
-      email: email,
-      password: password,
-    });
-    return response.data;
-  }
-
-  // JWT 토큰 검증
-  async function verifyToken(token) {
-    const response = await axiosBaseURL.post("api/v1/user/token/verify/", {
-      token: token,
-    });
-    return response.data;
-  }
-
-  // JWT 토큰 새로 발급받기
-  async function refreshToken(refresh) {
-    const response = await axiosBaseURL.post("api/v1/user/token/refresh/", {
-      refresh: refresh,
-    });
-    return response.data;
-  }
-
-  // 유저 프로필 가져오기
-  async function getUserProfile(userId, token) {
-    const response = await axiosBaseURL.get(`api/v1/user/${userId}/profile/`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    return response.data;
-  }
-
   // 유저 검색
   async function searchUser(username, token) {
     const response = await axiosBaseURL.get("api/v1/user/search/", {
@@ -96,48 +52,7 @@ export default function Home() {
     );
     return response.data;
   }
-  async function ExampleUsage() {
-    try {
-      //유저 등록
-      // const registerResult = await registerUser('newUsername1', 'Test@example.com', 'password');
-      // console.log(registerResult);
-      // 로그인 요청
-      // const loginResult = await loginUser("user1@test.com", "password123");
-      // console.log(loginResult);
-      // // JWT 검증
-      // const verifyResult = await verifyToken(loginResult.access_token);
-      // console.log(verifyResult);
-      // let userId = loginResult.user.user_id;
-      // let userName = loginResult.user.username;
-      // console.log(userId);
-      // console.log(userName);
-      // JWT 새로 발급
-      // const refreshResult = await refreshToken(loginResult.refresh_token);
-      // console.log(refreshResult);
-      // 유저 프로필 조회 => 마이페이지에서 사용해야 할듯
-      // const userProfile = await getUserProfile(
-      //   userId,
-      //   loginResult.access_token
-      // );
-      // console.log(userProfile);
-      // setLoginState({
-      //   isLoggedIn: true,
-      //   user: loginResult.user,
-      //   accessToken: null,
-      //   refreshToken: null,
-      // });
-      // console.log("loginState.user : " + loginState.user);
-      // console.log("loginState.accessToken" + loginState.accessToken);
-      //refreshResult.access
-      // // 유저 검색
-      // const searchResult = await searchUser(userName, loginResult.access_token);
-      // console.log(searchResult);
-      // const deleteResult = await deleteUser(loginResult.user.user_id, loginResult.access_token);
-      // console.log(deleteResult);
-    } catch (error) {
-      console.error(`Error: ${error}`);
-    }
-  }
+
   const requestPermission = async () => {
     const permission = await Notification.requestPermission();
 
