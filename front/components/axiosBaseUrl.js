@@ -74,7 +74,11 @@ axiosBaseURL.interceptors.response.use(
   async (error) => {
     const prevRequest = error?.config;
 
-    //mypage api에선 로그아웃 연장이 안된다. =>> 이 부분 때문에 재발급 계속 받음.
+    // mypage api에선 로그아웃 연장이 안된다.
+    // 1. 이 부분이 재발급 받는 부분인데, 그 과정에서 access_token 지워지고 생성된다.
+    // 2. 그 과정에서 local storage에 undefined 된 access_token이 생성되어 401 error가 뜬다
+    // 3. 그럼 401 에 걸려서 err catch로 넘어가고, 그 결과로 로그인이 안된 상태로 처리되는 것 같다.
+
     // if (error?.response?.status === 401 && !prevRequest?.sent) {
     //   console.log('401 token 재발급');
     //   const accessToken = await getNewAccessToken()
