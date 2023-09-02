@@ -119,6 +119,8 @@ class UserAPITest(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIsNotNone(User.objects.get(id=self.user1.id).profile_image)
 
+        self.user1.profile_image.delete()
+
     def test_edit_other_user_profile(self):
         url = reverse("user-profile", kwargs={"user_id": str(self.user2.user_id)})
         data = {"username": "updateduser1"}
@@ -258,14 +260,6 @@ class UserAPITest(TestCase):
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(response.data["detail"], "username is required")
-
-    @classmethod
-    def tearDownClass(cls):
-        super().tearDownClass()
-
-        test_image_path = "media/profile_images/test.png"
-
-        os.remove(os.path.abspath(test_image_path))
 
 
 class FCMTest(TestCase):
