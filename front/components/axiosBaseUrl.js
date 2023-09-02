@@ -26,7 +26,7 @@ const getNewAccessToken = mem(
 );
 
 const axiosBaseURL = axios.create({
-  baseURL: 'https://mypinnedlandmark.bnbong.tk/', // 프로덕션 이미지 빌드 시 실제 URL로 변경
+  baseURL: `${process.env.NEXT_PUBLIC_URL}/`, // 프로덕션 이미지 빌드 시 실제 URL로 변경
   withCredentials: true,
 });
 
