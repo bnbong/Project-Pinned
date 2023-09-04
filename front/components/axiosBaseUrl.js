@@ -30,12 +30,16 @@ const axiosBaseURL = axios.create({
   withCredentials: true,
 });
 
-const accessToken =
-  typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+// 모듈 스코프에서 선언된 변수는 모듈이 임포트 될 때 한번만 초기화 된다. 이후 초기화 값에서 변경되지 않는다.
+// 클로저의 특징을 가진 요청 인터셉터는 최초 초기화 값을 기억한다.
+// 변수 값은 변경되지 않는데 이 특성 때문에 요청 인터셉터는 토큰의 값이 변경되어도 항상 최초 초기화 값만 사용하게 된다.
+// const accessToken =
+//   typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
 
 axiosBaseURL.interceptors.request.use(
   (config) => {
     console.log('requeset interceptor', config.url);
+    const accessToken = localStorage.getItem('access_token');
     // 모든 Request Header에 Access토큰을 넣어주는 역할
     if (!config.headers['Authorization'] && accessToken !== '' && accessToken) {
       //메인 피드 동적으로 변경시 변경 필요
@@ -79,26 +83,28 @@ axiosBaseURL.interceptors.response.use(
     // 2. 그 과정에서 local storage에 undefined 된 access_token이 생성되어 401 error가 뜬다
     // 3. 그럼 401 에 걸려서 err catch로 넘어가고, 그 결과로 로그인이 안된 상태로 처리되는 것 같다.
 
-    // if (error?.response?.status === 401 && !prevRequest?.sent) {
-    //   console.log('401 token 재발급');
-    //   const accessToken = await getNewAccessToken()
-    //     .then((res) => {
-    //       localStorage.removeItem('access_token');
-    //       localStorage.setItem('access_token', res);
-    //     })
-    //     .catch((err) => {
-    //       toast.error('다시 로그인 해주세요!');
-    //       throw err;
-    //     });
+    if (error?.response?.status === 401 && !prevRequest?.sent) {
+      console.log('401 token 재발급');
 
-    //   prevRequest.sent = true;
-    //   prevRequest.headers['Authorization'] = `Bearer ${accessToken}`;
-    // }
+      try {
+        const newAccessToken = await getNewAccessToken();
+        localStorage.setItem('access_token', newAccessToken);
+
+        prevRequest.sent = true;
+        prevRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+
+        return axiosBaseURL(prevRequest);
+      } catch (err) {
+        toast.error('다시 로그인 해주세요!');
+        throw err;
+      }
+    }
+
     if (error?.response?.status >= 500) {
       toast.error('서버 에러가 발생했습니다.');
     }
+
     return Promise.reject(error);
   }
 );
-
 export default axiosBaseURL;
