@@ -58,14 +58,14 @@ export default function EditProfileModal({
   setImg,
 }) {
   const { loginState, setLoginState } = useContext(AuthContext);
-  const [name, setName] = useState(userName);
-  const [newImg, setNewImg] = useState('');
+  const [newname, setNewName] = useState('');
+  const [newImg, setNewImg] = useState(img);
   const [imgObject, setImgObject] = useState('');
 
   const handleSubmit = async () => {
     const formData = new FormData();
-    formData.append('username', name);
-    console.log(name);
+    formData.append('username', newname);
+    console.log(newname);
     console.log(id);
     formData.append('profile_image', imgObject);
     console.log('이미지 확인 = ' + imgObject);
@@ -76,7 +76,7 @@ export default function EditProfileModal({
       );
 
       if (response.data.is_success) {
-        setUserName(name);
+        setUserName(newname);
         setImg(newImg);
       }
     } catch (error) {
@@ -129,8 +129,8 @@ export default function EditProfileModal({
                   name='name'
                   id='name'
                   className='mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={userName}
+                  onChange={(e) => setNewName(e.target.value)}
                 />
               </div>
             </div>

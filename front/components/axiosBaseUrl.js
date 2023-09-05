@@ -33,13 +33,16 @@ const axiosBaseURL = axios.create({
 // 모듈 스코프에서 선언된 변수는 모듈이 임포트 될 때 한번만 초기화 된다. 이후 초기화 값에서 변경되지 않는다.
 // 클로저의 특징을 가진 요청 인터셉터는 최초 초기화 값을 기억한다.
 // 변수 값은 변경되지 않는데 이 특성 때문에 요청 인터셉터는 토큰의 값이 변경되어도 항상 최초 초기화 값만 사용하게 된다.
-// const accessToken =
-//   typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+let accessToken =
+  typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
 
 axiosBaseURL.interceptors.request.use(
   (config) => {
     console.log('requeset interceptor', config.url);
-    const accessToken = localStorage.getItem('access_token');
+    accessToken =
+      typeof window !== 'undefined'
+        ? localStorage.getItem('access_token')
+        : null;
     // 모든 Request Header에 Access토큰을 넣어주는 역할
     if (!config.headers['Authorization'] && accessToken !== '' && accessToken) {
       //메인 피드 동적으로 변경시 변경 필요

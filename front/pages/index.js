@@ -1,24 +1,24 @@
-import Link from "next/link";
-import axios from "axios";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { AuthContext } from "@/contexts/AuthContext";
-import { getToken, getMessaging } from "firebase/messaging";
-import { messaging } from "@/components/firebase";
-import NewPostLayout from "@/components/PostLayout";
-import axiosBaseURL from "@/components/axiosBaseUrl";
-import { useInfiniteQuery } from "react-query";
-import { useObserver } from "@/hook/useObserver";
-import { LazyLoadImage } from "react-lazy-load-image-component";
-import { Toaster } from "react-hot-toast";
-import SkeletonCard from "@/components/SkeletonPostLayout";
+import Link from 'next/link';
+import axios from 'axios';
+import { createContext, useContext, useEffect, useRef, useState } from 'react';
+import { AuthContext } from '@/contexts/AuthContext';
+import { getToken, getMessaging } from 'firebase/messaging';
+import { messaging } from '@/components/firebase';
+import NewPostLayout from '@/components/PostLayout';
+import axiosBaseURL from '@/components/axiosBaseUrl';
+import { useInfiniteQuery } from 'react-query';
+import { useObserver } from '@/hook/useObserver';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { Toaster } from 'react-hot-toast';
+import SkeletonCard from '@/components/SkeletonPostLayout';
 
 export default function Home() {
   const [isSupported] = useState(
-    typeof window !== "undefined" ? "Notification" in window : 0
+    typeof window !== 'undefined' ? 'Notification' in window : 0
   );
   const [, setBrowserNotification] = useState(
-    typeof window !== "undefined"
-      ? "Notification" in window && Notification.permission === "granted"
+    typeof window !== 'undefined'
+      ? 'Notification' in window && Notification.permission === 'granted'
       : 0
   );
 
@@ -29,7 +29,7 @@ export default function Home() {
 
   // 유저 검색
   async function searchUser(username, token) {
-    const response = await axiosBaseURL.get("api/v1/user/search/", {
+    const response = await axiosBaseURL.get('api/v1/user/search/', {
       params: {
         username: username,
       },
@@ -56,7 +56,7 @@ export default function Home() {
   const requestPermission = async () => {
     const permission = await Notification.requestPermission();
 
-    if (permission === "granted") {
+    if (permission === 'granted') {
       setBrowserNotification(true);
 
       return getFCMToken();
@@ -68,93 +68,13 @@ export default function Home() {
   // };
   const getFCMToken = async () => {
     if (!isSupported) {
-      alert("알림이 지원되지 않는 브라우저입니다.");
+      alert('알림이 지원되지 않는 브라우저입니다.');
       return null;
-    } else if (Notification.permission !== "granted") {
-      alert("브라우저 알림 설정을 확인해주세요.");
+    } else if (Notification.permission !== 'granted') {
+      alert('브라우저 알림 설정을 확인해주세요.');
       return null;
     }
   };
-
-  // useEffect(() => {
-  //   ExampleUsage();
-  // }, []);
-
-  // useEffect(() => {
-  //   // requestPermission();
-  //   getToken(messaging, {
-  //     vapidKey: process.env.NEXT_PUBLIC_vapid_key,
-  //   })
-  //     .then((currentToken) => {
-  //       if (currentToken) {
-  //         // Send the token to your server and update the UI if necessary
-  //         // ...
-  //         console.log(currentToken);
-  //       } else {
-  //         // Show permission request UI
-  //         console.log(
-  //           "No registration token available. Request permission to generate one."
-  //         );
-  //         // ...
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log("An error occurred while retrieving token. ", err);
-  //       // ...
-  //     });
-  // }, []);
-
-  // const dummyData = [
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile2.jpg",
-  //     username: "Username2",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 500,
-  //     description: "Post Description 2...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  //   {
-  //     profileImage: "profile1.jpg",
-  //     username: "Username1",
-  //     postImage: "https://via.placeholder.com/150",
-  //     likes: 999,
-  //     description: "Post Description 1...",
-  //   },
-  // ];
 
   //post 가져오기
   const getPost = async (param = OFFSET) => {
@@ -180,7 +100,7 @@ export default function Home() {
     isFetching, // 첫 페이지 fetching 여부, Boolean, 잘 안쓰인다
     isFetchingNextPage, // 추가 페이지 fetching 여부, Boolean
     status, // loading, error, success 중 하나의 상태, string
-  } = useInfiniteQuery(["posts"], getPost, {
+  } = useInfiniteQuery(['posts'], getPost, {
     getNextPageParam: (lastPage) => {
       const count = 1;
 
@@ -201,32 +121,32 @@ export default function Home() {
   });
 
   return (
-    <div className="p-5 bg-neutral-50 mb-20">
-      <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
-        <div className="flex justify-between mx-auto">
-          <div className="flex">
-            <h2 className="text-2xl font-bold m-auto mr-10">
+    <div className='p-5 bg-neutral-50 mb-20'>
+      <div className='flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28'>
+        <div className='flex justify-between mx-auto'>
+          <div className='flex'>
+            <h2 className='text-2xl font-bold m-auto mr-10'>
               이런 장소는 어떠세요?
             </h2>
           </div>
-          <div className="ml-10">
-            <div className="flex">
-              <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-white">문화의거리</h2>
+          <div className='ml-10'>
+            <div className='flex'>
+              <div className='bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md'>
+                <h2 className='text-white'>문화의거리</h2>
               </div>
-              <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-white">병천순대골목</h2>
+              <div className='bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md'>
+                <h2 className='text-white'>병천순대골목</h2>
               </div>
-              <div className="bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md">
-                <h2 className="text-gray-100">하동숲길</h2>
+              <div className='bg-indigo-600 font-semibold rounded-xl p-1 m-1 drop-shadow-md'>
+                <h2 className='text-gray-100'>하동숲길</h2>
               </div>
             </div>
           </div>
         </div>
       </div>
-      {status === "loading" && <SkeletonCard />}
-      {status === "error" && <p>{error.message}</p>}
-      {status === "success" &&
+      {status === 'loading' && <SkeletonCard />}
+      {status === 'error' && <p>{error.message}</p>}
+      {status === 'success' &&
         data &&
         data.pages.map((group, index) => (
           // pages들이 페이지 숫자에 맞춰서 들어있기 때문에
@@ -236,14 +156,14 @@ export default function Home() {
             {group.data.trending_posts.map((post, index) => (
               <div
                 key={index}
-                className="grid-cols-1 items-center justify-center"
+                className='grid-cols-1 items-center justify-center'
               >
                 <NewPostLayout
                   postId={post.post_id}
                   author={post.username}
                   location={post.landmark_name}
                   title={post.post_title}
-                  content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
+                  content={post.post_content.replace(/(<([^>]+)>)/gi, '')}
                   images={post.post_image}
                 />
               </div>
