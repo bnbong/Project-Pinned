@@ -153,9 +153,10 @@ class UserLogout(LogoutView):
     """
     Cookie에 있는 refresh token을 사용하여 로그아웃하는 API.
     """
+
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
-        request.data['refresh'] = refresh_token
+        request.data["refresh"] = refresh_token
 
         return super().post(request, *args, **kwargs)
 
@@ -483,6 +484,6 @@ class UserFCMToken(APIView):
 class CookieTokenRefreshView(TokenRefreshView):
     def post(self, request, *args, **kwargs):
         refresh_token = request.COOKIES.get("refresh_token")
-        request.data['refresh'] = refresh_token
+        request.data["refresh"] = refresh_token
 
         return super().post(request, *args, **kwargs)

@@ -1,22 +1,22 @@
-import { AuthContext } from "@/contexts/AuthContext";
-import React, { useContext, useEffect, useState } from "react";
-import axios from "axios";
-import { useRouter } from "next/router";
-import EditProfileModal from "@/components/modal";
-import NewPostLayout from "@/components/PostLayout";
-import withAuth from "@/HOC/withAuth";
-import axiosBaseURL from "@/components/axiosBaseUrl";
-import { data } from "autoprefixer";
-import { FaCog } from "react-icons/fa";
-import toast from "react-hot-toast";
+import { AuthContext } from '@/contexts/AuthContext';
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import EditProfileModal from '@/components/modal';
+import NewPostLayout from '@/components/PostLayout';
+import withAuth from '@/HOC/withAuth';
+import axiosBaseURL from '@/components/axiosBaseUrl';
+import { data } from 'autoprefixer';
+import { FaCog } from 'react-icons/fa';
+import toast from 'react-hot-toast';
 
 const MyPage = () => {
   const router = useRouter();
   const accessToken =
-    typeof window !== "undefined" ? localStorage.getItem("access_token") : null;
-  if (!accessToken || accessToken === "") {
-    toast.error("로그인이 필요합니다.");
-    if (typeof window !== "undefined") router.replace("/login");
+    typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
+  if (!accessToken || accessToken === '') {
+    toast.error('로그인이 필요합니다.');
+    if (typeof window !== 'undefined') router.replace('/login');
     return null;
   }
   // loginState = 유저의 데이터
@@ -31,18 +31,13 @@ const MyPage = () => {
   //user_Id, user_name, follower, following 관리
   const [userID, setUserID] = useState();
   const [userName, setUserName] = useState();
-  const [follower, setFollower] = useState();
-  const [following, setFollowing] = useState();
+  const [follower, setFollower] = useState(0);
+  const [following, setFollowing] = useState(0);
   const [postNumber, setPostNumber] = useState();
   const [response, setResponse] = useState([]);
 
   //img 파일 관리하는 state
-  const [img, setImg] = useState(
-    user?.profile_image.replace(
-      `${process.env.NEXT_PUBLIC_API_URL}`,
-      `${process.env.NEXT_PUBLIC_API_URL}/api`
-    ) || "https://via.placeholder.com/150"
-  );
+  const [img, setImg] = useState('https://via.placeholder.com/150');
   //post 관리하는 state
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -57,13 +52,14 @@ const MyPage = () => {
   const logout = async () => {
     try {
       const res = await axiosBaseURL.post(`api/v1/user/logout/`);
-      
-      localStorage.removeItem("access_token");
-      router.push("/");
+
+      localStorage.removeItem('access_token');
+      router.push('/');
     } catch (error) {
       console.log(error);
     }
   };
+
   const fetchUsers = async () => {
     try {
       const res = await axiosBaseURL.get(`api/v1/user/mypage/`);
@@ -73,6 +69,7 @@ const MyPage = () => {
       setUserName(res.data.username);
       setFollower(res.data.followers);
       setFollowing(res.data.followings);
+      setImg(res.data.profile_image);
       // setPosts(response.data.user_posts);
       // setPostNumber(posts.length);
       return res.data.user_id;
@@ -99,56 +96,57 @@ const MyPage = () => {
   //게시물 로딩
 
   useEffect(() => {
-      fetchUsers().then((userID) => fetchPosts(userID));
+    console.log('Token in mypage:', localStorage.getItem('access_token'));
+    fetchUsers().then((userID) => fetchPosts(userID));
   }, []);
   useEffect(() => {
     setPostNumber(response.length);
   }, [response]);
 
   useEffect(() => {
-    setImg(user?.profile_image || "https://via.placeholder.com/150");
+    setImg(user?.profile_image || 'https://via.placeholder.com/150');
   }, [user?.profile_image]);
   //  console.log(response.map((post) => console.log(post.username)));
 
   return (
-    <div className="p-5 bg-neutral-50 mb-20">
+    <div className='p-5 bg-neutral-50 mb-20'>
       {/* {console.log(user)}
       {console.log(userID)}
       {console.log(userName)}
       {console.log(posts)}
       {console.log(posts.length)} */}
-      <div className="flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28">
-        <div className="flex items-center">
+      <div className='flex flex-col items-center justify-center mb-5 pb-2.5 bg-neutral-50 bg-opacity-100 shadow-md h-28'>
+        <div className='flex items-center'>
           <img
-            className="w-12 h-12 rounded-full object-cover mr-5"
+            className='w-12 h-12 rounded-full object-cover mr-5'
             src={img}
-            alt="Avatar"
+            alt='Avatar'
           />
-          <h2 className="text-2xl font-bold mb-0">{userName}</h2>
+          <h2 className='text-2xl font-bold mb-0'>{userName}</h2>
           <button
             onClick={openEdit}
             className={
-              "w-14 bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer"
+              'w-14 bg-indigo-600 text-white p-1 px-1 py-1 inline-block ml-4 rounded cursor-pointer'
             }
           >
             Edit
           </button>
           <FaCog
-            className="w-6 h-6 ml-2 text-gray-600 cursor-pointer"
+            className='w-6 h-6 ml-2 text-gray-600 cursor-pointer'
             onClick={openModal}
           />
           {isModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-              <div className="w-40 h-20 bg-white p-6 rounded shadow-md">
-                <div className="flex flex-col justify-center h-full">
-                  <div className="mb-1">
-                    <button className="mx-auto block" onClick={logout}>
+            <div className='fixed inset-0 flex items-center justify-center bg-black bg-opacity-50'>
+              <div className='w-40 h-20 bg-white p-6 rounded shadow-md'>
+                <div className='flex flex-col justify-center h-full'>
+                  <div className='mb-1'>
+                    <button className='mx-auto block' onClick={logout}>
                       로그아웃
                     </button>
                   </div>
                   <hr />
-                  <div className="mt-1">
-                    <button className="mx-auto block" onClick={closeModal}>
+                  <div className='mt-1'>
+                    <button className='mx-auto block' onClick={closeModal}>
                       닫기
                     </button>
                   </div>
@@ -166,24 +164,24 @@ const MyPage = () => {
             setImg={setImg}
           />
         </div>
-        <div className="flex list-none p-0 m-0 mt-2">
-          <ul className="flex list-none p-0 m-0">
-            <li className="mr-5">
-              <strong className="block">{postNumber}</strong>
+        <div className='flex list-none p-0 m-0 mt-2'>
+          <ul className='flex list-none p-0 m-0'>
+            <li className='mr-5'>
+              <strong className='block'>{postNumber}</strong>
               <span>Posts</span>
             </li>
-            <li className="mr-5">
-              <strong className="block">{follower}</strong>
+            <li className='mr-5'>
+              <strong className='block'>{follower}</strong>
               <span>Followers</span>
             </li>
             <li>
-              <strong className="block">{following}</strong>
+              <strong className='block'>{following}</strong>
               <span>Following</span>
             </li>
           </ul>
         </div>
       </div>
-      <div className="grid-cols-1 items-center justify-center">
+      <div className='grid-cols-1 items-center justify-center'>
         {response.map((post, index) => (
           <div key={index}>
             <NewPostLayout
@@ -191,7 +189,7 @@ const MyPage = () => {
               author={post.username}
               location={post.landmark_name}
               title={post.post_title}
-              content={post.post_content.replace(/(<([^>]+)>)/gi, "")}
+              content={post.post_content.replace(/(<([^>]+)>)/gi, '')}
               images={post.post_image}
             />
           </div>
