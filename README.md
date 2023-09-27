@@ -1,7 +1,7 @@
 # 핀드 - 내 추억 속의 랜드마크
 &lt;공모전 출품용> 지역 랜드마크와 관련된 내 추억을 공유하는 지도 기반 웹 SNS 서비스
 
-SNS Link: [Link](https://mypinnedlandmark.bnbong.tk/)
+SNS Link(Disabled): [Link](https://mypinnedlandmark.bnbong.tk/)
 
 ## Developers  
 1. 이준혁 (팀장, 백엔드, 프로젝트 설계 및 디자인, 스프린트 매니징, 아키텍처 설계)
